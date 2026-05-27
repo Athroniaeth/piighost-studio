@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { GithubIcon } from "@/components/github-icon";
+import { NavLink } from "@/components/nav-link";
 import { GITHUB_ORG, navLinks } from "@/lib/site";
 
 export function SiteNavbar() {
@@ -13,9 +14,7 @@ export function SiteNavbar() {
         </Link>
         <nav className="hidden items-center gap-1 md:flex">
           {navLinks.map((l) => (
-            <Button key={l.href} variant="ghost" size="sm" render={<Link href={l.href} />}>
-              {l.label}
-            </Button>
+            <NavLink key={l.href} href={l.href} label={l.label} />
           ))}
         </nav>
         <div className="flex items-center gap-1">
