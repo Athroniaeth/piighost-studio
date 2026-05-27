@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://piighost.dev"),
-  title: { default: "piighost — anonymize PII before it reaches the LLM", template: "%s — piighost" },
+  title: { default: "piighost - anonymize PII before it reaches the LLM", template: "%s - piighost" },
   description:
     "piighost is a Python library for building PII anonymization pipelines. Detect PII with regex, NER, or an LLM, swap it for stable placeholders, and restore real values for your tools.",
   openGraph: {
