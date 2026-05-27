@@ -1,0 +1,38 @@
+import { ProjectHeader } from "@/components/project-header";
+import { CodeBlock } from "@/components/code-block";
+import { getProject } from "@/lib/site";
+
+export const metadata = { title: "piighost-chat" };
+
+<ProjectHeader project={getProject("chat")} />
+
+<div className="mx-auto max-w-3xl px-4 py-12">
+
+## What it demonstrates
+
+piighost-chat is a demo chatbot that shows a privacy-preserving conversation end to end.
+User messages are anonymized before they reach the LLM, and responses are deanonymized
+before they reach the user. Tools receive the real values.
+
+## The stack
+
+- A React frontend and a Litestar backend running a LangChain agent.
+- PIIAnonymizationMiddleware wrapping the agent: anonymize before the LLM, deanonymize after.
+- piighost-api for detection and highlighting, with thread-scoped memory for consistent
+  placeholders.
+- keyshield for API-key authentication.
+
+## The user flow
+
+1. The user types a message.
+2. The backend calls piighost-api to detect PII; the frontend highlights the entities.
+3. The user confirms, and the message goes to the agent.
+4. The middleware anonymizes it before the model sees it, and deanonymizes the reply.
+
+## Run it
+
+<CodeBlock code={`git clone https://github.com/Athroniaeth/piighost-chat
+cd piighost-chat
+docker compose up`} lang="bash" />
+
+</div>
