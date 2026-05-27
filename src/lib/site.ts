@@ -41,3 +41,9 @@ export const projects: Project[] = [
 ];
 
 export const navLinks = projects.map((p) => ({ href: `/${p.slug}`, label: p.name }));
+
+export function getProject(slug: string): Project {
+  const p = projects.find((x) => x.slug === slug);
+  if (!p) throw new Error(`unknown project: ${slug}`);
+  return p;
+}
