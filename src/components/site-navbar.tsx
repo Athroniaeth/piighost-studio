@@ -43,12 +43,14 @@ export function SiteNavbar() {
                   <ul className="grid gap-1 p-1">
                     {projects.map((p) => {
                       const label = (t.nav[p.slug as keyof typeof t.nav] ?? p.name) as string;
+                      const tagline =
+                        t.projects[p.slug as keyof typeof t.projects]?.tagline ?? p.tagline;
                       return (
                         <li key={p.slug}>
                           <NavigationMenuLink render={<Link href={`/${p.slug}`} />}>
                             <div className="flex flex-col gap-0.5">
                               <span className="font-mono text-sm font-medium">{label}</span>
-                              <span className="text-xs text-muted-foreground">{p.tagline}</span>
+                              <span className="text-xs text-muted-foreground">{tagline}</span>
                             </div>
                           </NavigationMenuLink>
                         </li>
