@@ -75,7 +75,7 @@ export const fr: Dictionary = {
       },
       {
         title: "Traitement de documents",
-        body: "Longs PDF, contrats, tickets de support. Le budget de latence est plus large, la precision prime. Un modele LLM comme detecteur sur les paragraphes difficiles, des expressions regulieres sur les champs structures, et un rer-ancrage pour aligner les resultats avec le document source.",
+        body: "Longs PDF, contrats, tickets de support. Le budget de latence est plus large, la precision prime. Un modele LLM comme detecteur sur les paragraphes difficiles, des expressions regulieres sur les champs structures, et un re-ancrage pour aligner les resultats avec le document source.",
       },
       {
         title: "Formulaires structures",
