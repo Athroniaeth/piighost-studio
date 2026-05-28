@@ -14,7 +14,11 @@ export function Section({
   children?: ReactNode;
 }) {
   return (
-    <section id={id} className="mx-auto max-w-6xl px-4 py-20">
+    <section
+      id={id}
+      className="flex min-h-[calc(100dvh-4rem)] snap-start scroll-mt-16 flex-col justify-center"
+    >
+      <div className="mx-auto w-full max-w-6xl px-4 py-16">
       {(eyebrow || title || description) && (
         <div className="mx-auto mb-12 max-w-2xl text-center">
           {eyebrow && (
@@ -27,6 +31,7 @@ export function Section({
         </div>
       )}
       {children}
+      </div>
     </section>
   );
 }
