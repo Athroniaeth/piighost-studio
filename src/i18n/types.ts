@@ -20,6 +20,7 @@ export type Dictionary = {
     api: string;
     chat: string;
     proofreader: string;
+    projects: string;
     philosophy: string;
     github: string;
     toggleTheme: string;

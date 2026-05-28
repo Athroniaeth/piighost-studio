@@ -6,6 +6,7 @@ export const en: Dictionary = {
     api: "piighost-api",
     chat: "piighost-chat",
     proofreader: "piighost-proofreader",
+    projects: "Projects",
     philosophy: "Philosophy",
     github: "GitHub",
     toggleTheme: "Toggle theme",
