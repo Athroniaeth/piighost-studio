@@ -1,7 +1,10 @@
+"use client";
+
 import { ArrowDown } from "lucide-react";
 import type { ReactNode } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Section } from "@/components/section";
+import { useT } from "@/i18n/use-t";
 
 function Pii({ children }: { children: ReactNode }) {
   return (
@@ -45,21 +48,23 @@ function FlowArrow() {
 }
 
 export function HowItWorks() {
+  const { t } = useT();
+  const hw = t.howItWorks;
   return (
     <Section
       id="how-it-works"
-      eyebrow="How it works"
-      title="A layer between your agent and the model"
+      eyebrow={hw.eyebrow}
+      title={hw.title}
     >
       <Tabs defaultValue="detect" className="mx-auto max-w-3xl">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="detect">Detect</TabsTrigger>
-          <TabsTrigger value="anonymize">Anonymize</TabsTrigger>
-          <TabsTrigger value="deanonymize">Deanonymize</TabsTrigger>
+          <TabsTrigger value="detect">{hw.tabs.detect}</TabsTrigger>
+          <TabsTrigger value="anonymize">{hw.tabs.anonymize}</TabsTrigger>
+          <TabsTrigger value="deanonymize">{hw.tabs.deanonymize}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="detect" className="mt-6 space-y-4">
-          <MessageBox label="User message">
+          <MessageBox label={hw.labels.userMessage}>
             Hi, this is <Pii>Patrick Dupont</Pii>. Could you forward this to{" "}
             <Pii>Marie Lambert</Pii> and <Pii>Jean Moreau</Pii>? My email is{" "}
             <Pii>patrick.dupont@acme.com</Pii>, and you can also cc{" "}
@@ -67,15 +72,12 @@ export function HowItWorks() {
             <Pii>#ACME-9123</Pii>.
           </MessageBox>
           <p className="text-sm text-muted-foreground">
-            piighost runs your detectors over the message and flags every PII
-            span it finds: names, emails, identifiers, anything the model does
-            not need to see. Overlapping detections from multiple detectors
-            are arbitrated by confidence before anything is replaced.
+            {hw.detectCaption}
           </p>
         </TabsContent>
 
         <TabsContent value="anonymize" className="mt-6 space-y-4">
-          <MessageBox label="From the user">
+          <MessageBox label={hw.labels.fromUser}>
             Hi, this is <Pii>Patrick Dupont</Pii>. Could you forward this to{" "}
             <Pii>Marie Lambert</Pii> and <Pii>Jean Moreau</Pii>? My email is{" "}
             <Pii>patrick.dupont@acme.com</Pii>, and you can also cc{" "}
@@ -85,7 +87,7 @@ export function HowItWorks() {
           <div className="flex justify-center">
             <FlowArrow />
           </div>
-          <MessageBox label="What the LLM sees">
+          <MessageBox label={hw.labels.llmSees}>
             Hi, this is <Token>{"<<PERSON:1>>"}</Token>. Could you forward
             this to <Token>{"<<PERSON:2>>"}</Token> and{" "}
             <Token>{"<<PERSON:3>>"}</Token>? My email is{" "}
@@ -94,11 +96,11 @@ export function HowItWorks() {
             <Token>{"<<ID:1>>"}</Token>.
           </MessageBox>
           <p className="text-sm text-muted-foreground">
-            Each PII value gets a stable counter scoped to its type. The three
-            people in this message become{" "}
+            {hw.anonymizeCaption}{" "}
             <Token>{"<<PERSON:1>>"}</Token>, <Token>{"<<PERSON:2>>"}</Token>,
-            and <Token>{"<<PERSON:3>>"}</Token>; the two distinct emails
-            become <Token>{"<<EMAIL:1>>"}</Token> and{" "}
+            and <Token>{"<<PERSON:3>>"}</Token>
+            {hw.anonymizeCaptionTokens}{" "}
+            <Token>{"<<EMAIL:1>>"}</Token> and{" "}
             <Token>{"<<EMAIL:2>>"}</Token>. The same value keeps the same
             identifier across every later message, every tool call, and every
             retry.
@@ -106,7 +108,7 @@ export function HowItWorks() {
         </TabsContent>
 
         <TabsContent value="deanonymize" className="mt-6 space-y-4">
-          <MessageBox label="LLM response">
+          <MessageBox label={hw.labels.llmResponse}>
             I have forwarded your message to{" "}
             <Token>{"<<PERSON:2>>"}</Token> and{" "}
             <Token>{"<<PERSON:3>>"}</Token> with the case{" "}
@@ -117,7 +119,7 @@ export function HowItWorks() {
           <div className="flex justify-center">
             <FlowArrow />
           </div>
-          <MessageBox label="What the user sees">
+          <MessageBox label={hw.labels.userSees}>
             I have forwarded your message to <Pii>Marie Lambert</Pii> and{" "}
             <Pii>Jean Moreau</Pii> with the case <Pii>#ACME-9123</Pii>. A
             confirmation will be sent to{" "}
@@ -125,8 +127,7 @@ export function HowItWorks() {
             <Pii>marie.lambert@acme.com</Pii>.
           </MessageBox>
           <p className="text-sm text-muted-foreground">
-            Tool calls receive the real values, and the final response is
-            restored before it reaches the user. Notice the model wrote{" "}
+            {hw.deanonymizeCaption}{" "}
             <Token>{"<<PERSON:2>>"}</Token> and{" "}
             <Token>{"<<PERSON:3>>"}</Token>, and piighost mapped each one back
             to the right name. Your agent code never has to manage that

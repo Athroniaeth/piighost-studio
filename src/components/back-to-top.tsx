@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useT } from "@/i18n/use-t";
 
 export function BackToTop() {
   const [visible, setVisible] = useState(false);
+  const { t } = useT();
 
   useEffect(() => {
     function onScroll() {
@@ -18,7 +20,7 @@ export function BackToTop() {
 
   return (
     <Button
-      aria-label="Scroll to top"
+      aria-label={t.nav.backToTop}
       size="icon-lg"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       className={`fixed bottom-6 right-6 z-40 size-12 rounded-full shadow-lg transition-opacity duration-300 ${

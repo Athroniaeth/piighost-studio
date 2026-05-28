@@ -1,5 +1,8 @@
+"use client";
+
 import { Section } from "@/components/section";
 import { CodeBlock } from "@/components/code-block";
+import { useT } from "@/i18n/use-t";
 
 const install = `uv add 'piighost[cache]'`;
 
@@ -24,11 +27,12 @@ agent = create_agent(
 # Your send_email tool still receives the real value.`;
 
 export function QuickStart() {
+  const { t } = useT();
   return (
     <Section
-      eyebrow="Quick start"
-      title="Drop it into a LangChain agent"
-      description="Add the middleware and your agent code stays the same."
+      eyebrow={t.quickStart.eyebrow}
+      title={t.quickStart.title}
+      description={t.quickStart.description}
     >
       <div className="mx-auto grid max-w-3xl gap-4">
         <CodeBlock code={install} lang="bash" />
