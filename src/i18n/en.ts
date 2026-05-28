@@ -50,11 +50,9 @@ export const en: Dictionary = {
     detectCaption:
       "piighost runs your detectors over the message and flags every PII span it finds: names, emails, identifiers, anything the model does not need to see. Overlapping detections from multiple detectors are arbitrated by confidence before anything is replaced.",
     anonymizeCaption:
-      "Each PII value gets a stable counter scoped to its type. The three people in this message become",
-    anonymizeCaptionTokens:
-      "; the two distinct emails become",
+      "Each PII value gets a stable counter scoped to its type. The three people in this message become <<PERSON:1>>, <<PERSON:2>>, and <<PERSON:3>>; the two distinct emails become <<EMAIL:1>> and <<EMAIL:2>>. The same value keeps the same identifier across every later message, every tool call, and every retry.",
     deanonymizeCaption:
-      "Tool calls receive the real values, and the final response is restored before it reaches the user. Notice the model wrote",
+      "Tool calls receive the real values, and the final response is restored before it reaches the user. Notice the model wrote <<PERSON:2>> and <<PERSON:3>>, and piighost mapped each one back to the right name. Your agent code never has to manage that bookkeeping.",
     labels: {
       userMessage: "User message",
       fromUser: "From the user",

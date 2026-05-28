@@ -49,7 +49,6 @@ export type Dictionary = {
     tabs: { detect: string; anonymize: string; deanonymize: string };
     detectCaption: string;
     anonymizeCaption: string;
-    anonymizeCaptionTokens: string;
     deanonymizeCaption: string;
     labels: {
       userMessage: string;

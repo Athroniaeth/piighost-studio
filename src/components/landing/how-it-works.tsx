@@ -47,15 +47,17 @@ function FlowArrow() {
   );
 }
 
+function renderCaption(text: string): ReactNode {
+  return text.split(/(<<[^>]+>>)/g).map((part, i) =>
+    part.startsWith("<<") ? <Token key={i}>{part}</Token> : <span key={i}>{part}</span>,
+  );
+}
+
 export function HowItWorks() {
   const { t } = useT();
   const hw = t.howItWorks;
   return (
-    <Section
-      id="how-it-works"
-      eyebrow={hw.eyebrow}
-      title={hw.title}
-    >
+    <Section id="how-it-works" eyebrow={hw.eyebrow} title={hw.title}>
       <Tabs defaultValue="detect" className="mx-auto max-w-3xl">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="detect">{hw.tabs.detect}</TabsTrigger>
@@ -71,9 +73,7 @@ export function HowItWorks() {
             <Pii>marie.lambert@acme.com</Pii>. The case ID is{" "}
             <Pii>#ACME-9123</Pii>.
           </MessageBox>
-          <p className="text-sm text-muted-foreground">
-            {hw.detectCaption}
-          </p>
+          <p className="text-sm text-muted-foreground">{hw.detectCaption}</p>
         </TabsContent>
 
         <TabsContent value="anonymize" className="mt-6 space-y-4">
@@ -95,16 +95,7 @@ export function HowItWorks() {
             <Token>{"<<EMAIL:2>>"}</Token>. The case ID is{" "}
             <Token>{"<<ID:1>>"}</Token>.
           </MessageBox>
-          <p className="text-sm text-muted-foreground">
-            {hw.anonymizeCaption}{" "}
-            <Token>{"<<PERSON:1>>"}</Token>, <Token>{"<<PERSON:2>>"}</Token>,
-            and <Token>{"<<PERSON:3>>"}</Token>
-            {hw.anonymizeCaptionTokens}{" "}
-            <Token>{"<<EMAIL:1>>"}</Token> and{" "}
-            <Token>{"<<EMAIL:2>>"}</Token>. The same value keeps the same
-            identifier across every later message, every tool call, and every
-            retry.
-          </p>
+          <p className="text-sm text-muted-foreground">{renderCaption(hw.anonymizeCaption)}</p>
         </TabsContent>
 
         <TabsContent value="deanonymize" className="mt-6 space-y-4">
@@ -126,13 +117,7 @@ export function HowItWorks() {
             <Pii>patrick.dupont@acme.com</Pii> and copied to{" "}
             <Pii>marie.lambert@acme.com</Pii>.
           </MessageBox>
-          <p className="text-sm text-muted-foreground">
-            {hw.deanonymizeCaption}{" "}
-            <Token>{"<<PERSON:2>>"}</Token> and{" "}
-            <Token>{"<<PERSON:3>>"}</Token>, and piighost mapped each one back
-            to the right name. Your agent code never has to manage that
-            bookkeeping.
-          </p>
+          <p className="text-sm text-muted-foreground">{renderCaption(hw.deanonymizeCaption)}</p>
         </TabsContent>
       </Tabs>
     </Section>

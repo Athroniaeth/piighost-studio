@@ -8,118 +8,116 @@ export const fr: Dictionary = {
     proofreader: "piighost-proofreader",
     philosophy: "Philosophie",
     github: "GitHub",
-    toggleTheme: "Changer le theme",
+    toggleTheme: "Changer le thème",
     toggleLanguage: "Passer en anglais",
     backToTop: "Remonter en haut",
   },
   footer: {
-    tagline: "Anonymisez les donnees personnelles avant qu'elles atteignent le modele.",
+    tagline: "Anonymisez les données personnelles avant qu'elles n'atteignent le modèle.",
     projects: "Projets",
     links: "Liens",
     mit: "Licence MIT. Construit avec Next.js et shadcn/ui.",
   },
   hero: {
-    title: "Anonymisez les donnees personnelles avant qu'elles atteignent le modele",
+    title: "Anonymisez les données personnelles avant qu'elles n'atteignent le modèle",
     description:
-      "piighost est une bibliotheque Python pour les pipelines d'anonymisation de donnees personnelles. Elle remplace les informations sensibles par des jetons stables que le modele peut utiliser, puis restitue les valeurs reelles a vos outils et a vos utilisateurs. Votre code d'agent ne change pas.",
-    getStarted: "Demarrer",
+      "piighost est une bibliothèque Python pour les pipelines d'anonymisation de données personnelles. Elle remplace les informations sensibles par des jetons stables que le modèle peut utiliser, puis restitue les vraies valeurs à vos outils et à vos utilisateurs. Votre code d'agent ne change pas.",
+    getStarted: "Démarrer",
     github: "GitHub",
   },
   problem: {
-    eyebrow: "Le probleme",
-    title: "Vous ne devriez pas avoir a choisir entre de bons modeles et la confidentialite",
+    eyebrow: "Le problème",
+    title: "Vous ne devriez pas avoir à choisir entre de bons modèles et la confidentialité",
     items: [
       {
-        title: "Les clouds heberges exposent les donnees brutes",
-        body: "OpenAI, Anthropic et Google proposent les meilleurs modeles du marche. Mais chaque octet de contexte que vous leur envoyez, y compris les donnees personnelles brutes, quitte votre perimetre des que la requete part sur le reseau. Une seule invite devient une exportation de donnees, et \"on supprimera ca plus tard\" ne tient pas face a un audit serieux.",
+        title: "Les clouds hébergés exposent les données brutes",
+        body: "OpenAI, Anthropic et Google proposent les meilleurs modèles du marché. Mais chaque octet de contexte que vous leur envoyez, y compris les données personnelles brutes, quitte votre juridiction dès que la requête part sur le réseau. Une seule invite devient une exportation de données, et 'on caviardera plus tard' ne tient pas face à un vrai audit.",
       },
       {
-        title: "Les modeles locaux sacrifient la qualite",
-        body: "L'auto-hebergement garde les donnees dans votre reseau, mais vous renoncez a une partie de l'etat de l'art et vous prenez en charge la facture GPU, les mises a jour et le pipeline d'evaluation. Le gain en confidentialite s'accompagne d'un cout operationnel permanent, et le modele que vous pouvez faire tourner est rarement celui que vous voudriez utiliser.",
+        title: "Les modèles locaux sacrifient la qualité",
+        body: "L'auto-hébergement garde les données dans votre réseau, mais vous renoncez à une partie de l'état de l'art et vous prenez en charge la facture GPU, les mises à jour et le pipeline d'évaluation. Le gain en confidentialité s'accompagne d'un coût opérationnel permanent, et le modèle que vous pouvez faire tourner est rarement celui que vous voudriez utiliser.",
       },
       {
-        title: "La conformite n'attend pas",
-        body: "Le RGPD, HIPAA et les regles de souverainete des donnees s'appliquent que votre stack ait ete concu avec elles ou non. Envoyer des donnees personnelles brutes a un tiers est une responsabilite que vous ne pouvez pas effacer apres coup, et cela soumet chaque decision produit ulterieure a une revue juridique.",
+        title: "La conformité n'attend pas",
+        body: "Le RGPD, HIPAA et les règles de résidence des données s'appliquent que votre stack ait été conçu avec elles ou non. Envoyer des données personnelles brutes à un tiers est une responsabilité que vous ne pouvez pas effacer une fois la requête partie, et cela soumet chaque décision produit ultérieure à une revue juridique.",
       },
     ],
   },
   howItWorks: {
     eyebrow: "Fonctionnement",
-    title: "Une couche entre votre agent et le modele",
-    tabs: { detect: "Detecter", anonymize: "Anonymiser", deanonymize: "Desanonymiser" },
+    title: "Une couche entre votre agent et le modèle",
+    tabs: { detect: "Détecter", anonymize: "Anonymiser", deanonymize: "Désanonymiser" },
     detectCaption:
-      "piighost execute vos detecteurs sur le message et signale chaque donnee personnelle trouvee: noms, e-mails, identifiants, tout ce que le modele n'a pas besoin de voir. Les detections superposees de plusieurs detecteurs sont arbitrees par niveau de confiance avant tout remplacement.",
+      "piighost exécute vos détecteurs sur le message et signale chaque donnée personnelle trouvée : noms, e-mails, identifiants, tout ce que le modèle n'a pas besoin de voir. Les détections qui se chevauchent entre plusieurs détecteurs sont arbitrées par niveau de confiance avant tout remplacement.",
     anonymizeCaption:
-      "Chaque donnee personnelle recoit un compteur stable cible sur son type. Les trois personnes de ce message deviennent",
-    anonymizeCaptionTokens:
-      "; les deux adresses e-mail distinctes deviennent",
+      "Chaque donnée personnelle reçoit un compteur stable, propre à son type. Les trois personnes de ce message deviennent <<PERSON:1>>, <<PERSON:2>> et <<PERSON:3>> ; les deux adresses e-mail distinctes deviennent <<EMAIL:1>> et <<EMAIL:2>>. La même valeur garde le même identifiant dans chaque message suivant, chaque appel d'outil et chaque réessai.",
     deanonymizeCaption:
-      "Les appels d'outils recoivent les vraies valeurs, et la reponse finale est restituee avant d'atteindre l'utilisateur. Notez que le modele a ecrit",
+      "Les appels d'outils reçoivent les vraies valeurs, et la réponse finale est restituée avant d'atteindre l'utilisateur. Le modèle a écrit <<PERSON:2>> et <<PERSON:3>>, et piighost remet le bon nom en face de chaque jeton. Votre code d'agent n'a jamais à gérer cette comptabilité.",
     labels: {
       userMessage: "Message utilisateur",
       fromUser: "De l'utilisateur",
-      llmSees: "Ce que voit le modele",
-      llmResponse: "Reponse du modele",
+      llmSees: "Ce que voit le modèle",
+      llmResponse: "Réponse du modèle",
       userSees: "Ce que voit l'utilisateur",
     },
   },
   detector: {
-    eyebrow: "Oriente cas d'usage",
+    eyebrow: "Orienté cas d'usage",
     title: "Chaque cas d'usage appelle son propre pipeline",
     description:
-      "Il n'existe pas de detecteur universel pour les donnees personnelles. piighost vous fournit des blocs composables (detection, liaison, garde-fous de sortie) pour construire un pipeline adapte a vos donnees, votre budget de latence et vos regles de conformite.",
+      "Il n'existe pas de détecteur universel pour les données personnelles. piighost vous fournit des briques composables (détection, liaison, garde-fous de sortie) pour construire un pipeline adapté à vos données, votre budget de latence et vos règles de conformité.",
     items: [
       {
         title: "Conversationnel",
-        body: "Support client, chat integre, transcriptions vocales. Reconnaissance d'entites nommees rapide pour les noms et lieux, expressions regulieres pour les e-mails et numeros de telephone, memoire par fil de discussion pour que la meme personne garde le meme jeton tout au long de la conversation.",
+        body: "Support client, chat intégré, transcriptions vocales. Reconnaissance d'entités nommées rapide pour les noms et lieux, expressions régulières pour les e-mails et numéros de téléphone, mémoire par fil de discussion pour que la même personne garde le même jeton tout au long de la conversation.",
       },
       {
         title: "Traitement de documents",
-        body: "Longs PDF, contrats, tickets de support. Le budget de latence est plus large, la precision prime. Un modele LLM comme detecteur sur les paragraphes difficiles, des expressions regulieres sur les champs structures, et un re-ancrage pour aligner les resultats avec le document source.",
+        body: "PDF longs, contrats, tickets de support. Le budget de latence est plus large, la précision prime. Un LLM en détecteur sur les passages difficiles, des expressions régulières sur les champs structurés, et un ré-ancrage pour que les résultats se calent sur le document source.",
       },
       {
-        title: "Formulaires structures",
-        body: "Charges utiles API, CSV, exports. Sous la milliseconde, deterministe, auditable. Un pipeline regex pur avec un ensemble de regles exhaustif, aucun modele dans la boucle, et un format de jeton que vos systemes aval peuvent analyser.",
+        title: "Formulaires structurés",
+        body: "Charges utiles d'API, CSV, exports. Sous la milliseconde, déterministe, auditable. Un pipeline regex pur avec un jeu de règles exhaustif, aucun modèle dans la boucle, et un format de jeton que vos systèmes aval peuvent analyser.",
       },
     ],
   },
   ecosystem: {
-    eyebrow: "L'ecosysteme",
-    title: "Une couche de confidentialite, de nombreux projets",
+    eyebrow: "L'écosystème",
+    title: "Une couche de confidentialité, plusieurs projets",
     description:
-      "Commencez avec la bibliotheque. Ajoutez le serveur, la demo de chat et le correcteur au fur et a mesure de votre croissance.",
-    moreToCome: "D'autres projets a venir.",
+      "Commencez avec la bibliothèque. Ajoutez le serveur, la démo de chat et le correcteur de CV au fil de votre croissance.",
+    moreToCome: "À venir.",
   },
   quickStart: {
-    eyebrow: "Demarrage rapide",
-    title: "Integrez-le dans un agent LangChain",
-    description: "Ajoutez le middleware et votre code d'agent reste identique.",
+    eyebrow: "Démarrage rapide",
+    title: "Branchez-le sur un agent LangChain",
+    description: "Ajoutez le middleware et votre code d'agent reste le même.",
   },
   cta: {
-    title: "Deployez des fonctionnalites IA sans exposer les donnees utilisateurs",
+    title: "Livrez des fonctionnalités IA sans livrer les données de vos utilisateurs",
     description:
-      "Installez piighost, connectez votre detecteur et gardez les donnees personnelles hors du modele.",
+      "Installez piighost, branchez votre détecteur et gardez les données personnelles hors du modèle.",
     readTheDocs: "Lire la documentation",
-    starOnGitHub: "Etoiler sur GitHub",
+    starOnGitHub: "Étoiler sur GitHub",
   },
   philosophy: {
     eyebrow: "Philosophie",
     title: "Pourquoi anonymiser ?",
     intro:
-      "Un expose factuel sur la facon dont les modeles cloud traitent vos donnees, sur les protections juridiques et techniques en place (et celles qui manquent), et sur les raisons pour lesquelles anonymiser avant d'envoyer est le seul controle que vous exercez vous-meme.",
+      "Un exposé factuel sur la manière dont les modèles cloud traitent vos données, sur les protections juridiques et techniques en place (et celles qui manquent), et sur la raison pour laquelle anonymiser avant d'envoyer est le seul contrôle qui reste entièrement entre vos mains.",
     sections: [
       {
         id: "how-cloud-llm-works",
-        heading: "Comment fonctionne un modele cloud",
+        heading: "Comment fonctionne un modèle cloud",
         paragraphs: [
-          "Un modele comme ChatGPT, Claude ou Mistral Le Chat n'est pas un logiciel qui tourne sur votre ordinateur. C'est un service distant. Votre question quitte votre machine, traverse Internet, atteint les serveurs du fournisseur, y est traitee, et une reponse revient.",
-          "L'interface peut etre locale, le modele ne l'est pas. Meme si vous utilisez une application de bureau, une extension de navigateur ou un plugin d'IDE, le modele n'est pas execute sur votre machine. Seule l'interface l'est. Le calcul se passe dans le cloud du fournisseur. Le terme \"LLM local\" designe exclusivement l'inference sur votre propre materiel, via des outils comme Ollama ou llama.cpp.",
-          "Ce chemin a plusieurs consequences souvent sous-estimees :",
+          "Un modèle comme ChatGPT, Claude ou Mistral Le Chat n'est pas un logiciel qui tourne sur votre ordinateur. C'est un service distant. Votre question quitte votre machine, traverse Internet, atteint les serveurs du fournisseur, y est traitée, et une réponse vous revient.",
+          "L'interface peut être locale, le modèle ne l'est pas. Même si vous utilisez une application de bureau, une extension de navigateur ou un plugin d'IDE, le modèle ne s'exécute pas sur votre machine. Seule l'interface s'y exécute. Le calcul a lieu dans le cloud du fournisseur. Le terme « LLM local » désigne uniquement l'inférence sur votre propre matériel, via des outils comme Ollama ou llama.cpp.",
+          "Ce chemin a plusieurs conséquences souvent sous-estimées :",
         ],
         list: [
-          "Le message est recu en clair par l'infrastructure du fournisseur. Le chiffrement TLS protege le transit, pas la lecture cote serveur.",
-          "Il est generalement journalise a des fins de facturation, de detection d'abus, de debogage et d'amelioration du modele.",
-          "Il peut etre conserve pendant des semaines, des mois ou des annees, selon la politique du fournisseur et les obligations legales qui le lient.",
+          "Le message est reçu en clair par l'infrastructure du fournisseur. Le chiffrement TLS protège le transit, pas la lecture côté serveur.",
+          "Il est en général journalisé à des fins de facturation, de détection d'abus, de débogage et d'amélioration du modèle.",
+          "Il peut être conservé pendant des semaines, des mois ou des années, selon la politique du fournisseur et les obligations légales qui le lient.",
         ],
         subsections: [],
       },
@@ -127,34 +125,34 @@ export const fr: Dictionary = {
         id: "limits-of-contractual-promise",
         heading: "Les limites d'une promesse contractuelle",
         paragraphs: [
-          "Partons de l'hypothese la plus favorable : les grands fournisseurs (OpenAI, Anthropic, Google, Mistral et autres) veulent sincerement proteger les donnees de leurs utilisateurs. Leurs politiques de confidentialite formalisent des engagements (\"nous n'utilisons pas vos donnees API pour l'entrainement\", \"nous supprimons apres 30 jours\", \"nous rejetons les requetes abusives\"), et ces engagements sont generalement respectes.",
-          "Ce n'est pas suffisant, car un engagement contractuel peut tomber pour trois raisons distinctes, aucune d'elles ne relevant de la mauvaise foi du fournisseur.",
+          "Partons de l'hypothèse la plus favorable : les grands fournisseurs (OpenAI, Anthropic, Google, Mistral et d'autres) veulent sincèrement protéger les données de leurs utilisateurs. Leurs politiques de confidentialité formalisent des engagements (« nous n'entraînons pas sur vos données API », « nous supprimons après 30 jours », « nous rejetons les requêtes abusives »), et ces engagements sont en général tenus.",
+          "Ce n'est pas suffisant, car un engagement contractuel peut tomber pour trois raisons distinctes, dont aucune ne relève de la mauvaise foi du fournisseur.",
         ],
         subsections: [
           {
-            heading: "Un incident technique, un bug ou une attaque",
+            heading: "Un incident technique, un bug, une attaque",
             paragraphs: [
-              "Aucune politique ne protege contre une erreur d'ingenierie ou une intrusion reussie. Deux cas suffisent a illustrer le propos.",
-              "Le 20 mars 2023, un bug dans la bibliotheque Redis utilisee par OpenAI a expose les titres des conversations ChatGPT a d'autres utilisateurs pendant environ neuf heures. Pour environ 1,2 % des abonnes ChatGPT Plus actifs pendant cette periode, des informations de paiement partielles (nom, e-mail, quatre derniers chiffres de la carte, date d'expiration) etaient egalement visibles par des comptes tiers. OpenAI a publie un post-mortem public reconnaissant l'incident.",
-              "En janvier 2025, des chercheurs de Wiz Research ont decouvert qu'une base de donnees ClickHouse de DeepSeek etait accessible sur Internet sans authentification. Plus d'un million de lignes de journaux etaient exposees, incluant des historiques de conversations, des cles API et des metadonnees d'infrastructure interne.",
-              "Dans les deux cas, les donnees ont fuite sans proces, sans injonction et sans intention malveillante de la part de l'entreprise. Un bug, une configuration manquante, et le perimetre contractuel perd son sens.",
+              "Aucune politique ne protège d'une erreur d'ingénierie ou d'une intrusion réussie. Deux cas suffisent à illustrer le propos.",
+              "Le 20 mars 2023, un bug dans la bibliothèque Redis utilisée par OpenAI a exposé les titres de conversations ChatGPT à d'autres utilisateurs pendant environ neuf heures. Pour environ 1,2 % des abonnés ChatGPT Plus actifs pendant cette fenêtre, des informations de paiement partielles (nom, e-mail, quatre derniers chiffres de la carte, date d'expiration) étaient également visibles depuis des comptes tiers. OpenAI a publié un post-mortem public reconnaissant l'incident.",
+              "En janvier 2025, des chercheurs de Wiz Research ont découvert qu'une base de données ClickHouse de DeepSeek était joignable sur Internet sans authentification. Plus d'un million de lignes de journaux étaient exposées, incluant des historiques de conversations, des clés API et des métadonnées d'infrastructure interne.",
+              "Dans les deux cas, les données ont fuité sans procès, sans injonction et sans intention malveillante de la part de l'entreprise. Un bug, une configuration oubliée, et le périmètre contractuel perd son sens.",
             ],
           },
           {
-            heading: "L'utilisation de vos donnees pour l'entrainement",
+            heading: "Vos données utilisées pour l'entraînement",
             paragraphs: [
-              "\"Si c'est gratuit, vous etes le produit.\" Le vieil adage du web commercial s'applique aussi aux modeles LLM. Faire tourner l'inference sur un grand modele est couteux : chaque reponse mobilise des GPU en temps reel et le fournisseur paye cette facture a chaque requete. Pourtant, OpenAI, Google et d'autres offrent des paliers gratuits tres genereux. Les raisons commerciales classiques (acquisition d'utilisateurs, effets de standard de facto) n'expliquent qu'une partie de ce modele economique. Ces paliers gratuits alimentent aussi la collecte de donnees d'entrainement.",
-              "Sur les paliers gratuits grand public, vos conversations peuvent servir a ameliorer le modele de plusieurs facons : les retours explicites (pouce haut ou bas, reformulation, regeneration) servent de signal d'apprentissage par renforcement, les echanges peuvent etre examines par des annotateurs humains pour identifier les modes d'echec, et le corpus complet de conversations peut servir de matiere premiere pour construire les jeux de donnees des iterations suivantes.",
-              "Les offres payantes (API, ChatGPT Enterprise, Claude Team, etc.) excluent generalement vos donnees de l'entrainement par defaut. Sur les paliers gratuits, en revanche, la desactivation est souvent enfouie dans les parametres, parfois desactivee par defaut, et la politique peut evoluer au fil du temps.",
+              "« Si c'est gratuit, c'est vous le produit. » Le vieil adage du web commercial s'applique aussi aux LLM. Faire tourner l'inférence sur un grand modèle coûte cher : chaque réponse mobilise des GPU en temps réel et le fournisseur paie cette facture à chaque requête. Pourtant, OpenAI, Google et d'autres proposent des paliers gratuits très généreux. Les raisons commerciales classiques (acquisition d'utilisateurs, effet de standard de fait) n'expliquent qu'une partie de ce modèle économique. Ces paliers gratuits alimentent aussi la collecte de données d'entraînement.",
+              "Sur les paliers gratuits grand public, vos conversations peuvent servir à améliorer le modèle de plusieurs façons : les retours explicites (pouce levé ou baissé, reformulation, régénération) servent de signal d'apprentissage par renforcement, les échanges peuvent être relus par des annotateurs humains pour identifier les modes d'échec, et le corpus complet des conversations peut servir de matière première pour construire les jeux de données des itérations suivantes.",
+              "Les offres payantes (API, ChatGPT Enterprise, Claude Team, etc.) excluent en général vos données de l'entraînement par défaut. Sur les paliers gratuits, en revanche, l'option de désinscription est souvent enfouie dans les paramètres, parfois désactivée par défaut, et la politique peut évoluer au fil du temps.",
             ],
           },
           {
             heading: "Une injonction judiciaire",
             paragraphs: [
-              "Meme quand le fournisseur souhaite supprimer vos donnees, un tribunal peut l'en empecher.",
-              "Le 13 mai 2025, dans le cadre de son action en justice contre OpenAI, le New York Times a obtenu du magistrat Ona T. Wang une ordonnance de conservation : OpenAI etait tenu de conserver toutes les conversations ChatGPT et tous les appels API de ses clients, y compris ceux que l'entreprise aurait normalement supprimes selon sa propre politique. OpenAI s'est oppose publiquement a l'ordonnance en deposant une demande de reexamen, rejetee dans un premier temps, puis en faisant appel aupres du juge de district Sidney Stein, qui a rejete l'appel en juin 2025. L'ordonnance a finalement ete levee le 26 septembre 2025 (cloture formelle le 9 octobre), les utilisateurs de l'EEE, de Suisse et du Royaume-Uni ayant ete exemptes de la mesure.",
-              "L'affaire n'en est pas restee la. Le 7 novembre 2025, le meme magistrat a ordonne a OpenAI de remettre 20 millions de journaux ChatGPT depersonnalises au New York Times comme elements de preuve. OpenAI a depose une demande de reexamen, rejetee, puis a fait appel. Le 5 janvier 2026, le juge de district Stein a confirme la decision, entrinant l'obligation de remise.",
-              "Cet episode a deux consequences pratiques. D'abord, la politique de confidentialite d'un fournisseur n'est jamais definitive : une decision judiciaire a laquelle vous n'etes pas partie peut la remettre en cause, forcer la conservation ou contraindre la remise massive de conversations a un tiers. Ensuite, la fenetre d'exposition de vos donnees a une fuite ou une attaque future augmente mecaniquement, et avec elle la probabilite qu'une autorite publique (americaine ou, via commission rogatoire internationale, etrangere) y accede.",
+              "Même quand le fournisseur veut supprimer vos données, un tribunal peut l'en empêcher.",
+              "Le 13 mai 2025, dans le cadre de son procès contre OpenAI, le New York Times a obtenu de la Magistrate Judge Ona T. Wang une ordonnance de conservation : OpenAI a été tenu de conserver chaque conversation ChatGPT et chaque appel API de ses clients, y compris ceux que l'entreprise aurait normalement supprimés selon sa propre politique. OpenAI s'est opposé publiquement à l'ordonnance en déposant une demande de reconsidération, rejetée en première instance, puis en interjetant appel devant le District Judge Sidney Stein, qui a rejeté l'appel en juin 2025. L'ordonnance a finalement été levée le 26 septembre 2025 (clôture formelle le 9 octobre), les utilisateurs de l'EEE, de Suisse et du Royaume-Uni ayant été exemptés de la mesure.",
+              "L'affaire ne s'est pas arrêtée là. Le 7 novembre 2025, la même Magistrate Judge a ordonné à OpenAI de remettre 20 millions de journaux ChatGPT pseudonymisés au New York Times à titre d'élément de preuve. OpenAI a déposé une demande de reconsidération, qui a été rejetée, puis a fait appel. Le 5 janvier 2026, le District Judge Stein a confirmé la décision, entérinant l'obligation de remise.",
+              "Cet épisode a deux conséquences pratiques. D'abord, la politique de confidentialité d'un fournisseur n'est jamais définitive : une décision judiciaire à laquelle vous n'êtes pas partie peut la réécrire, forcer la rétention, ou contraindre la remise massive de conversations à un tiers. Ensuite, la fenêtre d'exposition de vos données à une fuite ou à une attaque future s'élargit mécaniquement, et avec elle la probabilité qu'une autorité publique (américaine ou, par commission rogatoire internationale, étrangère) y accède.",
             ],
           },
         ],
@@ -163,135 +161,135 @@ export const fr: Dictionary = {
         id: "legal-not-enough",
         heading: "Juridique : le droit ne suffit pas non plus",
         paragraphs: [
-          "La reaction instinctive face a ce tableau technique est de se tourner vers le droit : choisir un fournisseur \"conforme RGPD\", verifier les certifications, exiger des clauses contractuelles. Cette approche est utile mais incomplete, pour deux raisons : le droit americain prevoit des voies d'acces legales aux donnees, et le droit europeen n'a pas encore produit de garantie eprouvee appliquee aux modeles LLM.",
+          "Face à ce tableau technique, la réaction instinctive est de se tourner vers le droit : choisir un fournisseur « conforme RGPD », vérifier les certifications, exiger des clauses contractuelles. Cette approche est utile mais incomplète, pour deux raisons : le droit américain ménage des voies d'accès légales aux données, et le droit européen n'a pas encore produit de garde-fou éprouvé appliqué aux LLM.",
         ],
         subsections: [
           {
-            heading: "Le cadre americain : CLOUD Act, FISA 702, decret executif 12333",
+            heading: "Le cadre américain : CLOUD Act, FISA 702, décret 12333",
             paragraphs: [
-              "Trois textes structurent l'acces americain aux donnees des fournisseurs, et aucun d'eux n'est le Patriot Act. Le Patriot Act (2001) revient souvent dans ce debat, mais ce n'est plus le bon texte a citer. Sa disposition de surveillance la plus connue, la section 215, a ete restreinte par le USA FREEDOM Act en 2015, puis laissee expirer par le Congres en mars 2020.",
+              "Trois textes structurent l'accès américain aux données des fournisseurs, et aucun d'eux n'est le Patriot Act. Le Patriot Act (2001) revient souvent dans ce débat, mais ce n'est plus le bon texte à citer. Sa disposition de surveillance la plus connue, la Section 215, a été restreinte par le USA FREEDOM Act en 2015, puis a été laissée expirer par le Congrès en mars 2020.",
             ],
             list: [
-              "Le CLOUD Act (2018) oblige tout fournisseur sous juridiction americaine a remettre les donnees qu'il controle, quel que soit le lieu de stockage physique. Un centre de donnees en Irlande ou en France ne met pas les donnees hors d'atteinte des lors que l'entreprise est americaine.",
-              "FISA section 702 est le fondement juridique des programmes de surveillance de masse comme PRISM, reveles en 2013 par Edward Snowden. Il permet la collecte de communications via les grands fournisseurs americains.",
-              "Le decret executif 12333 est le cadre general de la surveillance par l'executif americain, sans supervision judiciaire directe.",
+              "Le CLOUD Act (2018) oblige tout fournisseur sous juridiction américaine à remettre les données qu'il contrôle, peu importe où ces données sont physiquement stockées. Un centre de données en Irlande ou en France ne met pas les données hors d'atteinte dès lors que l'entreprise est américaine.",
+              "FISA Section 702 est le fondement légal de programmes de surveillance de masse comme PRISM, révélés en 2013 par Edward Snowden. Il autorise la collecte de communications via les principaux fournisseurs américains.",
+              "Le décret 12333 est le cadre plus large de la surveillance par l'exécutif américain, sans supervision judiciaire directe.",
             ],
           },
           {
             heading: "Schrems II : la CJUE tranche",
             paragraphs: [
-              "En juillet 2020, la Cour de justice de l'Union europeenne a invalide le Privacy Shield, l'accord qui encadrait les transferts de donnees entre l'UE et les Etats-Unis. Son raisonnement, en resume : FISA 702 et le decret executif 12333 sont trop permissifs pour etre compatibles avec le RGPD et n'offrent aucun recours judiciaire effectif aux citoyens europeens. Plus de 5 300 entreprises s'appuyaient sur le Privacy Shield pour leurs transferts transatlantiques. Un second accord, le Data Privacy Framework (2023), l'a remplace, mais il repose sur les memes bases juridiques americaines et sa durabilite est contestee.",
+              "En juillet 2020, la Cour de justice de l'Union européenne a invalidé le Privacy Shield, l'accord qui encadrait les transferts de données entre l'UE et les États-Unis. Le raisonnement, en bref : FISA 702 et le décret 12333 sont trop permissifs pour être compatibles avec le RGPD et n'offrent aucun recours judiciaire effectif aux citoyens européens. Plus de 5 300 entreprises s'appuyaient sur le Privacy Shield pour leurs transferts transatlantiques. Un second accord, le Data Privacy Framework (2023), l'a remplacé, mais il repose sur les mêmes fondations juridiques américaines et sa pérennité est contestée.",
             ],
           },
           {
-            heading: "Microsoft Irlande : la juridiction prime sur la geographie",
+            heading: "Microsoft Irlande : la juridiction l'emporte sur la géographie",
             paragraphs: [
-              "Entre 2013 et 2018, les autorites americaines ont exige de Microsoft, via un mandat emis en vertu du Stored Communications Act, la remise des donnees d'un client stockees sur ses serveurs en Irlande. Microsoft a resiste jusqu'a la Cour supreme. La procedure n'a jamais ete tranchee sur le fond, car le Congres a adopte le CLOUD Act en mars 2018 pour clarifier la reponse : oui, les entreprises americaines doivent produire les donnees ou qu'elles soient stockees.",
-              "Consequence directe : l'hebergement europeen par un fournisseur americain n'offre aucune etancheite juridique vis-a-vis des Etats-Unis. Le marketing \"vos donnees restent en Europe\" masque cette asymetrie.",
+              "Entre 2013 et 2018, les autorités américaines ont demandé à Microsoft, via un mandat émis sous le Stored Communications Act, la remise des données d'un client stockées sur ses serveurs en Irlande. Microsoft a résisté jusqu'à la Cour suprême. La procédure n'a jamais été tranchée sur le fond, parce que le Congrès a adopté le CLOUD Act en mars 2018 pour clarifier la réponse : oui, les entreprises américaines doivent fournir les données où qu'elles soient stockées.",
+              "Conséquence directe : l'hébergement européen par un fournisseur américain n'offre aucune étanchéité juridique face aux États-Unis. Le marketing « vos données restent en Europe » masque cette asymétrie.",
             ],
           },
           {
-            heading: "Le cadre europeen : un RGPD qui n'a pas encore resiste sur les LLM",
+            heading: "Le cadre européen : un RGPD qui n'a pas encore tenu sur les LLM",
             paragraphs: [
-              "Le RGPD reste un outil solide sur le papier, mais son application aux modeles LLM est balbutiante. Le Garante, l'autorite italienne de protection des donnees, a ouvert une enquete contre OpenAI des mars 2023. En decembre 2024, il a inflige une amende de 15 millions d'euros a OpenAI pour traitement sans base legale, manques a la transparence et absence de mecanisme de verification de l'age. Mais en mars 2026, le tribunal de Rome a annule cette decision dans son integralite. A ce jour, aucune autorite europeenne n'a obtenu une sanction definitive contre un grand fournisseur de LLM pour une violation du RGPD liee a la phase de collecte pour l'entrainement.",
+              "Le RGPD reste un outil solide sur le papier, mais son application aux LLM en est à ses premiers pas. Le Garante, l'autorité italienne de protection des données, a ouvert une enquête contre OpenAI dès mars 2023. En décembre 2024, il a infligé à OpenAI une amende de 15 millions d'euros pour traitement sans base légale, manquements à la transparence et absence d'un mécanisme de vérification de l'âge. Mais en mars 2026, le tribunal de Rome a annulé cette décision dans son intégralité. À ce jour, aucune autorité européenne n'a sécurisé en dernier ressort une sanction contre un grand LLM pour une violation du RGPD liée à la phase de collecte d'entraînement.",
             ],
           },
         ],
       },
       {
         id: "secondary-uses",
-        heading: "Usages secondaires : ce que permettent les donnees collectees",
+        heading: "Usages secondaires : ce que les données collectées rendent possible",
         paragraphs: [
-          "Les sections precedentes expliquent comment les donnees quittent votre perimetre. Il reste a preciser ce qu'elles permettent une fois collectees. Trois usages, inegalement documentes, meritent d'etre distingues pour ne pas confondre un risque structurel avec une pratique avere.",
+          "Les sections précédentes expliquent comment les données quittent votre périmètre. Il reste à préciser ce qu'elles permettent une fois collectées. Trois usages, inégalement documentés, méritent d'être distingués pour ne pas mélanger un risque structurel et une pratique avérée.",
         ],
         subsections: [
           {
             heading: "Surveillance de masse",
             paragraphs: [
-              "Une conversation avec un modele LLM ressemble techniquement a un e-mail ou a un chat : texte horodate, rattache a un compte identifiable. Elle releve du meme perimetre de collecte que les autres communications electroniques couvertes par FISA 702, renouvele pour deux ans en avril 2024 par RISAA, et dont le renouvellement est de nouveau en debat au Congres en avril 2026. Des rapports declassifies du PCLOB documentent plusieurs centaines de milliers de selecteurs (identifiants cibles) actifs chaque annee, et la collecte \"a propos de\" (suspendue en 2017, puis reautori-see) elargit mecaniquement le perimetre aux communications qui ne sont ni envoyees par ni a destination de la cible, mais qui la mentionnent.",
+              "Une conversation avec un LLM ressemble techniquement à un e-mail ou à une discussion : du texte horodaté, attaché à un compte identifiable. Elle relève du même périmètre de collecte que les autres communications électroniques couvertes par FISA 702, renouvelé pour deux ans en avril 2024 par RISAA, et dont le renouvellement est de nouveau en débat au Congrès en avril 2026. Des rapports déclassifiés du PCLOB documentent plusieurs centaines de milliers de sélecteurs (identifiants de cible) actifs chaque année, et la collecte « about » (suspendue en 2017, puis ré-autorisée) élargit mécaniquement le périmètre à des communications qui ne sont ni adressées à la cible, ni envoyées par elle, mais qui la mentionnent.",
             ],
           },
           {
             heading: "Profilage et ciblage politique",
             paragraphs: [
-              "La preoccupation n'est pas speculative ; elle repose sur des cas documentes de surveillance ciblee dans d'autres couches d'Internet.",
+              "L'inquiétude n'est pas spéculative ; elle repose sur des cas documentés de surveillance ciblée dans d'autres couches d'Internet.",
             ],
             list: [
-              "Angela Merkel, octobre 2013 : les revelations Snowden documentent la surveillance par la NSA du telephone portable de la chanceliere allemande, inscrite comme cible depuis 2002.",
-              "Associated Press, 2012-2013 : le ministere de la Justice a saisi secretement en avril-mai 2012 les relevs de plus de vingt lignes telephoniques de l'AP, dans le cadre d'une enquete sur des fuites.",
-              "Pegasus / NSO, 2021 : le collectif Forbidden Stories documente l'utilisation du logiciel espion Pegasus contre environ 180 journalistes cibles, ainsi que des militants, avocats, diplomates et chefs d'Etat dans plus de 20 pays.",
+              "Angela Merkel, octobre 2013 : les révélations Snowden documentent la surveillance par la NSA du téléphone portable de la chancelière allemande, listée comme cible depuis 2002.",
+              "Associated Press, 2012-2013 : le Department of Justice a saisi en secret, en avril-mai 2012, les relevés de plus de vingt lignes téléphoniques d'AP, dans le cadre d'une enquête sur des fuites.",
+              "Pegasus / NSO, 2021 : la coalition Forbidden Stories documente l'usage du logiciel espion Pegasus contre environ 180 journalistes ciblés, ainsi que des militants, avocats, diplomates et chefs d'État dans plus de 20 pays.",
             ],
           },
           {
-            heading: "Ciblage commercial et courtiers en donnees",
+            heading: "Ciblage commercial et courtiers en données",
             paragraphs: [
-              "Le risque est different des deux precedents : il ne necessite ni juge ni mandat. Il repose sur l'ecosysteme commercial qui entoure les fournisseurs, et se deroule en trois etapes.",
-              "D'abord, une structure d'incitation. Plusieurs grands acteurs du secteur LLM ont des interets adjacents dans la publicite ciblee : Google en fait son metier principal, Microsoft (actionnaire majeur d'OpenAI) exploite Bing Ads, Meta pousse son propre ecosysteme d'IA generative au sein d'un groupe dont la quasi-totalite des revenus provient du ciblage publicitaire.",
-              "Ensuite, l'etat actuel des preuves. Il n'existe aucune preuve aujourd'hui qu'un fournisseur ait revendu des conversations LLM a des courtiers en donnees. L'argument repose donc non sur une pratique averee mais sur un risque structurel : des donnees entrant dans un systeme, detenues par un acteur qui a un interet economique a les exploiter, peuvent ulterieurement sortir par des canaux qui ne sont pas ceux initialement annonces.",
-              "Enfin, la porosite documentee entre l'ecosysteme publicitaire et la surveillance. Un rapport du directeur du renseignement national date de janvier 2022 et declassifie en juin 2023 reconnait que les agences de renseignement americaines achetent regulierement des donnees commerciales aupres de courtiers en donnees, notamment des donnees de localisation et de navigation. Ce qui est collecte pour vendre de la publicite peut donc etre rachete pour surveiller, sans mandat ni notification.",
+              "Le risque diffère des deux précédents : il ne demande ni juge, ni mandat. Il repose sur l'écosystème commercial qui entoure les fournisseurs, et se déploie en trois temps.",
+              "D'abord, une structure d'incitation. Plusieurs grands acteurs du LLM ont des intérêts adjacents dans la publicité ciblée : Google en fait son cœur de métier, Microsoft (gros actionnaire d'OpenAI) opère Bing Ads, Meta pousse son propre écosystème d'IA générative au sein d'un groupe dont la quasi-totalité du chiffre d'affaires vient du ciblage publicitaire.",
+              "Ensuite, l'état actuel des preuves. Aucune preuve aujourd'hui qu'un fournisseur ait revendu des conversations LLM à des courtiers en données. L'argument ne repose donc pas sur une pratique avérée mais sur un risque structurel : des données qui entrent dans un système, détenues par un acteur qui a un intérêt économique à les exploiter, peuvent en ressortir plus tard par des canaux qui n'étaient pas ceux annoncés au départ.",
+              "Enfin, la porosité documentée entre l'écosystème publicitaire et la surveillance. Un rapport du directeur du renseignement national daté de janvier 2022 et déclassifié en juin 2023 reconnaît que les agences de renseignement américaines achètent régulièrement des données commerciales auprès de courtiers en données, notamment des données de localisation et de navigation. Ce qui est collecté pour vendre de la publicité peut donc être racheté pour surveiller, sans mandat ni notification.",
             ],
           },
           {
-            heading: "Pourquoi l'anonymisation brise ce graphe",
+            heading: "Pourquoi l'anonymisation casse ce graphe",
             paragraphs: [
-              "Une donnee personnelle envoyee en clair devient un noeud dans un graphe potentiel : elle peut etre croisee avec des reseaux sociaux, des violations anterieures, des registres publics ou des bases de donnees commerciales, pour re-identifier, enrichir ou cibler. Un jeton de remplacement n'a aucune valeur d'agregation. Anonymiser avant d'envoyer coupe la racine commune de chacune des chaines d'usage secondaire decrites ci-dessus.",
+              "Une donnée personnelle envoyée en clair devient un nœud dans un graphe potentiel : on peut la croiser avec des réseaux sociaux, des fuites antérieures, des registres publics ou des bases commerciales, pour ré-identifier, enrichir ou cibler. Un jeton de remplacement n'a aucune valeur d'agrégation. Anonymiser avant d'envoyer coupe la racine commune de chaque chaîne d'usage secondaire décrite plus haut.",
             ],
           },
         ],
       },
       {
         id: "provider-spectrum",
-        heading: "Ou se positionner sur le spectre des fournisseurs ?",
+        heading: "Où vous placer sur le spectre des fournisseurs ?",
         paragraphs: [
-          "Le choix n'est pas binaire entre \"cloud americain\" et \"rien\". Il existe un continuum, du plus expose au plus isole, et chaque etape modifie a la fois le risque juridique et la responsabilite qui vous incombe.",
+          "Le choix n'est pas binaire entre « cloud américain » et « rien ». Il existe un continuum, du plus exposé au plus isolé, et chaque palier modifie à la fois le risque juridique et la part de responsabilité qui retombe sur vous.",
         ],
         table: {
-          headers: ["Option", "CLOUD Act / FISA 702", "RGPD", "Acces technique du fournisseur", "Entrainement sur vos donnees"],
+          headers: ["Option", "CLOUD Act / FISA 702", "RGPD", "Accès technique du fournisseur", "Entraînement sur vos données"],
           rows: [
             ["Fournisseur US, serveurs US", "Oui, directement", "Indirect, via DPF, fragile", "Oui", "Variable"],
-            ["Fournisseur US, serveurs UE", "Oui (cf. Microsoft Irlande)", "S'applique, mais supplan.", "Oui", "Exclu par defaut sur les offres entreprise"],
-            ["Fournisseur UE", "Non (sauf filiale US)", "S'applique pleinement", "Oui", "Exclu par defaut sur les offres payantes"],
-            ["Modele local (auto-heberge)", "Non", "Vous en etes responsable", "Non : vous etes le fournisseur", "Non : vous le controlez"],
+            ["Fournisseur US, serveurs UE", "Oui (cf. Microsoft Irlande)", "S'applique, mais préempté", "Oui", "Exclu par défaut sur les offres entreprise"],
+            ["Fournisseur UE", "Non (sauf filiale sous contrôle US)", "S'applique pleinement", "Oui", "Exclu par défaut sur les offres payantes"],
+            ["Modèle local (auto-hébergé)", "Non", "Vous en êtes responsable", "Non : vous êtes le fournisseur", "Non : vous le contrôlez"],
           ],
         },
         subsections: [
           {
             heading: "",
             paragraphs: [
-              "A une extremite du spectre, un fournisseur americain heberg aux Etats-Unis cumule les trois risques : le CLOUD Act, FISA 702 et le decret 12333 s'appliquent sans filtre, les transferts depuis l'UE reposent sur le Data Privacy Framework conteste, et une decision judiciaire americaine peut imposer la conservation indefinie des conversations.",
-              "Deplacer physiquement les serveurs en Europe ne change presque rien juridiquement. Des lors que l'entite exploitante est sous juridiction americaine, le CLOUD Act s'applique independamment de la localisation des disques durs.",
-              "Changer de juridiction en passant a un fournisseur europeen (Mistral, OVHcloud AI, Scaleway, Aleph Alpha) supprime par defaut le risque CLOUD Act, sauf si le fournisseur possede une filiale americaine sous controle. Le RGPD s'applique pleinement et les autorites europeennes peuvent sanctionner. Cela ne rend pas le fournisseur aveugle au contenu : il conserve un acces technique complet, la protection reste contractuelle et etatique.",
-              "Enfin, faire tourner le modele en local sur votre propre infrastructure (Ollama, vLLM, llama.cpp ou equivalent) supprime entierement le tiers : aucun fournisseur n'a acces technique au contenu, par construction. C'est la protection maximale sur le plan de la confidentialite. La contrepartie est que toute la responsabilite vous incombe : securite physique et logique, chiffrement au repos, gestion des acces, mises a jour, journalisation.",
-              "Le choix du fournisseur reste important pour de nombreux aspects : latence, cout, qualite du modele, conformite RGPD globale, ecosysteme d'integration. Mais pour le risque specifique de fuite de donnees personnelles, l'anonymisation neutralise ce choix. Si seuls des jetons de remplacement quittent votre infrastructure, un fournisseur americain ne recoit rien d'exploitable sur vos donnees sensibles.",
+              "À une extrémité du spectre, un fournisseur américain hébergé aux États-Unis cumule les trois risques ci-dessus : le CLOUD Act, FISA 702 et le décret 12333 s'appliquent sans filtre, les transferts depuis l'UE reposent sur le Data Privacy Framework contesté, et une décision judiciaire américaine peut imposer la conservation indéfinie des conversations.",
+              "Déplacer physiquement les serveurs en Europe ne change presque rien sur le plan juridique. Dès lors que l'entité exploitante est sous juridiction américaine, le CLOUD Act s'applique, peu importe où sont les disques durs.",
+              "Changer de juridiction en passant à un fournisseur européen (Mistral, OVHcloud AI, Scaleway, Aleph Alpha) fait tomber par défaut le risque CLOUD Act, sauf si le fournisseur possède une filiale américaine sous contrôle. Le RGPD s'applique pleinement et les autorités européennes peuvent sanctionner. Cela ne rend pas le fournisseur aveugle au contenu : il garde un accès technique complet, la protection reste contractuelle et étatique.",
+              "Enfin, faire tourner le modèle en local sur votre propre infrastructure (Ollama, vLLM, llama.cpp ou équivalent) supprime le tiers de l'équation : aucun fournisseur n'a accès technique au contenu, par construction. C'est la protection maximale côté confidentialité. La contrepartie, c'est que toute la responsabilité bascule sur vous : sécurité physique et logique, chiffrement au repos, gestion des accès, mises à jour, journalisation.",
+              "Le choix du fournisseur reste important pour beaucoup de choses : latence, coût, qualité du modèle, conformité RGPD globale, écosystème d'intégration. Mais pour le risque spécifique de fuite de données personnelles, l'anonymisation neutralise ce choix. Si seuls des jetons quittent votre infrastructure, un fournisseur américain ne reçoit rien d'exploitable sur vos données sensibles.",
             ],
           },
         ],
       },
       {
         id: "sectoral-obligations",
-        heading: "Obligations sectorielles et choix deja faits",
+        heading: "Obligations sectorielles et choix déjà faits",
         paragraphs: [],
         subsections: [
           {
-            heading: "Quand c'est une obligation legale",
+            heading: "Quand c'est une obligation légale",
             paragraphs: [
-              "Dans plusieurs professions, envoyer des donnees personnelles a un modele LLM non souverain n'est pas une question de commodite, c'est une impossibilite reglementaire.",
+              "Dans plusieurs métiers, envoyer des données personnelles à un LLM non souverain n'est pas une question de confort, c'est une impossibilité réglementaire.",
             ],
             list: [
-              "Finance : MiFID II, secret bancaire, obligations de confidentialite client.",
-              "Avocats : secret professionnel absolu (article 66-5 de la loi du 31 decembre 1971). Une consultation client envoyee brute et identifiable a un modele LLM americain peut constituer une faute deontologique.",
-              "Medecine : secret medical (article L.1110-4 du Code de la sante publique), HIPAA aux Etats-Unis. Un dossier patient ne peut pas transiter par un service tiers sans garanties techniques importantes.",
-              "Defense et secteurs strategiques : regimes specifiques (classification, CUI aux Etats-Unis, Diffusion Restreinte en France).",
+              "Finance : MiFID II, secret bancaire, obligations de confidentialité client.",
+              "Avocats : secret professionnel absolu (article 66-5 de la loi française du 31 décembre 1971). Une consultation client envoyée brute et identifiable à un LLM américain peut constituer une faute déontologique.",
+              "Médecine : secret médical (article L.1110-4 du Code de la santé publique), HIPAA aux États-Unis. Un dossier patient ne peut pas transiter par un service tiers sans garanties techniques lourdes.",
+              "Défense et secteurs stratégiques : régimes spécifiques (classification, CUI aux États-Unis, Diffusion Restreinte en France).",
             ],
           },
           {
-            heading: "Ce que les grandes entreprises ont deja decide",
+            heading: "Ce que les grandes entreprises ont déjà tranché",
             paragraphs: [
-              "En l'absence de protection technique disponible en 2023, plusieurs grands groupes ont simplement interdit a leurs employes d'utiliser des modeles LLM dans le cloud.",
+              "Faute de protection technique disponible en 2023, plusieurs grands groupes ont simplement interdit à leurs employés d'utiliser les LLM cloud.",
             ],
             list: [
-              "Samsung, avril 2023 : plusieurs incidents internes ou des ingenieurs avaient colle du code source et des notes de reunion dans ChatGPT. En mai 2023, l'entreprise a interdit l'usage de LLM generatifs sur les appareils professionnels.",
-              "Secteur bancaire americain, printemps 2023 : JPMorgan Chase, Bank of America, Citigroup, Goldman Sachs, Deutsche Bank et Wells Fargo ont bloque ou restreint l'usage de ChatGPT pour leurs employes.",
+              "Samsung, avril 2023 : plusieurs incidents internes au cours desquels des ingénieurs avaient collé du code source et des notes de réunion dans ChatGPT. En mai 2023, l'entreprise a interdit l'usage des LLM génératifs sur les appareils professionnels.",
+              "Secteur bancaire américain, printemps 2023 : JPMorgan Chase, Bank of America, Citigroup, Goldman Sachs, Deutsche Bank et Wells Fargo ont bloqué ou restreint l'usage de ChatGPT pour leurs employés.",
             ],
           },
         ],
@@ -300,49 +298,49 @@ export const fr: Dictionary = {
         id: "legal-vs-technical",
         heading: "Protection juridique contre protection technique",
         paragraphs: [
-          "Toutes les protections mobilisees jusqu'ici reposent sur des instruments juridiques : politiques de confidentialite, clauses contractuelles types, accords internationaux, amendes administratives. Elles partagent un defaut commun : elles sont revocables, par une decision politique ou judiciaire sur laquelle vous n'avez aucun levier.",
+          "Toutes les protections mobilisées jusqu'ici reposent sur des instruments juridiques : politiques de confidentialité, clauses contractuelles types, accords internationaux, amendes administratives. Elles partagent un défaut commun : elles sont révocables, par une décision politique ou judiciaire sur laquelle vous n'avez aucun levier.",
         ],
         table: {
           headers: ["Type de protection", "Exemple", "Pourquoi c'est fragile"],
           rows: [
-            ["Promesse contractuelle", "\"Nous ne lisons pas vos donnees\"", "Contournable par injonction (NYT c. OpenAI)"],
-            ["Clauses contractuelles types", "Transferts UE vers US", "Deja affaiblies par Schrems II"],
-            ["Accord international", "Privacy Shield, DPF", "Le premier invalide, le second conteste"],
-            ["Reglementation regionale", "RGPD", "Lente a produire des sanctions effectives sur les LLM"],
-            ["Hebergement regional", "\"Centres de donnees en Europe\"", "Neutralise par le CLOUD Act si le fournisseur est americain"],
+            ["Promesse contractuelle", "« Nous ne lisons pas vos données »", "Contournable par une injonction (NYT c. OpenAI)"],
+            ["Clauses contractuelles types", "Transferts UE vers US", "Déjà affaiblies par Schrems II"],
+            ["Accord international", "Privacy Shield, DPF", "Le premier invalidé, le second contesté"],
+            ["Réglementation régionale", "RGPD", "Lente à produire des sanctions effectivement appliquées aux LLM"],
+            ["Hébergement régional", "« Centres de données en Europe »", "Neutralisé par le CLOUD Act si le fournisseur est américain"],
           ],
         },
         subsections: [
           {
             heading: "",
             paragraphs: [
-              "La protection technique fonctionne differemment. Si les donnees personnelles ne quittent jamais votre infrastructure et qu'un simple jeton est envoye au modele :",
+              "La protection technique fonctionne autrement. Si les données personnelles ne quittent jamais votre infrastructure et que seul un jeton est envoyé au modèle :",
             ],
             list: [
-              "aucune injonction ne peut contraindre un tiers a divulguer ce qu'il ne detient pas,",
-              "aucune modification d'un accord international ne vous affecte,",
-              "aucune politique de conservation d'un fournisseur n'est en jeu,",
-              "le fournisseur peut etre pirate, rachete ou disparaitre : vos donnees n'etaient pas la.",
+              "aucune injonction ne peut contraindre un tiers à divulguer ce qu'il ne détient pas,",
+              "aucune modification d'un accord international ne vous touche,",
+              "aucune politique de rétention d'un fournisseur n'est en jeu,",
+              "le fournisseur peut être piraté, racheté ou disparaître : vos données n'y étaient pas.",
             ],
           },
           {
             heading: "",
             paragraphs: [
-              "C'est la difference entre \"nous promettons de ne pas regarder\" et \"nous sommes techniquement incapables de regarder\". La seconde est toujours plus solide que la premiere.",
+              "C'est la différence entre « nous promettons de ne pas regarder » et « nous sommes techniquement incapables de regarder ». Le second est toujours plus solide que le premier.",
             ],
           },
         ],
       },
       {
         id: "what-anonymization-does-not-solve",
-        heading: "Ce que l'anonymisation ne resout pas",
+        heading: "Ce que l'anonymisation ne résout pas",
         paragraphs: [
-          "L'anonymisation est une couche dans une posture de defense en profondeur, pas une solution miracle.",
+          "L'anonymisation est une couche dans une posture de défense en profondeur, pas une solution miracle.",
         ],
         list: [
-          "Elle ne rend pas un modele LLM conforme a tous les regimes reglementaires. Certaines donnees (donnees de sante identifiables par liaison, materiaux classes defense) ne doivent pas quitter l'infrastructure, meme sous forme anonymisee.",
-          "Elle depend de la qualite du detecteur. Une donnee personnelle non detectee passe en clair. C'est une contrainte d'ingenierie, pas un defaut conceptuel.",
-          "Elle ne remplace pas les autres bonnes pratiques : chiffrement au repos, journalisation auditee, gestion des acces, formation des equipes.",
+          "Elle ne rend pas un LLM conforme à tous les régimes réglementaires. Certaines données (données de santé re-liables, matériel classifié défense) ne doivent pas quitter l'infrastructure, même sous forme anonymisée.",
+          "Elle dépend de la qualité du détecteur. Une donnée personnelle non détectée passe en clair. C'est un sujet d'ingénierie, pas un défaut conceptuel.",
+          "Elle ne remplace pas les autres bonnes pratiques : chiffrement au repos, journalisation auditée, gestion des accès, formation des équipes.",
         ],
       },
     ],
