@@ -19,9 +19,9 @@ export function SiteNavbar() {
         </Link>
         <nav className="hidden items-center gap-1 md:flex">
           {projects.map((p) => {
-            const label = t.nav[p.slug as keyof typeof t.nav] ?? p.name;
+            const label = (t.nav[p.slug as keyof typeof t.nav] ?? p.name) as string;
             return (
-              <NavLink key={p.href ?? `/${p.slug}`} href={`/${p.slug}`} label={label as string} />
+              <NavLink key={`/${p.slug}`} href={`/${p.slug}`} label={label} />
             );
           })}
           <NavLink href="/philosophy" label={t.nav.philosophy} />

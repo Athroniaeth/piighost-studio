@@ -299,7 +299,7 @@ export const en: Dictionary = {
         id: "legal-vs-technical",
         heading: "Legal protection vs technical protection",
         paragraphs: [
-          "All the protections mobilized so far rest on legal instruments: privacy policies, standard contractual clauses, international agreements, administrative fines. They share a common flaw: they are revocable, by a political or judicial decision over which you have no leverage.",
+          "All the protections mobilized so far rest on legal instruments: privacy policies, standard contractual clauses, international agreements, administrative fines. They share a common flaw: they are revocable, by a political or judicial decision over which you have no control.",
         ],
         table: {
           headers: ["Type of protection", "Example", "Why it is fragile"],

@@ -28,7 +28,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         setLocaleState(stored);
       }
     } catch {
-      // SSR or storage unavailable — stay with default
+      // SSR or storage unavailable; stay with default
     }
   }, []);
 
@@ -37,7 +37,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     try {
       window.localStorage.setItem(STORAGE_KEY, next);
     } catch {
-      // storage unavailable — ignore
+      // storage unavailable; ignore
     }
   }
 
