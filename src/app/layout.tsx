@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { LanguageProvider } from "@/i18n/language-provider";
 import { SiteNavbar } from "@/components/site-navbar";
 import { SiteFooter } from "@/components/site-footer";
 import { SmoothSnap } from "@/components/smooth-snap";
@@ -42,13 +43,15 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-          <SmoothSnap />
-          <div className="flex min-h-dvh flex-col">
-            <SiteNavbar />
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
-          </div>
-          <BackToTop />
+          <LanguageProvider>
+            <SmoothSnap />
+            <div className="flex min-h-dvh flex-col">
+              <SiteNavbar />
+              <main className="flex-1">{children}</main>
+              <SiteFooter />
+            </div>
+            <BackToTop />
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>
