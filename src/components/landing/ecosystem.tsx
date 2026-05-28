@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { projects } from "@/lib/site";
 
 const GRID_SLOTS = 9;
-const PLACEHOLDER_HASHES = ["2b1", "7c4", "9af", "1e8", "f30"];
+const PLACEHOLDER_HASHES = ["2b1f4a", "7c43e9", "9af0d2", "1e8c75", "f30b86"];
 
 function PlaceholderCard({ hash }: { hash: string }) {
   return (
