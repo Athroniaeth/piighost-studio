@@ -14,11 +14,11 @@ export function Cta() {
           Install piighost, wire your detector, and keep PII out of the model.
         </p>
         <div className="mt-8 flex justify-center gap-3">
-          <Button size="lg" render={<a href="https://athroniaeth.github.io/piighost/" target="_blank" rel="noreferrer" />}>
-            <BookOpen className="mr-1 size-4" /> Read the docs
+          <Button size="xl" render={<a href="https://athroniaeth.github.io/piighost/" target="_blank" rel="noreferrer" />}>
+            <BookOpen className="mr-2 size-5" /> Read the docs
           </Button>
-          <Button size="lg" variant="outline" render={<a href={`${GITHUB_ORG}/piighost`} target="_blank" rel="noreferrer" />}>
-            <GithubIcon className="mr-1 size-4" /> Star on GitHub
+          <Button size="xl" variant="outline" render={<a href={`${GITHUB_ORG}/piighost`} target="_blank" rel="noreferrer" />}>
+            <GithubIcon className="mr-2 size-5" /> Star on GitHub
           </Button>
         </div>
       </div>

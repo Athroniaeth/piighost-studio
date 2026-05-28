@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GithubIcon } from "@/components/github-icon";
 import { AnonymizeFlow } from "@/components/anonymize-flow";
@@ -20,11 +20,11 @@ export function Hero() {
             values for your tools and your users. Your agent code does not change.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button size="lg" render={<Link href="/piighost" />}>
-              Get started <ArrowRight className="ml-1 size-4" />
+            <Button size="xl" render={<Link href="/piighost" />}>
+              <Rocket className="mr-2 size-5" /> Get started
             </Button>
-            <Button size="lg" variant="outline" render={<a href={`${GITHUB_ORG}/piighost`} target="_blank" rel="noreferrer" />}>
-              <GithubIcon className="mr-1 size-4" /> GitHub
+            <Button size="xl" variant="outline" render={<a href={`${GITHUB_ORG}/piighost`} target="_blank" rel="noreferrer" />}>
+              <GithubIcon className="mr-2 size-5" /> GitHub
             </Button>
           </div>
         </div>
