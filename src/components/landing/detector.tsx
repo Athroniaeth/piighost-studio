@@ -31,8 +31,12 @@ export function Detector() {
         {detectors.map((d) => (
           <Card key={d.title}>
             <CardHeader>
-              <d.icon className="size-6 text-primary" />
-              <CardTitle className="mt-3 text-lg">{d.title}</CardTitle>
+              <div className="flex items-center gap-3">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+                  <d.icon className="size-5" />
+                </span>
+                <CardTitle className="text-lg">{d.title}</CardTitle>
+              </div>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">{d.body}</p>
