@@ -13,6 +13,132 @@ export const fr: Dictionary = {
     toggleLanguage: "Passer en anglais",
     backToTop: "Remonter en haut",
   },
+  projectHeader: {
+    repository: "Dépôt",
+    docs: "Docs",
+    pypi: "PyPI",
+  },
+  projects: {
+    piighost: {
+      tagline: "La bibliothèque centrale. Construisez des pipelines d'anonymisation pour vos agents IA.",
+      sections: [
+        {
+          heading: "Ce qu'elle fait",
+          paragraphs: [
+            "piighost est la bibliothèque centrale. Elle se place entre votre agent et le modèle. Elle détecte les données personnelles, les remplace par des jetons stables que le modèle peut manipuler, et restitue les vraies valeurs à vos outils et à vos utilisateurs finaux. Une même valeur conserve le même jeton sur toute une conversation, y compris à travers plusieurs messages et appels d'outils.",
+            "Elle est agnostique au détecteur : vous branchez des expressions régulières, un modèle NER, un LLM, ou plusieurs à la fois. piighost gère l'arbitrage des détections, un lieur tolérant aux fautes de frappe et aux variantes de casse, et des garde-fous en sortie pour les cas où le modèle génère de nouvelles données personnelles dans sa réponse.",
+          ],
+        },
+        {
+          heading: "Installation",
+          code: "install",
+        },
+        {
+          heading: "Utilisation comme middleware LangChain",
+          code: "usage",
+        },
+        {
+          heading: "Où elle s'insère",
+          paragraphs: [
+            "La bibliothèque s'intègre dans votre processus Python. Lorsque vous avez besoin d'un point d'inférence partagé entre plusieurs processus, tournez-vous vers piighost-api. Pour la voir de bout en bout, regardez la démo de chat et le relecteur.",
+          ],
+        },
+      ],
+    },
+    api: {
+      tagline: "Un serveur REST qui héberge un pipeline piighost derrière HTTP.",
+      sections: [
+        {
+          heading: "Ce qu'il fait",
+          paragraphs: [
+            "piighost-api est un serveur REST qui héberge un pipeline piighost configurable derrière HTTP. La bibliothèque s'intègre dans votre processus ; l'API permet à plusieurs processus (backends de chat, traitements par lots, notebooks) d'interroger un même point d'inférence sans recharger les modèles ni dupliquer l'état du cache.",
+          ],
+        },
+        {
+          heading: "Fonctionnalités",
+          list: [
+            "Points d'accès d'anonymisation et de désanonymisation sur l'ensemble du pipeline.",
+            "N'importe quel détecteur piighost, chargé une fois et partagé entre les requêtes.",
+            "Mémoire à portée de fil pour que les entités restent cohérentes sur une conversation.",
+            "Authentification par clé d'API avec hachage Argon2, portées et expiration.",
+            "Cache Redis pour les correspondances d'anonymisation partagées.",
+            "Pipeline configuré au démarrage avec un chemin d'import module:variable.",
+          ],
+        },
+        {
+          heading: "Démarrage rapide",
+          code: "quickstart",
+        },
+        {
+          heading: "Dialoguer avec lui",
+          code: "request",
+        },
+      ],
+    },
+    chat: {
+      tagline: "Un chatbot de démonstration qui anonymise les messages avant que le LLM ne les voie.",
+      sections: [
+        {
+          heading: "Ce qu'il démontre",
+          paragraphs: [
+            "piighost-chat est un chatbot de démonstration qui montre une conversation respectueuse de la vie privée de bout en bout. Les messages de l'utilisateur sont anonymisés avant d'atteindre le LLM, et les réponses sont désanonymisées avant d'atteindre l'utilisateur. Les outils reçoivent les vraies valeurs.",
+          ],
+        },
+        {
+          heading: "La pile technique",
+          list: [
+            "Un frontend React et un backend Litestar exécutant un agent LangChain.",
+            "PIIAnonymizationMiddleware englobant l'agent : anonymisation avant le LLM, désanonymisation après.",
+            "piighost-api pour la détection et la mise en évidence, avec une mémoire à portée de fil pour des jetons cohérents.",
+            "keyshield pour l'authentification par clé d'API.",
+          ],
+        },
+        {
+          heading: "Le parcours utilisateur",
+          ordered: true,
+          list: [
+            "L'utilisateur saisit un message.",
+            "Le backend appelle piighost-api pour détecter les données personnelles ; le frontend met les entités en évidence.",
+            "L'utilisateur confirme, et le message part vers l'agent.",
+            "Le middleware l'anonymise avant que le modèle ne le voie, et désanonymise la réponse.",
+          ],
+        },
+        {
+          heading: "Lancez-le",
+          code: "run",
+        },
+      ],
+    },
+    proofreader: {
+      tagline: "Un relecteur de CV par LLM qui anonymise les documents avant tout appel au LLM.",
+      sections: [
+        {
+          heading: "Ce qu'il fait",
+          paragraphs: [
+            "piighost-proofreader est un relecteur de CV propulsé par un LLM. Vous téléversez un PDF et obtenez une liste annotée d'erreurs avec mise en évidence au clic sur les pages affichées. Le document est anonymisé avec piighost-api avant tout appel au LLM.",
+          ],
+        },
+        {
+          heading: "Comment ça marche",
+          ordered: true,
+          list: [
+            "opendataloader-pdf convertit le PDF en Markdown pour le LLM.",
+            "PyMuPDF affiche chaque page et émet les rectangles englobants mot par mot.",
+            "piighost-api anonymise le Markdown avant que le LLM ne le voie.",
+            "Une chaîne LangChain et LiteLLM exécute une relecture à sortie structurée.",
+            "Un localisateur réancre chaque erreur sur une page et un rectangle englobant.",
+            "Streamlit affiche les pages avec des surcouches ; cliquer sur une erreur la met en évidence.",
+          ],
+        },
+        {
+          heading: "Lancez-le",
+          code: "run",
+          afterCode:
+            "Vous avez aussi besoin d'un piighost-api en service à l'URL déclarée dans votre fichier .env.",
+        },
+      ],
+    },
+  },
   footer: {
     tagline: "Anonymisez les données personnelles avant qu'elles n'atteignent le modèle.",
     projects: "Projets",
@@ -47,17 +173,26 @@ export const fr: Dictionary = {
   howItWorks: {
     eyebrow: "Fonctionnement",
     title: "Une couche entre votre agent et le modèle",
-    tabs: { detect: "Détecter", anonymize: "Anonymiser", deanonymize: "Désanonymiser" },
+    tabs: {
+      detect: "Détecter",
+      anonymize: "Anonymiser",
+      tools: "Appels d'outils",
+      deanonymize: "Désanonymiser",
+    },
     detectCaption:
       "piighost exécute vos détecteurs sur le message et signale chaque donnée personnelle trouvée : noms, e-mails, identifiants, tout ce que le modèle n'a pas besoin de voir. Les détections qui se chevauchent entre plusieurs détecteurs sont arbitrées par niveau de confiance avant tout remplacement.",
     anonymizeCaption:
       "Chaque donnée personnelle reçoit un compteur stable, propre à son type. Les trois personnes de ce message deviennent <<PERSON:1>>, <<PERSON:2>> et <<PERSON:3>> ; les deux adresses e-mail distinctes deviennent <<EMAIL:1>> et <<EMAIL:2>>. La même valeur garde le même identifiant dans chaque message suivant, chaque appel d'outil et chaque réessai.",
+    toolsCaption:
+      "Le modèle ne voit jamais les vraies données : ses appels d'outils reviennent donc eux aussi écrits avec des jetons. piighost restitue les vraies valeurs dans les arguments avant que votre fonction ne s'exécute, si bien que l'e-mail part réellement vers la vraie adresse de <<EMAIL:1>> avec le vrai dossier <<ID:1>>. Tout ce que l'outil renvoie est réanonymisé avant que le modèle ne le lise.",
     deanonymizeCaption:
-      "Les appels d'outils reçoivent les vraies valeurs, et la réponse finale est restituée avant d'atteindre l'utilisateur. Le modèle a écrit <<PERSON:2>> et <<PERSON:3>>, et piighost remet le bon nom en face de chaque jeton. Votre code d'agent n'a jamais à gérer cette comptabilité.",
+      "La réponse finale est restituée avant d'atteindre l'utilisateur. Le modèle a écrit <<PERSON:2>> et <<PERSON:3>>, et piighost remet le bon nom en face de chaque jeton. Votre code d'agent n'a jamais à gérer cette comptabilité.",
     labels: {
       userMessage: "Message utilisateur",
       fromUser: "De l'utilisateur",
       llmSees: "Ce que voit le modèle",
+      toolCall: "Appel d'outil émis par le modèle",
+      toolRuns: "Ce que votre outil exécute réellement",
       llmResponse: "Réponse du modèle",
       userSees: "Ce que voit l'utilisateur",
     },

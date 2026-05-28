@@ -13,6 +13,132 @@ export const en: Dictionary = {
     toggleLanguage: "Switch to French",
     backToTop: "Scroll to top",
   },
+  projectHeader: {
+    repository: "Repository",
+    docs: "Docs",
+    pypi: "PyPI",
+  },
+  projects: {
+    piighost: {
+      tagline: "The core library. Build PII anonymization pipelines for AI agents.",
+      sections: [
+        {
+          heading: "What it does",
+          paragraphs: [
+            "piighost is the core library. It sits between your agent and the model. It detects PII, replaces it with stable placeholders the model can reason about, and restores the real values for your tools and your end users. The same value keeps the same placeholder across a whole conversation, even across multiple messages and tool calls.",
+            "It is detector-agnostic: you wire in regex, a NER model, an LLM, or several at once. piighost handles detection arbitration, a tolerant linker for typos and case variants, and output guardrails for when the model generates fresh PII in its reply.",
+          ],
+        },
+        {
+          heading: "Install",
+          code: "install",
+        },
+        {
+          heading: "Use it as LangChain middleware",
+          code: "usage",
+        },
+        {
+          heading: "Where it fits",
+          paragraphs: [
+            "The library embeds in your Python process. When you need one shared inference endpoint across several processes, reach for piighost-api. To see it end to end, look at the chat demo and the proofreader.",
+          ],
+        },
+      ],
+    },
+    api: {
+      tagline: "A REST server that hosts one piighost pipeline behind HTTP.",
+      sections: [
+        {
+          heading: "What it does",
+          paragraphs: [
+            "piighost-api is a REST server that hosts one configurable piighost pipeline behind HTTP. The library embeds in your process; the API lets several processes (chat backends, batch jobs, notebooks) hit one inference endpoint without re-loading models or duplicating cache state.",
+          ],
+        },
+        {
+          heading: "Features",
+          list: [
+            "Anonymize and deanonymize endpoints over the full pipeline.",
+            "Any piighost detector, loaded once and shared across requests.",
+            "Thread-scoped memory so entities stay consistent across a conversation.",
+            "API-key authentication with Argon2 hashing, scopes, and expiration.",
+            "Redis cache for shared anonymization mappings.",
+            "Pipeline configured at startup with a module:variable import path.",
+          ],
+        },
+        {
+          heading: "Quick start",
+          code: "quickstart",
+        },
+        {
+          heading: "Talk to it",
+          code: "request",
+        },
+      ],
+    },
+    chat: {
+      tagline: "A demo chatbot that anonymizes messages before the LLM sees them.",
+      sections: [
+        {
+          heading: "What it demonstrates",
+          paragraphs: [
+            "piighost-chat is a demo chatbot that shows a privacy-preserving conversation end to end. User messages are anonymized before they reach the LLM, and responses are deanonymized before they reach the user. Tools receive the real values.",
+          ],
+        },
+        {
+          heading: "The stack",
+          list: [
+            "A React frontend and a Litestar backend running a LangChain agent.",
+            "PIIAnonymizationMiddleware wrapping the agent: anonymize before the LLM, deanonymize after.",
+            "piighost-api for detection and highlighting, with thread-scoped memory for consistent placeholders.",
+            "keyshield for API-key authentication.",
+          ],
+        },
+        {
+          heading: "The user flow",
+          ordered: true,
+          list: [
+            "The user types a message.",
+            "The backend calls piighost-api to detect PII; the frontend highlights the entities.",
+            "The user confirms, and the message goes to the agent.",
+            "The middleware anonymizes it before the model sees it, and deanonymizes the reply.",
+          ],
+        },
+        {
+          heading: "Run it",
+          code: "run",
+        },
+      ],
+    },
+    proofreader: {
+      tagline: "An LLM CV proofreader that anonymizes documents before any LLM call.",
+      sections: [
+        {
+          heading: "What it does",
+          paragraphs: [
+            "piighost-proofreader is an LLM-powered proofreader for CVs. You upload a PDF and get an annotated list of mistakes with click-to-highlight on the rendered pages. The document is anonymized with piighost-api before any LLM call.",
+          ],
+        },
+        {
+          heading: "How it works",
+          ordered: true,
+          list: [
+            "opendataloader-pdf converts the PDF to Markdown for the LLM.",
+            "PyMuPDF renders each page and emits per-word bounding boxes.",
+            "piighost-api anonymizes the Markdown before the LLM sees it.",
+            "A LangChain and LiteLLM chain runs structured-output proofreading.",
+            "A locator re-anchors each mistake to a page and bounding box.",
+            "Streamlit renders the pages with overlays; clicking a mistake highlights it.",
+          ],
+        },
+        {
+          heading: "Run it",
+          code: "run",
+          afterCode:
+            "You also need a running piighost-api at the URL declared in your .env.",
+        },
+      ],
+    },
+  },
   footer: {
     tagline: "Anonymize PII before it reaches the LLM.",
     projects: "Projects",
@@ -47,17 +173,26 @@ export const en: Dictionary = {
   howItWorks: {
     eyebrow: "How it works",
     title: "A layer between your agent and the model",
-    tabs: { detect: "Detect", anonymize: "Anonymize", deanonymize: "Deanonymize" },
+    tabs: {
+      detect: "Detect",
+      anonymize: "Anonymize",
+      tools: "Tool calls",
+      deanonymize: "Deanonymize",
+    },
     detectCaption:
       "piighost runs your detectors over the message and flags every PII span it finds: names, emails, identifiers, anything the model does not need to see. Overlapping detections from multiple detectors are arbitrated by confidence before anything is replaced.",
     anonymizeCaption:
       "Each PII value gets a stable counter scoped to its type. The three people in this message become <<PERSON:1>>, <<PERSON:2>>, and <<PERSON:3>>; the two distinct emails become <<EMAIL:1>> and <<EMAIL:2>>. The same value keeps the same identifier across every later message, every tool call, and every retry.",
+    toolsCaption:
+      "The model never sees real data, so its tool calls come back written with placeholders too. piighost restores the real values inside the arguments before your function runs, so the email actually goes to <<EMAIL:1>>'s real address with the real case <<ID:1>>. Anything the tool returns is anonymized again before the model reads it.",
     deanonymizeCaption:
-      "Tool calls receive the real values, and the final response is restored before it reaches the user. Notice the model wrote <<PERSON:2>> and <<PERSON:3>>, and piighost mapped each one back to the right name. Your agent code never has to manage that bookkeeping.",
+      "The final response is restored before it reaches the user. Notice the model wrote <<PERSON:2>> and <<PERSON:3>>, and piighost mapped each one back to the right name. Your agent code never has to manage that bookkeeping.",
     labels: {
       userMessage: "User message",
       fromUser: "From the user",
       llmSees: "What the LLM sees",
+      toolCall: "Tool call from the model",
+      toolRuns: "What your tool actually runs",
       llmResponse: "LLM response",
       userSees: "What the user sees",
     },

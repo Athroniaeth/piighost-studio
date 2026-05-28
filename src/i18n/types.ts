@@ -1,5 +1,19 @@
 export type Locale = "en" | "fr";
 
+export type ProjectSection = {
+  heading: string;
+  paragraphs?: string[];
+  list?: string[];
+  ordered?: boolean;
+  code?: string;
+  afterCode?: string;
+};
+
+export type ProjectPageDict = {
+  tagline: string;
+  sections: ProjectSection[];
+};
+
 export type PhilosophyDict = {
   eyebrow: string;
   title: string;
@@ -27,6 +41,17 @@ export type Dictionary = {
     toggleLanguage: string;
     backToTop: string;
   };
+  projectHeader: {
+    repository: string;
+    docs: string;
+    pypi: string;
+  };
+  projects: {
+    piighost: ProjectPageDict;
+    api: ProjectPageDict;
+    chat: ProjectPageDict;
+    proofreader: ProjectPageDict;
+  };
   footer: {
     tagline: string;
     projects: string;
@@ -47,14 +72,17 @@ export type Dictionary = {
   howItWorks: {
     eyebrow: string;
     title: string;
-    tabs: { detect: string; anonymize: string; deanonymize: string };
+    tabs: { detect: string; anonymize: string; tools: string; deanonymize: string };
     detectCaption: string;
     anonymizeCaption: string;
+    toolsCaption: string;
     deanonymizeCaption: string;
     labels: {
       userMessage: string;
       fromUser: string;
       llmSees: string;
+      toolCall: string;
+      toolRuns: string;
       llmResponse: string;
       userSees: string;
     };
