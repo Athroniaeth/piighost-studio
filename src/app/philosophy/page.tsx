@@ -46,17 +46,17 @@ export default function PhilosophyPage() {
           {p.eyebrow}
         </p>
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">{p.title}</h1>
-        {p.intro && (
-          <p className="mt-6 text-lg text-muted-foreground">{p.intro}</p>
-        )}
       </header>
+      {p.intro && (
+        <p className="mb-12 text-justify text-lg leading-relaxed hyphens-auto text-muted-foreground">{p.intro}</p>
+      )}
 
       {p.sections.map((section, si) => (
         <section key={section.id ?? si} id={section.id}>
           <h2 className="mt-12 text-2xl font-semibold tracking-tight">{section.heading}</h2>
 
           {section.paragraphs.map((para, pi) => (
-            <p key={pi} className="mt-4 leading-7 text-muted-foreground">{para}</p>
+            <p key={pi} className="mt-4 text-justify hyphens-auto leading-7 text-muted-foreground">{para}</p>
           ))}
 
           {section.list && section.list.length > 0 && (
@@ -75,7 +75,7 @@ export default function PhilosophyPage() {
                 <h3 className="mt-8 text-xl font-semibold tracking-tight">{sub.heading}</h3>
               )}
               {sub.paragraphs.map((para, pi) => (
-                <p key={pi} className="mt-4 leading-7 text-muted-foreground">{para}</p>
+                <p key={pi} className="mt-4 text-justify hyphens-auto leading-7 text-muted-foreground">{para}</p>
               ))}
               {sub.list && sub.list.length > 0 && (
                 <ul className="mt-4 list-disc space-y-2 pl-6 text-muted-foreground">

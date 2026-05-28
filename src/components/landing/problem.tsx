@@ -28,7 +28,7 @@ export function Problem() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">{it.body}</p>
+                <p className="text-justify text-sm hyphens-auto text-muted-foreground">{it.body}</p>
               </CardContent>
             </Card>
           );

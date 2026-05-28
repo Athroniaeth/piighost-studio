@@ -29,7 +29,7 @@ export function Detector() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">{p.body}</p>
+                <p className="text-justify text-sm hyphens-auto text-muted-foreground">{p.body}</p>
               </CardContent>
             </Card>
           );
