@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 
-const LOCK_MS = 850;
-const MIN_DELTA = 6;
+const LOCK_MS = 650;
+const MIN_DELTA = 2;
 
 function isInsideScrollable(target: EventTarget | null): boolean {
   let el = target instanceof Element ? target : null;
