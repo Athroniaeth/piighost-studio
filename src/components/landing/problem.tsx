@@ -6,17 +6,17 @@ const items = [
   {
     icon: Cloud,
     title: "Hosted clouds leak raw data",
-    body: "OpenAI, Anthropic, and Google give you the best models, but every byte of context, including raw user PII, leaves your jurisdiction.",
+    body: "OpenAI, Anthropic, and Google ship the best models on the market. But every byte of context you send them, including raw user PII, leaves your jurisdiction the moment the request hits the wire. A single prompt becomes a data export, and 'we will redact it later' is not a story that survives a real audit.",
   },
   {
     icon: Cpu,
     title: "Local models trade quality",
-    body: "Self-hosting keeps data in, but you give up capability and take on the cost of running and maintaining the infrastructure.",
+    body: "Self-hosting keeps the data inside your network, but you give up part of the state of the art and you take on the GPU bill, the patching, and the eval pipeline. The privacy gain comes with a permanent operational cost, and the model you can run is rarely the model you wish you were running.",
   },
   {
     icon: Scale,
     title: "Compliance does not wait",
-    body: "GDPR and data-residency rules apply whether or not your stack was designed for them. Sending PII to a third party is a liability.",
+    body: "GDPR, HIPAA, and data-residency rules apply whether or not your stack was built with them in mind. Sending raw PII to a third party is a liability you cannot undo once a request has left, and it forces every later product decision through a legal review.",
   },
 ];
 

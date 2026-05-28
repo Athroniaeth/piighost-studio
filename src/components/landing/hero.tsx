@@ -7,9 +7,9 @@ import { GITHUB_ORG } from "@/lib/site";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden border-b">
+    <section className="relative flex min-h-[calc(100dvh-4rem)] items-center overflow-hidden border-b">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_0%,var(--primary)/12%,transparent)]" />
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-24 lg:grid-cols-2">
+      <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-4 py-16 lg:grid-cols-2">
         <div>
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
             Anonymize PII before it reaches the LLM

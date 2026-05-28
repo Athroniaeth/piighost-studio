@@ -4,13 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { projects } from "@/lib/site";
 
 const GRID_SLOTS = 9;
+const PLACEHOLDER_HASHES = ["2b1", "7c4", "9af", "1e8", "f30"];
 
-function PlaceholderCard() {
+function PlaceholderCard({ hash }: { hash: string }) {
   return (
     <Card className="h-full border-dashed bg-transparent shadow-none opacity-60">
       <CardHeader>
         <CardTitle className="font-mono text-lg text-muted-foreground">
-          piighost-???
+          {`<<PROJECT_NAME:${hash}>>`}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -35,7 +36,7 @@ export function Ecosystem() {
           <ProjectCard key={p.slug} project={p} />
         ))}
         {Array.from({ length: placeholders }).map((_, i) => (
-          <PlaceholderCard key={`ph-${i}`} />
+          <PlaceholderCard key={`ph-${i}`} hash={PLACEHOLDER_HASHES[i % PLACEHOLDER_HASHES.length]} />
         ))}
       </div>
     </Section>
