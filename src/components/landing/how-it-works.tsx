@@ -60,74 +60,77 @@ export function HowItWorks() {
 
         <TabsContent value="detect" className="mt-6 space-y-4">
           <MessageBox label="User message">
-            Hi, this is <Pii>Patrick Dupont</Pii> from <Pii>Acme Corp</Pii>.
-            Could you cancel subscription <Pii>#ACME-9123</Pii>? I will no
-            longer be at <Pii>12 rue de la Paix</Pii> in <Pii>Paris</Pii>{" "}
-            after next month. You can reach me at{" "}
-            <Pii>patrick.dupont@acme.com</Pii> or{" "}
-            <Pii>+33 6 12 34 56 78</Pii>.
+            Hi, this is <Pii>Patrick Dupont</Pii>. Could you forward this to{" "}
+            <Pii>Marie Lambert</Pii> and <Pii>Jean Moreau</Pii>? My email is{" "}
+            <Pii>patrick.dupont@acme.com</Pii>, and you can also cc{" "}
+            <Pii>marie.lambert@acme.com</Pii>. The case ID is{" "}
+            <Pii>#ACME-9123</Pii>.
           </MessageBox>
           <p className="text-sm text-muted-foreground">
             piighost runs your detectors over the message and flags every PII
-            span it finds: names, organizations, addresses, identifiers, phone
-            numbers, anything the model does not need to see. Overlapping
-            detections from multiple detectors are arbitrated by confidence
-            before anything is replaced.
+            span it finds: names, emails, identifiers, anything the model does
+            not need to see. Overlapping detections from multiple detectors
+            are arbitrated by confidence before anything is replaced.
           </p>
         </TabsContent>
 
         <TabsContent value="anonymize" className="mt-6 space-y-4">
           <MessageBox label="From the user">
-            Hi, this is <Pii>Patrick Dupont</Pii> from <Pii>Acme Corp</Pii>.
-            Could you cancel subscription <Pii>#ACME-9123</Pii>? I will no
-            longer be at <Pii>12 rue de la Paix</Pii> in <Pii>Paris</Pii>{" "}
-            after next month. You can reach me at{" "}
-            <Pii>patrick.dupont@acme.com</Pii> or{" "}
-            <Pii>+33 6 12 34 56 78</Pii>.
+            Hi, this is <Pii>Patrick Dupont</Pii>. Could you forward this to{" "}
+            <Pii>Marie Lambert</Pii> and <Pii>Jean Moreau</Pii>? My email is{" "}
+            <Pii>patrick.dupont@acme.com</Pii>, and you can also cc{" "}
+            <Pii>marie.lambert@acme.com</Pii>. The case ID is{" "}
+            <Pii>#ACME-9123</Pii>.
           </MessageBox>
           <div className="flex justify-center">
             <FlowArrow />
           </div>
           <MessageBox label="What the LLM sees">
-            Hi, this is <Token>{"<<PERSON:1>>"}</Token> from{" "}
-            <Token>{"<<ORG:1>>"}</Token>. Could you cancel subscription{" "}
-            <Token>{"<<ID:1>>"}</Token>? I will no longer be at{" "}
-            <Token>{"<<ADDRESS:1>>"}</Token> in{" "}
-            <Token>{"<<LOCATION:1>>"}</Token> after next month. You can reach
-            me at <Token>{"<<EMAIL:1>>"}</Token> or{" "}
-            <Token>{"<<PHONE:1>>"}</Token>.
+            Hi, this is <Token>{"<<PERSON:1>>"}</Token>. Could you forward
+            this to <Token>{"<<PERSON:2>>"}</Token> and{" "}
+            <Token>{"<<PERSON:3>>"}</Token>? My email is{" "}
+            <Token>{"<<EMAIL:1>>"}</Token>, and you can also cc{" "}
+            <Token>{"<<EMAIL:2>>"}</Token>. The case ID is{" "}
+            <Token>{"<<ID:1>>"}</Token>.
           </MessageBox>
           <p className="text-sm text-muted-foreground">
-            Each span is swapped for a stable placeholder. The same person
-            keeps the same identifier across every later message, every tool
-            call, and every retry, so the model never confuses two people for
-            one or one person for two.
+            Each PII value gets a stable counter scoped to its type. The three
+            people in this message become{" "}
+            <Token>{"<<PERSON:1>>"}</Token>, <Token>{"<<PERSON:2>>"}</Token>,
+            and <Token>{"<<PERSON:3>>"}</Token>; the two distinct emails
+            become <Token>{"<<EMAIL:1>>"}</Token> and{" "}
+            <Token>{"<<EMAIL:2>>"}</Token>. The same value keeps the same
+            identifier across every later message, every tool call, and every
+            retry.
           </p>
         </TabsContent>
 
         <TabsContent value="deanonymize" className="mt-6 space-y-4">
           <MessageBox label="LLM response">
-            I have cancelled subscription <Token>{"<<ID:1>>"}</Token> for{" "}
-            <Token>{"<<PERSON:1>>"}</Token>. A confirmation email is on its
-            way to <Token>{"<<EMAIL:1>>"}</Token>, and the address on file at{" "}
-            <Token>{"<<ADDRESS:1>>"}</Token> will be marked inactive on the
-            effective date.
+            I have forwarded your message to{" "}
+            <Token>{"<<PERSON:2>>"}</Token> and{" "}
+            <Token>{"<<PERSON:3>>"}</Token> with the case{" "}
+            <Token>{"<<ID:1>>"}</Token>. A confirmation will be sent to{" "}
+            <Token>{"<<EMAIL:1>>"}</Token> and copied to{" "}
+            <Token>{"<<EMAIL:2>>"}</Token>.
           </MessageBox>
           <div className="flex justify-center">
             <FlowArrow />
           </div>
           <MessageBox label="What the user sees">
-            I have cancelled subscription <Pii>#ACME-9123</Pii> for{" "}
-            <Pii>Patrick Dupont</Pii>. A confirmation email is on its way to{" "}
-            <Pii>patrick.dupont@acme.com</Pii>, and the address on file at{" "}
-            <Pii>12 rue de la Paix</Pii> will be marked inactive on the
-            effective date.
+            I have forwarded your message to <Pii>Marie Lambert</Pii> and{" "}
+            <Pii>Jean Moreau</Pii> with the case <Pii>#ACME-9123</Pii>. A
+            confirmation will be sent to{" "}
+            <Pii>patrick.dupont@acme.com</Pii> and copied to{" "}
+            <Pii>marie.lambert@acme.com</Pii>.
           </MessageBox>
           <p className="text-sm text-muted-foreground">
             Tool calls receive the real values, and the final response is
-            restored before it reaches the user. The model only ever saw
-            placeholders. Your agent code, your tools, and your end users keep
-            working with real data.
+            restored before it reaches the user. Notice the model wrote{" "}
+            <Token>{"<<PERSON:2>>"}</Token> and{" "}
+            <Token>{"<<PERSON:3>>"}</Token>, and piighost mapped each one back
+            to the right name. Your agent code never has to manage that
+            bookkeeping.
           </p>
         </TabsContent>
       </Tabs>
