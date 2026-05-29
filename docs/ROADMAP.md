@@ -53,10 +53,18 @@ shadcn/ui variante base-ui, i18n maison (contexte React + dictionnaires
   sauvegardés (activer/désactiver, réordonner, retirer, éditer via
   `/playground?edit=`), on bascule les étapes (span_resolver / entity_linker /
   entity_resolver entre leur variante par défaut et `disabled`), et on choisit le
-  style de jeton de l'anonymizer (placeholder factory). Export **TOML**
-  (compatible `load_pipeline`) et **Python**.
-  - Spec : `docs/superpowers/specs/2026-05-29-config-playground-v2-design.md`
-  - Plan : `docs/superpowers/plans/2026-05-29-config-playground-v2.md`
+  style de jeton de l'anonymizer (placeholder factory). Le pipeline est dessiné
+  de gauche à droite (un bloc par étape, selects de variantes, aide « ? »).
+  Sauvegarde de la pipeline (modale → localStorage) et export **TOML**
+  (compatible `load_pipeline`) + **Python** (modale, avec téléchargement `.toml`).
+  Un **test live** sous les blocs exécute la pipeline en **approximation
+  navigateur** (détection réelle + résolution/regroupement/anonymisation
+  réimplémentés en JS) et affiche surlignage + texte anonymisé. Le test fidèle
+  (avec ML) reste pour la phase 4 (backend).
+  - Spec : `docs/superpowers/specs/2026-05-29-config-playground-v2-design.md`,
+    `docs/superpowers/specs/2026-05-29-pipeline-live-test-design.md`
+  - Plan : `docs/superpowers/plans/2026-05-29-config-playground-v2.md`,
+    `docs/superpowers/plans/2026-05-29-pipeline-live-test.md`
 
 ## Feuille de route (validée en brainstorming)
 
