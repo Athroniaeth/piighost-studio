@@ -135,6 +135,19 @@ revoit le choix de runtime avant d'investir dans l'UI.
 - La sauvegarde / le hub de configs (roadmap phase 3).
 - Toute notion de config piighost (fichier TOML) — c'est la phase 2.
 
+## Note — avertissements console onnxruntime (filtrés volontairement)
+
+À chaque initialisation d'un modèle GLiNER, onnxruntime-web écrit des
+avertissements bénins dans la console, du type
+`[W:onnxruntime ... VerifyEachNodeIsAssignedToAnEp] Some nodes were not assigned
+to the preferred execution providers ...`. C'est attendu : ORT exécute
+délibérément certaines opérations de forme sur le CPU. Le package `gliner`
+n'expose pas le `logLevel` d'onnxruntime, et en dev Next.js les remonte dans son
+overlay d'erreurs. On les filtre donc explicitement, et **uniquement ces
+lignes-là**, dans `src/lib/onnx-log-filter.ts` (`filterOnnxConsoleNoise`, appelé
+depuis `gliner.ts` avant l'init). C'est du confort de dev ; en production
+statique il n'y a pas d'overlay. À garder en tête : la console est patchée.
+
 ## Conventions
 
 - Pas d'em-dash ni de tournures « LLM » dans le contenu visible ; français avec

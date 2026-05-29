@@ -1,4 +1,5 @@
 import type { Entity } from "./ner";
+import { filterOnnxConsoleNoise } from "./onnx-log-filter";
 
 export type GlinerModelId =
   | "onnx-community/gliner_small-v2.1"
@@ -65,6 +66,8 @@ async function getGliner(model: GlinerModelId) {
   if (existing) return existing;
 
   const created = (async () => {
+    // onnxruntime prints benign node-assignment warnings on init; hide them.
+    filterOnnxConsoleNoise();
     const { Gliner } = await import("gliner");
     const executionProvider = await pickProvider();
     const g = new Gliner({
