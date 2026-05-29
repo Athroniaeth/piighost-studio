@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/copy-button";
 import {
   defaultPipeline,
   defaultPlaceholder,
   PLACEHOLDER_TYPES,
   type ConfigPipeline,
+  type Placeholder,
   type PlaceholderType,
 } from "@/lib/detector-config";
 import { toToml, toPython } from "@/lib/pipeline-export";
@@ -26,6 +28,32 @@ function ExportBox({ title, code }: { title: string; code: string }) {
   );
 }
 
+/** Indicative example of what each token style produces for a PERSON entity.
+ *  The exact format is decided by the piighost placeholder factories; these are
+ *  illustrative, matching the documented strategies. */
+function tokenExample(ph: Placeholder): string {
+  switch (ph.type) {
+    case "label_counter":
+      return "<<PERSON:1>>";
+    case "label_hash":
+      return "<<PERSON:a1b2c3d4>>";
+    case "label":
+      return "<PERSON>";
+    case "mask":
+      return (ph.maskChar || "*").repeat(8);
+    case "redact_counter":
+      return "[REDACT:1]";
+    case "redact_hash":
+      return "[REDACT:a1b2c3d4]";
+    case "redact":
+      return "[REDACT]";
+    case "faker_counter":
+    case "faker_hash":
+    case "faker":
+      return "Jordan Hale";
+  }
+}
+
 function Toggle({ label, on, onToggle }: { label: string; on: boolean; onToggle: () => void }) {
   return (
     <label className="flex cursor-pointer items-center justify-between gap-2 rounded-md bg-muted/40 p-2 text-sm">
@@ -40,6 +68,8 @@ export function ConfigBuilder() {
   const pg = t.playground;
   const [pipeline, setPipeline] = useState<ConfigPipeline>(defaultPipeline());
   const [saved, setSaved] = useState<SavedDetector[]>([]);
+  const [showExport, setShowExport] = useState(false);
+  const [exportTab, setExportTab] = useState<"toml" | "python">("toml");
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -74,6 +104,16 @@ export function ConfigBuilder() {
       [next[i], next[j]] = [next[j], next[i]];
       return { ...p, detectors: next };
     });
+  }
+
+  function downloadToml() {
+    const blob = new Blob([toToml(pipeline)], { type: "application/toml" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${pipeline.name.trim() || "pipeline"}.toml`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   return (
@@ -153,6 +193,10 @@ export function ConfigBuilder() {
                 <option key={ty} value={ty}>{ty}</option>
               ))}
             </select>
+            <p className="text-xs text-muted-foreground">
+              {pg.tokenExample} :{" "}
+              <code className="rounded bg-muted px-1 py-0.5 font-mono">{tokenExample(ph)}</code>
+            </p>
 
             {(ph.type === "label_hash" || ph.type === "redact_hash" || ph.type === "faker_hash") && (
               <label className="flex items-center justify-between gap-2 text-sm">
@@ -198,9 +242,40 @@ export function ConfigBuilder() {
         </section>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <ExportBox title={pg.exportToml} code={toToml(pipeline)} />
-        <ExportBox title={pg.exportPython} code={toPython(pipeline)} />
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => setShowExport((s) => !s)}>
+            {pg.exportTitle}
+          </Button>
+          {showExport && (
+            <Button variant="outline" onClick={downloadToml}>
+              {pg.downloadToml}
+            </Button>
+          )}
+        </div>
+
+        {showExport && (
+          <div className="space-y-2">
+            <div className="flex gap-1">
+              {(["toml", "python"] as const).map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setExportTab(tab)}
+                  className={`rounded-md px-3 py-1 text-xs ${
+                    exportTab === tab ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {tab === "toml" ? pg.exportToml : pg.exportPython}
+                </button>
+              ))}
+            </div>
+            <ExportBox
+              title={exportTab === "toml" ? pg.exportToml : pg.exportPython}
+              code={exportTab === "toml" ? toToml(pipeline) : toPython(pipeline)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

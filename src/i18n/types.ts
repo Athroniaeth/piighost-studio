@@ -158,8 +158,11 @@ export type Dictionary = {
     patternsHint: string;
     pipelineNameLabel: string;
     emptyPipeline: string;
+    exportTitle: string;
     exportToml: string;
     exportPython: string;
+    downloadToml: string;
+    tokenExample: string;
     saveDetector: string;
     detectorName: string;
     savedDetectors: string;
