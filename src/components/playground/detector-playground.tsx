@@ -27,9 +27,7 @@ export function DetectorPlayground() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSaved(list);
     if (found) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setConfig(found.config);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setName(found.name);
     }
   }, []);

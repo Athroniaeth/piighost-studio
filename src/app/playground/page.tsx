@@ -1,7 +1,7 @@
-import { PipelineBuilder } from "@/components/playground/pipeline-builder";
+import { DetectorPlayground } from "@/components/playground/detector-playground";
 
 export const metadata = { title: "Playground" };
 
 export default function PlaygroundPage() {
-  return <PipelineBuilder />;
+  return <DetectorPlayground />;
 }
