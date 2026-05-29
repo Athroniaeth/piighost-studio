@@ -125,7 +125,7 @@ export function DetectorPlayground() {
 
   return (
     <div className="flex w-full flex-col p-4 lg:h-[calc(100dvh-4rem)]">
-      <div className="grid flex-1 gap-4 overflow-hidden lg:min-h-0 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,3.6fr)]">
+      <div className="grid flex-1 gap-4 overflow-hidden lg:min-h-0 lg:grid-cols-[minmax(0,0.6fr)_minmax(0,3.6fr)]">
         {/* Saved-detectors library — deliberately set apart (dashed, muted) from
             the playground itself: it is browser-stored persistence, not the test
             surface. Holds the save form and the saved list. */}
