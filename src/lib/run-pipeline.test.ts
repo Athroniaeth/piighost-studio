@@ -8,6 +8,7 @@ describe("hashValue", () => {
     expect(hashValue("Marie", 8)).toBe(hashValue("Marie", 8));
     expect(hashValue("Marie", 8)).toHaveLength(8);
     expect(hashValue("Marie", 16)).toHaveLength(16);
+    expect(hashValue("Marie", 8)).not.toBe(hashValue("Pierre", 8));
   });
 });
 

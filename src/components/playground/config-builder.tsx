@@ -159,6 +159,7 @@ export function ConfigBuilder() {
   const [testSnapshot, setTestSnapshot] = useState("");
   const testColors = useMemo(() => assignLabelColors(testEntities.map((e) => e.label)), [testEntities]);
   const hasEnabledDetector = pipeline.detectors.some((d) => d.enabled && d.config.type !== "llm");
+  const hasEnabledLlm = pipeline.detectors.some((d) => d.enabled && d.config.type === "llm");
   // The shown result is stale if the pipeline or text changed since the run.
   const testStale =
     testStatus === "done" && testSnapshot !== JSON.stringify({ pipeline, text: testText });
@@ -406,6 +407,9 @@ export function ConfigBuilder() {
             </Button>
             {!hasEnabledDetector && (
               <span className="text-xs text-muted-foreground">{pg.noEnabledDetectors}</span>
+            )}
+            {hasEnabledLlm && (
+              <span className="text-xs text-muted-foreground">{pg.llmDeploymentNote}</span>
             )}
             {testStale && <span className="text-xs text-amber-600">{pg.staleNote}</span>}
           </div>
