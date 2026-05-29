@@ -4,7 +4,15 @@ import { useMemo, useState, type ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EntityHighlight } from "@/components/playground/entity-highlight";
-import { loadNer, runNer, type Entity, type ModelId, type ProgressEvent } from "@/lib/ner";
+import {
+  loadNer,
+  runNer,
+  sortEntities,
+  type Entity,
+  type EntitySort,
+  type ModelId,
+  type ProgressEvent,
+} from "@/lib/ner";
 import { loadGliner, runGliner, type GlinerModelId } from "@/lib/gliner";
 import { parseLabels, assignLabelColors, labelStyle } from "@/lib/labels";
 import { useT } from "@/i18n/use-t";
@@ -74,6 +82,7 @@ export function NerPlayground() {
   );
   // Wall-clock of the last inference (the run, not the model download), in ms.
   const [durationMs, setDurationMs] = useState<number | null>(null);
+  const [sort, setSort] = useState<EntitySort>("appearance");
 
   // Threshold and label filters apply live, without re-running the model.
   const entities = useMemo(
@@ -87,6 +96,9 @@ export function NerPlayground() {
     () => assignLabelColors(allEntities.map((e) => e.label)),
     [allEntities],
   );
+
+  // The list is sortable; the highlight always follows text position regardless.
+  const sortedEntities = useMemo(() => sortEntities(entities, sort), [entities, sort]);
 
   const selectedModel = MODELS.find((m) => m.id === model) ?? MODELS[0];
   const isGliner = selectedModel.family === "gliner";
@@ -306,8 +318,24 @@ export function NerPlayground() {
           ) : entities.length === 0 ? (
             <p className="text-sm text-muted-foreground">{pg.noEntities}</p>
           ) : (
-            <ul className="space-y-2">
-              {entities.map((e, i) => (
+            <>
+              <div className="mb-3 flex shrink-0 items-center gap-2">
+                <label className="text-xs text-muted-foreground" htmlFor="entity-sort">
+                  {pg.sortLabel}
+                </label>
+                <select
+                  id="entity-sort"
+                  className="rounded-md border bg-background px-2 py-1 text-xs"
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value as EntitySort)}
+                >
+                  <option value="appearance">{pg.sortByAppearance}</option>
+                  <option value="scoreDesc">{pg.sortByScoreDesc}</option>
+                  <option value="scoreAsc">{pg.sortByScoreAsc}</option>
+                </select>
+              </div>
+              <ul className="space-y-2">
+                {sortedEntities.map((e, i) => (
                 <li
                   key={`${e.start}-${i}`}
                   className="flex items-center justify-between gap-2 rounded-md bg-muted/40 p-2"
@@ -320,8 +348,9 @@ export function NerPlayground() {
                     {(e.score * 100).toFixed(0)}%
                   </span>
                 </li>
-              ))}
-            </ul>
+                ))}
+              </ul>
+            </>
           )}
         </Region>
       </div>

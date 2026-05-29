@@ -106,6 +106,22 @@ export function toSegments(text: string, entities: Entity[]): Segment[] {
   return segments;
 }
 
+export type EntitySort = "appearance" | "scoreDesc" | "scoreAsc";
+
+/** Return a new array of entities ordered for display: by position in the text
+ *  ("appearance"), or by score descending / ascending. Does not mutate input. */
+export function sortEntities(entities: Entity[], mode: EntitySort): Entity[] {
+  const arr = [...entities];
+  switch (mode) {
+    case "scoreDesc":
+      return arr.sort((a, b) => b.score - a.score);
+    case "scoreAsc":
+      return arr.sort((a, b) => a.score - b.score);
+    default:
+      return arr.sort((a, b) => a.start - b.start);
+  }
+}
+
 export type ModelId =
   | "Xenova/bert-base-multilingual-cased-ner-hrl"
   | "Xenova/bert-base-NER";

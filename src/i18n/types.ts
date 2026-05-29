@@ -137,6 +137,10 @@ export type Dictionary = {
     resultsTitle: string;
     inferenceTime: string;
     reqPerSecond: string;
+    sortLabel: string;
+    sortByAppearance: string;
+    sortByScoreDesc: string;
+    sortByScoreAsc: string;
     noEntities: string;
     columns: { text: string; label: string; score: string };
     errorTitle: string;
