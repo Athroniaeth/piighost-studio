@@ -269,6 +269,8 @@ export const en: Dictionary = {
       "The first run downloads the model to your browser (tens to a few hundred MB). It is cached afterwards, so later runs are instant.",
     edit: "Edit",
     resultsTitle: "Detected entities",
+    inferenceTime: "Inference",
+    reqPerSecond: "req/s",
     noEntities: "No entities detected.",
     columns: { text: "Text", label: "Label", score: "Score" },
     errorTitle: "Something went wrong",

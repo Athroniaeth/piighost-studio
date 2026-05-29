@@ -135,6 +135,8 @@ export type Dictionary = {
     firstLoadNote: string;
     edit: string;
     resultsTitle: string;
+    inferenceTime: string;
+    reqPerSecond: string;
     noEntities: string;
     columns: { text: string; label: string; score: string };
     errorTitle: string;

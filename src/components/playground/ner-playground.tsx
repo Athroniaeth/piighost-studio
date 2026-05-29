@@ -72,6 +72,8 @@ export function NerPlayground() {
   const [glinerLabels, setGlinerLabels] = useState(
     MODELS.find((m) => m.id === model)?.defaultLabels ?? "",
   );
+  // Wall-clock of the last inference (the run, not the model download), in ms.
+  const [durationMs, setDurationMs] = useState<number | null>(null);
 
   // Threshold and label filters apply live, without re-running the model.
   const entities = useMemo(
@@ -94,11 +96,14 @@ export function NerPlayground() {
     try {
       setStatus("loading");
       setProgress(0);
+      setDurationMs(null);
       let result: Entity[];
+      let started: number;
       if (selectedModel.family === "gliner") {
         const gid = model as GlinerModelId;
         await loadGliner(gid);
         setStatus("analyzing");
+        started = performance.now();
         result = await runGliner(gid, parseLabels(glinerLabels), text);
       } else {
         const cid = model as ModelId;
@@ -108,8 +113,11 @@ export function NerPlayground() {
           }
         });
         setStatus("analyzing");
+        started = performance.now();
         result = await runNer(cid, text);
       }
+      // Time only the inference, not the one-time model download.
+      setDurationMs(performance.now() - started);
       setAllEntities(result);
       setAnalyzed(text);
       setStatus("done");
@@ -153,6 +161,7 @@ export function NerPlayground() {
                   // A different model can't have produced the showing results.
                   setAllEntities([]);
                   setAnalyzed("");
+                  setDurationMs(null);
                   setStatus("idle");
                 }}
               >
@@ -286,6 +295,12 @@ export function NerPlayground() {
 
         {/* 3. Entities */}
         <Region title={pg.resultsTitle}>
+          {status === "done" && durationMs !== null && (
+            <p className="mb-3 shrink-0 text-xs text-muted-foreground">
+              {pg.inferenceTime}: {Math.round(durationMs)} ms · ~
+              {(1000 / durationMs).toFixed(1)} {pg.reqPerSecond}
+            </p>
+          )}
           {status !== "done" ? (
             <p className="text-sm text-muted-foreground">{pg.emptyHint}</p>
           ) : entities.length === 0 ? (

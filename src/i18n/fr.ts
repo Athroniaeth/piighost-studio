@@ -270,6 +270,8 @@ export const fr: Dictionary = {
       "Le premier lancement télécharge le modèle dans votre navigateur (de quelques dizaines à quelques centaines de Mo). Il est ensuite mis en cache, donc les analyses suivantes sont instantanées.",
     edit: "Modifier",
     resultsTitle: "Entités détectées",
+    inferenceTime: "Inférence",
+    reqPerSecond: "req/s",
     noEntities: "Aucune entité détectée.",
     columns: { text: "Texte", label: "Label", score: "Score" },
     errorTitle: "Une erreur est survenue",
