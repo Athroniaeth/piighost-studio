@@ -90,6 +90,10 @@ export function toSegments(text: string, entities: Entity[]): Segment[] {
   const segments: Segment[] = [];
   let cursor = 0;
   for (const entity of sorted) {
+    // Skip entities that overlap one already emitted. Classic BIO grouping never
+    // overlaps, but GLiNER can return overlapping spans across labels, which
+    // would otherwise produce garbled, doubled-up highlights.
+    if (entity.start < cursor) continue;
     if (entity.start > cursor) {
       segments.push({ value: text.slice(cursor, entity.start) });
     }

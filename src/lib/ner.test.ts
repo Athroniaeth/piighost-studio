@@ -98,4 +98,11 @@ describe("toSegments", () => {
     const segs = toSegments(text, [e("Ann", "PER", 8, 11), e("Bob", "PER", 0, 3)]);
     expect(segs.map((s) => s.value)).toEqual(["Bob", " and ", "Ann"]);
   });
+
+  it("drops a later entity overlapping one already emitted", () => {
+    // GLiNER can return overlapping spans (e.g. "Bob" and "Bob Smith").
+    const text = "Bob Smith waved";
+    const segs = toSegments(text, [e("Bob Smith", "person", 0, 9), e("Smith", "person", 4, 9)]);
+    expect(segs.map((s) => s.value)).toEqual(["Bob Smith", " waved"]);
+  });
 });
