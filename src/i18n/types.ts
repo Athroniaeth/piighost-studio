@@ -185,6 +185,7 @@ export type Dictionary = {
     anonymizedLabel: string;
     approximationNote: string;
     noEnabledDetectors: string;
+    staleNote: string;
     savePipeline: string;
     save: string;
     cancel: string;

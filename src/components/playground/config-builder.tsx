@@ -156,8 +156,12 @@ export function ConfigBuilder() {
   const [testEntities, setTestEntities] = useState<Entity[]>([]);
   const [testAnonymized, setTestAnonymized] = useState("");
   const [testAnalyzed, setTestAnalyzed] = useState("");
+  const [testSnapshot, setTestSnapshot] = useState("");
   const testColors = useMemo(() => assignLabelColors(testEntities.map((e) => e.label)), [testEntities]);
   const hasEnabledDetector = pipeline.detectors.some((d) => d.enabled && d.config.type !== "llm");
+  // The shown result is stale if the pipeline or text changed since the run.
+  const testStale =
+    testStatus === "done" && testSnapshot !== JSON.stringify({ pipeline, text: testText });
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -211,6 +215,7 @@ export function ConfigBuilder() {
       setTestEntities(result.entities);
       setTestAnonymized(result.anonymized);
       setTestAnalyzed(testText);
+      setTestSnapshot(JSON.stringify({ pipeline, text: testText }));
       setTestStatus("done");
     } catch (err) {
       console.error("pipeline test failed", err);
@@ -386,6 +391,7 @@ export function ConfigBuilder() {
           </div>
           <textarea
             className="min-h-32 w-full flex-1 resize-none rounded-lg border bg-background p-3 text-sm"
+            aria-label={pg.liveTestTitle}
             value={testText}
             disabled={testStatus === "running"}
             onChange={(e) => setTestText(e.target.value)}
@@ -401,6 +407,7 @@ export function ConfigBuilder() {
             {!hasEnabledDetector && (
               <span className="text-xs text-muted-foreground">{pg.noEnabledDetectors}</span>
             )}
+            {testStale && <span className="text-xs text-amber-600">{pg.staleNote}</span>}
           </div>
         </section>
 

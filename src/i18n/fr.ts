@@ -325,6 +325,7 @@ export const fr: Dictionary = {
     anonymizedLabel: "Texte anonymisé",
     approximationNote: "Approximation navigateur. Le vrai moteur piighost peut différer sur les cas limites.",
     noEnabledDetectors: "Activez au moins un détecteur pour tester la pipeline.",
+    staleNote: "Pipeline modifiée, relancez pour mettre à jour.",
     savePipeline: "Sauvegarder la pipeline",
     save: "Sauvegarder",
     cancel: "Annuler",
