@@ -30,6 +30,19 @@ shadcn/ui variante base-ui, i18n maison (contexte React + dictionnaires
   et `Xenova/bert-base-NER` (labels figés PER/ORG/LOC/MISC).
   - Spec : `docs/superpowers/specs/2026-05-29-ner-playground-design.md`
   - Plan : `docs/superpowers/plans/2026-05-29-ner-playground.md`
+- **GLiNER zero-shot : intégré au playground.** Deux modèles GLiNER ajoutés au
+  sélecteur (groupé « NER classique » / « GLiNER (zero-shot) ») :
+  `onnx-community/gliner_small-v2.1` (~183 Mo, généraliste) et
+  `onnx-community/gliner_multi_pii-v1` (~349 Mo, spécialisé PII). En mode GLiNER,
+  les cases de labels figés laissent place à un champ de labels libres saisis par
+  l'utilisateur. Runtime via le package `gliner` chargé dynamiquement (code-split,
+  téléchargé seulement à l'usage) ; modèle et WASM servis depuis des CDN, sans
+  hébergement. Deux ajustements nécessaires côté bundler (voir commits) : alias
+  Turbopack `fs`/`path` pour @xenova/transformers, et `modelType: "span-level"`.
+  Les avertissements console bénins d'onnxruntime sont filtrés volontairement
+  (`src/lib/onnx-log-filter.ts`) ; la console est donc patchée, voir la spec.
+  - Spec : `docs/superpowers/specs/2026-05-29-gliner-zero-shot-design.md`
+  - Plan : `docs/superpowers/plans/2026-05-29-gliner-zero-shot.md`
 
 ## Feuille de route (validée en brainstorming)
 

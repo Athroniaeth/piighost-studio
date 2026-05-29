@@ -115,7 +115,16 @@ export type Dictionary = {
   playground: {
     configTitle: string;
     modelLabel: string;
-    models: { multilingual: string; english: string };
+    models: {
+      multilingual: string;
+      english: string;
+      glinerSmall: string;
+      glinerPii: string;
+    };
+    modelGroups: { classic: string; gliner: string };
+    glinerLabelsLabel: string;
+    glinerLabelsPlaceholder: string;
+    glinerLabelsHint: string;
     labelsLabel: string;
     thresholdLabel: string;
     inputLabel: string;
@@ -124,8 +133,14 @@ export type Dictionary = {
     analyzing: string;
     loadingModel: string;
     firstLoadNote: string;
-    outputTitle: string;
+    edit: string;
     resultsTitle: string;
+    inferenceTime: string;
+    reqPerSecond: string;
+    sortLabel: string;
+    sortByAppearance: string;
+    sortByScoreDesc: string;
+    sortByScoreAsc: string;
     noEntities: string;
     columns: { text: string; label: string; score: string };
     errorTitle: string;

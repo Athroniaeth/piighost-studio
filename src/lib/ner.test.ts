@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { groupEntities, toSegments, type RawToken } from "./ner";
+import { groupEntities, toSegments, sortEntities, type RawToken, type Entity } from "./ner";
 
 // transformers.js token-classification returns no offsets, only a BIO tag,
 // a score, and a WordPiece `word` (subwords prefixed with "##").
@@ -97,5 +97,41 @@ describe("toSegments", () => {
     const text = "Bob and Ann";
     const segs = toSegments(text, [e("Ann", "PER", 8, 11), e("Bob", "PER", 0, 3)]);
     expect(segs.map((s) => s.value)).toEqual(["Bob", " and ", "Ann"]);
+  });
+
+  it("drops a later entity overlapping one already emitted", () => {
+    // GLiNER can return overlapping spans (e.g. "Bob" and "Bob Smith").
+    const text = "Bob Smith waved";
+    const segs = toSegments(text, [e("Bob Smith", "person", 0, 9), e("Smith", "person", 4, 9)]);
+    expect(segs.map((s) => s.value)).toEqual(["Bob Smith", " waved"]);
+  });
+});
+
+describe("sortEntities", () => {
+  const mk = (start: number, score: number): Entity => ({
+    text: "x",
+    label: "PER",
+    score,
+    start,
+    end: start + 1,
+  });
+  const items = [mk(10, 0.3), mk(2, 0.9), mk(5, 0.6)];
+
+  it("orders by position for appearance", () => {
+    expect(sortEntities(items, "appearance").map((e) => e.start)).toEqual([2, 5, 10]);
+  });
+
+  it("orders by score descending", () => {
+    expect(sortEntities(items, "scoreDesc").map((e) => e.score)).toEqual([0.9, 0.6, 0.3]);
+  });
+
+  it("orders by score ascending", () => {
+    expect(sortEntities(items, "scoreAsc").map((e) => e.score)).toEqual([0.3, 0.6, 0.9]);
+  });
+
+  it("does not mutate the input array", () => {
+    const before = items.map((e) => e.start);
+    sortEntities(items, "scoreDesc");
+    expect(items.map((e) => e.start)).toEqual(before);
   });
 });

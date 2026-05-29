@@ -90,6 +90,10 @@ export function toSegments(text: string, entities: Entity[]): Segment[] {
   const segments: Segment[] = [];
   let cursor = 0;
   for (const entity of sorted) {
+    // Skip entities that overlap one already emitted. Classic BIO grouping never
+    // overlaps, but GLiNER can return overlapping spans across labels, which
+    // would otherwise produce garbled, doubled-up highlights.
+    if (entity.start < cursor) continue;
     if (entity.start > cursor) {
       segments.push({ value: text.slice(cursor, entity.start) });
     }
@@ -100,6 +104,22 @@ export function toSegments(text: string, entities: Entity[]): Segment[] {
     segments.push({ value: text.slice(cursor) });
   }
   return segments;
+}
+
+export type EntitySort = "appearance" | "scoreDesc" | "scoreAsc";
+
+/** Return a new array of entities ordered for display: by position in the text
+ *  ("appearance"), or by score descending / ascending. Does not mutate input. */
+export function sortEntities(entities: Entity[], mode: EntitySort): Entity[] {
+  const arr = [...entities];
+  switch (mode) {
+    case "scoreDesc":
+      return arr.sort((a, b) => b.score - a.score);
+    case "scoreAsc":
+      return arr.sort((a, b) => a.score - b.score);
+    default:
+      return arr.sort((a, b) => a.start - b.start);
+  }
 }
 
 export type ModelId =
@@ -148,6 +168,9 @@ async function getPipeline(model: ModelId, onProgress?: (e: ProgressEvent) => vo
     return pipeline("token-classification", model, {
       progress_callback: onProgress,
       device,
+      // Quantized int8 weights (model_quantized.onnx): ~178 MB / ~109 MB instead
+      // of the 700+ MB fp32, and faster inference. Matches the stated sizes.
+      dtype: "q8",
     });
   })();
 
