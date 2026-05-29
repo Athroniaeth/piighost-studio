@@ -21,6 +21,11 @@ describe("serialize/parse", () => {
     expect(parse(null)).toEqual([]);
     expect(parse("not json")).toEqual([]);
   });
+
+  it("drops malformed entries", () => {
+    const raw = JSON.stringify([{ name: "ok", config: cfg }, { name: 5 }, { config: cfg }, 42]);
+    expect(parse(raw)).toEqual([{ name: "ok", config: cfg }]);
+  });
 });
 
 describe("localStorage store", () => {

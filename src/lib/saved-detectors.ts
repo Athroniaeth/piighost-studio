@@ -9,12 +9,23 @@ export function serialize(list: SavedDetector[]): string {
   return JSON.stringify(list);
 }
 
-/** Parse a JSON string (or null) into a list; tolerant of garbage/missing. */
+function isSavedDetector(x: unknown): x is SavedDetector {
+  return (
+    typeof x === "object" &&
+    x !== null &&
+    typeof (x as SavedDetector).name === "string" &&
+    typeof (x as SavedDetector).config === "object" &&
+    (x as SavedDetector).config !== null
+  );
+}
+
+/** Parse a JSON string (or null) into a list; tolerant of garbage/missing.
+ *  Malformed entries are dropped rather than trusted. */
 export function parse(raw: string | null): SavedDetector[] {
   if (!raw) return [];
   try {
     const value = JSON.parse(raw);
-    return Array.isArray(value) ? (value as SavedDetector[]) : [];
+    return Array.isArray(value) ? value.filter(isSavedDetector) : [];
   } catch {
     return [];
   }

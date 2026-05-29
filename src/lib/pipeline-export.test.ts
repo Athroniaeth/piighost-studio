@@ -38,6 +38,11 @@ describe("toToml", () => {
     expect((toml.match(/\[\[detectors\]\]/g) ?? []).length).toBe(2);
   });
 
+  it("emits the pipeline detector name in its [[detectors]] block", () => {
+    const toml = toToml(pipeline);
+    expect(toml).toContain('name = "emails"');
+  });
+
   it("writes regex patterns as literal strings with a basic-string fallback", () => {
     const toml = toToml(pipeline);
     expect(toml).toContain("EMAIL = '\\w+@\\w+'");

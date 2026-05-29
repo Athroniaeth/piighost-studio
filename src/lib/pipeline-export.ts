@@ -14,9 +14,10 @@ function patternsInline(patterns: Record<string, string>): string {
   return `{ ${entries.join(", ")} }`;
 }
 
-function detectorToml(d: DetectorConfig): string {
+function detectorToml(d: DetectorConfig, name?: string): string {
   const lines = ["[[detectors]]", `type = "${d.type}"`];
-  if (d.name) lines.push(`name = ${basicString(d.name)}`);
+  const label = name ?? d.name;
+  if (label) lines.push(`name = ${basicString(label)}`);
   switch (d.type) {
     case "regex":
       lines.push(`patterns = ${patternsInline(d.patterns)}`);
@@ -44,7 +45,7 @@ function detectorToml(d: DetectorConfig): string {
 }
 
 function placeholderToml(p: Placeholder): string {
-  const lines = [`placeholder_factory.type = "${p.type}"`];
+  const lines = [`placeholder_factory.type = ${basicString(p.type)}`];
   if (p.type === "label_hash" || p.type === "redact_hash" || p.type === "faker_hash") {
     lines.push(`placeholder_factory.hash_length = ${p.hashLength}`);
   }
@@ -64,7 +65,7 @@ export function toToml(pipeline: ConfigPipeline): string {
     `[pipeline]\nname = ${basicString(pipeline.name)}\nschema_version = 1`,
   ];
   for (const d of pipeline.detectors) {
-    if (d.enabled) parts.push(detectorToml(d.config));
+    if (d.enabled) parts.push(detectorToml(d.config, d.name));
   }
   parts.push(`[span_resolver]\ntype = "${pipeline.spanResolver ? "confidence" : "disabled"}"`);
   parts.push(`[entity_linker]\ntype = "${pipeline.entityLinker ? "exact" : "disabled"}"`);
