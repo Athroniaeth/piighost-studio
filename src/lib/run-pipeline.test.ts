@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { hashValue, assignToken, createTokenContext } from "./run-pipeline";
+import { hashValue, assignToken, createTokenContext, assemblePipeline } from "./run-pipeline";
+import { defaultPipeline, type ConfigPipeline } from "./detector-config";
+import type { Entity } from "./ner";
 
 describe("hashValue", () => {
   it("is deterministic and respects the length", () => {
@@ -38,5 +40,49 @@ describe("assignToken", () => {
     const ctx = createTokenContext();
     const tok = assignToken({ type: "label_hash", hashLength: 8 }, "PER", "Marie", ctx);
     expect(tok).toBe(`<<PER:${hashValue("Marie", 8)}>>`);
+  });
+});
+
+const e = (text: string, label: string, start: number, score = 1): Entity => ({
+  text,
+  label,
+  score,
+  start,
+  end: start + text.length,
+});
+
+describe("assemblePipeline", () => {
+  const base: ConfigPipeline = { ...defaultPipeline(), name: "t" };
+  const text = "Marie called Marie and Lyon";
+
+  it("links repeats of the same value to the same token (label_counter)", () => {
+    const out = assemblePipeline([e("Marie", "PER", 0), e("Marie", "PER", 13), e("Lyon", "LOC", 23)], base, text);
+    expect(out.anonymized).toBe("<<PER:1>> called <<PER:1>> and <<LOC:1>>");
+  });
+
+  it("gives each occurrence its own token when linking and resolving are disabled", () => {
+    const cfg = { ...base, entityLinker: "disabled" as const, entityResolver: "disabled" as const };
+    const out = assemblePipeline([e("Marie", "PER", 0), e("Marie", "PER", 13)], cfg, text);
+    expect(out.anonymized).toBe("<<PER:1>> called <<PER:2>> and Lyon");
+  });
+
+  it("groups case variants when the resolver is fuzzy", () => {
+    const cfg = { ...base, entityResolver: "fuzzy" as const };
+    const out = assemblePipeline([e("Marie", "PER", 0), e("marie", "PER", 13)], cfg, text);
+    expect(out.anonymized).toBe("<<PER:1>> called <<PER:1>> and Lyon");
+  });
+
+  it("drops the lower-scoring span when two overlap", () => {
+    const overlap = "Cyberdyne Systems";
+    const dets = [e("Cyberdyne", "ORG", 0, 0.6), e("Cyberdyne Systems", "ORG", 0, 0.9)];
+    const out = assemblePipeline(dets, { ...base, name: "o" }, overlap);
+    expect(out.entities).toHaveLength(1);
+    expect(out.entities[0].text).toBe("Cyberdyne Systems");
+  });
+
+  it("keeps overlaps when the span resolver is disabled", () => {
+    const dets = [e("ab", "X", 0, 0.6), e("abc", "X", 0, 0.9)];
+    const out = assemblePipeline(dets, { ...base, spanResolver: "disabled" as const }, "abc");
+    expect(out.entities).toHaveLength(2);
   });
 });

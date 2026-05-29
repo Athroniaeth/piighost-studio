@@ -53,3 +53,54 @@ export function assignToken(
       return "<<REDACT>>";
   }
 }
+
+/** Keep non-overlapping spans, preferring higher score; disabled keeps all. */
+function resolveSpans(entities: Entity[], mode: ConfigPipeline["spanResolver"]): Entity[] {
+  if (mode === "disabled") {
+    return [...entities].sort((a, b) => a.start - b.start);
+  }
+  const byScore = [...entities].sort((a, b) => b.score - a.score);
+  const kept: Entity[] = [];
+  for (const cand of byScore) {
+    const overlaps = kept.some((k) => cand.start < k.end && k.start < cand.end);
+    if (!overlaps) kept.push(cand);
+  }
+  return kept.sort((a, b) => a.start - b.start);
+}
+
+/** Apply the non-detector pipeline stages (approximate) to a set of detections:
+ *  resolve overlaps, group entities that should share a placeholder, then build
+ *  the anonymized text. Returns the kept entities (for highlighting) and the
+ *  anonymized text. */
+export function assemblePipeline(
+  detections: Entity[],
+  pipeline: ConfigPipeline,
+  text: string,
+): { entities: Entity[]; anonymized: string } {
+  const kept = resolveSpans(detections, pipeline.spanResolver);
+  const grouping = !(pipeline.entityLinker === "disabled" && pipeline.entityResolver === "disabled");
+  const norm = (v: string) => (pipeline.entityResolver === "fuzzy" ? v.toLowerCase().trim() : v);
+
+  const ctx = createTokenContext();
+  const groupToken = new Map<string, string>();
+  const tokenFor = (entity: Entity, index: number): string => {
+    const key = grouping ? `${entity.label} ${norm(entity.text)}` : `i:${index}`;
+    let token = groupToken.get(key);
+    if (token === undefined) {
+      token = assignToken(pipeline.placeholder, entity.label, entity.text, ctx);
+      groupToken.set(key, token);
+    }
+    return token;
+  };
+
+  let cursor = 0;
+  let anonymized = "";
+  kept.forEach((entity, index) => {
+    if (entity.start < cursor) return; // overlap leftover (only when resolver disabled)
+    anonymized += text.slice(cursor, entity.start) + tokenFor(entity, index);
+    cursor = entity.end;
+  });
+  anonymized += text.slice(cursor);
+
+  return { entities: kept, anonymized };
+}
