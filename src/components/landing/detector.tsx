@@ -1,11 +1,11 @@
 "use client";
 
-import { MessageSquare, FileText, Table } from "lucide-react";
+import { MessageSquare, FileText, Table, Terminal } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Section } from "@/components/section";
 import { useT } from "@/i18n/use-t";
 
-const icons = [MessageSquare, FileText, Table];
+const icons = [MessageSquare, FileText, Table, Terminal];
 
 export function Detector() {
   const { t } = useT();
@@ -15,7 +15,7 @@ export function Detector() {
       title={t.detector.title}
       description={t.detector.description}
     >
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="mx-auto grid max-w-4xl gap-6 sm:grid-cols-2">
         {t.detector.items.map((p, i) => {
           const Icon = icons[i];
           return (

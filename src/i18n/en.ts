@@ -168,6 +168,10 @@ export const en: Dictionary = {
         title: "Compliance does not wait",
         body: "GDPR, HIPAA, and data-residency rules apply whether or not your stack was built with them in mind. Sending raw PII to a third party is a liability you cannot undo once a request has left, and it forces every later product decision through a legal review.",
       },
+      {
+        title: "Bans throw away the upside",
+        body: "Some teams respond by banning hosted LLMs outright. That protects the data, but it also forfeits the productivity gains everyone else is capturing, and people route around the ban anyway by pasting work into personal accounts the company cannot see.",
+      },
     ],
   },
   howItWorks: {
@@ -214,6 +218,10 @@ export const en: Dictionary = {
       {
         title: "Structured forms",
         body: "API payloads, CSVs, exports. Sub-millisecond, deterministic, auditable. A pure regex pipeline with an exhaustive ruleset, no model in the loop, and a placeholder format your downstream systems can parse.",
+      },
+      {
+        title: "Code and logs",
+        body: "Debugging assistants, log triage, incident bots. Stack traces and log lines carry secrets, tokens, internal hostnames, and user records. A regex-first pipeline strips credentials and identifiers, with custom detectors for your own ID formats, before anything reaches the model.",
       },
     ],
   },

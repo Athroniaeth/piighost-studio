@@ -17,6 +17,7 @@ export function QuickStart({
       eyebrow={t.quickStart.eyebrow}
       title={t.quickStart.title}
       description={t.quickStart.description}
+      centerDescription
     >
       <div className="mx-auto grid max-w-3xl gap-4">
         {installBlock}

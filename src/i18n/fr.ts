@@ -168,6 +168,10 @@ export const fr: Dictionary = {
         title: "La conformité n'attend pas",
         body: "Le RGPD, HIPAA et les règles de résidence des données s'appliquent que votre stack ait été conçu avec elles ou non. Envoyer des données personnelles brutes à un tiers est une responsabilité que vous ne pouvez pas effacer une fois la requête partie, et cela soumet chaque décision produit ultérieure à une revue juridique.",
       },
+      {
+        title: "Interdire, c'est renoncer aux gains",
+        body: "Certaines équipes réagissent en interdisant purement et simplement les LLM hébergés. Cela protège les données, mais cela renonce aussi aux gains de productivité que tous les autres captent, et les gens contournent l'interdiction de toute façon en collant leur travail dans des comptes personnels que l'entreprise ne voit pas.",
+      },
     ],
   },
   howItWorks: {
@@ -214,6 +218,10 @@ export const fr: Dictionary = {
       {
         title: "Formulaires structurés",
         body: "Charges utiles d'API, CSV, exports. Sous la milliseconde, déterministe, auditable. Un pipeline regex pur avec un jeu de règles exhaustif, aucun modèle dans la boucle, et un format de jeton que vos systèmes aval peuvent analyser.",
+      },
+      {
+        title: "Code et journaux",
+        body: "Assistants de débogage, tri des journaux, bots d'incident. Les traces d'exécution et les lignes de journaux contiennent des secrets, des jetons, des noms d'hôtes internes et des enregistrements utilisateur. Un pipeline d'abord à base d'expressions régulières retire les identifiants et les secrets, avec des détecteurs sur mesure pour vos propres formats d'identifiants, avant que quoi que ce soit n'atteigne le modèle.",
       },
     ],
   },

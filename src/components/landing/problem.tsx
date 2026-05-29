@@ -1,11 +1,11 @@
 "use client";
 
-import { Cloud, Cpu, Scale } from "lucide-react";
+import { Cloud, Cpu, Scale, Ban } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Section } from "@/components/section";
 import { useT } from "@/i18n/use-t";
 
-const icons = [Cloud, Cpu, Scale];
+const icons = [Cloud, Cpu, Scale, Ban];
 
 export function Problem() {
   const { t } = useT();
@@ -14,7 +14,7 @@ export function Problem() {
       eyebrow={t.problem.eyebrow}
       title={t.problem.title}
     >
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="mx-auto grid max-w-4xl gap-6 sm:grid-cols-2">
         {t.problem.items.map((it, i) => {
           const Icon = icons[i];
           return (

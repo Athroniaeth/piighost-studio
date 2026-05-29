@@ -78,7 +78,7 @@ export function AnonymizeFlow() {
   }, []);
 
   return (
-    <div className="rounded-xl border bg-card p-6 shadow-sm sm:p-8">
+    <div className="mx-auto w-full max-w-md rounded-xl border bg-card p-6 shadow-sm sm:p-8">
       <p className="font-mono text-base leading-relaxed sm:text-lg">
         {SEGMENTS.map((seg, i) => {
           if (seg.kind === "text") return <span key={i}>{seg.value}</span>;

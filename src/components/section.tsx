@@ -5,12 +5,14 @@ export function Section({
   eyebrow,
   title,
   description,
+  centerDescription,
   children,
 }: {
   id?: string;
   eyebrow?: string;
   title?: string;
   description?: string;
+  centerDescription?: boolean;
   children?: ReactNode;
 }) {
   return (
@@ -20,7 +22,7 @@ export function Section({
     >
       <div className="mx-auto w-full max-w-6xl px-4 py-16">
       {(eyebrow || title || description) && (
-        <div className="mx-auto mb-12 max-w-2xl">
+        <div className="mb-12">
           {(eyebrow || title) && (
             <div className="text-center">
               {eyebrow && (
@@ -28,11 +30,23 @@ export function Section({
                   {eyebrow}
                 </p>
               )}
-              {title && <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>}
+              {title && (
+                <h2 className="mx-auto max-w-5xl text-balance text-3xl font-bold tracking-tight sm:text-4xl">
+                  {title}
+                </h2>
+              )}
             </div>
           )}
           {description && (
-            <p className="mt-4 text-justify hyphens-auto text-muted-foreground">{description}</p>
+            <p
+              className={
+                centerDescription
+                  ? "mx-auto mt-4 max-w-2xl text-center text-muted-foreground"
+                  : "mx-auto mt-4 max-w-2xl text-justify hyphens-auto text-muted-foreground"
+              }
+            >
+              {description}
+            </p>
           )}
         </div>
       )}

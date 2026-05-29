@@ -138,6 +138,21 @@
   }
 }
 
+/* Scale the whole UI up on large, high-resolution displays (e.g. a 1440p
+   27" screen at native scaling), where 16px feels too small. Everything is
+   sized in rem, so bumping the root font size acts like a browser zoom. */
+@media (min-width: 1920px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 2560px) {
+  html {
+    font-size: 21px;
+  }
+}
+
 .shiki,
 .shiki span {
   color: var(--shiki-light) !important;
