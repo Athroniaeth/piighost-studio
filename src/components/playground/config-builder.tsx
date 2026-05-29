@@ -38,15 +38,15 @@ function tokenExample(ph: Placeholder): string {
     case "label_hash":
       return "<<PERSON:a1b2c3d4>>";
     case "label":
-      return "<PERSON>";
+      return "<<PERSON>>";
     case "mask":
-      return (ph.maskChar || "*").repeat(8);
+      return "M" + (ph.maskChar || "*").repeat(7);
     case "redact_counter":
-      return "[REDACT:1]";
+      return "<<REDACT:1>>";
     case "redact_hash":
-      return "[REDACT:a1b2c3d4]";
+      return "<<REDACT:a1b2c3d4>>";
     case "redact":
-      return "[REDACT]";
+      return "<<REDACT>>";
     case "faker_counter":
     case "faker_hash":
     case "faker":
@@ -197,6 +197,9 @@ export function ConfigBuilder() {
               {pg.tokenExample} :{" "}
               <code className="rounded bg-muted px-1 py-0.5 font-mono">{tokenExample(ph)}</code>
             </p>
+            {ph.type.startsWith("faker") && (
+              <p className="text-xs text-muted-foreground">{pg.fakerNote}</p>
+            )}
 
             {(ph.type === "label_hash" || ph.type === "redact_hash" || ph.type === "faker_hash") && (
               <label className="flex items-center justify-between gap-2 text-sm">

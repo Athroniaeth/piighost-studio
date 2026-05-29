@@ -163,6 +163,7 @@ export type Dictionary = {
     exportPython: string;
     downloadToml: string;
     tokenExample: string;
+    fakerNote: string;
     saveDetector: string;
     detectorName: string;
     savedDetectors: string;
