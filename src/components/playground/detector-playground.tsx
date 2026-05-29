@@ -125,12 +125,15 @@ export function DetectorPlayground() {
 
   return (
     <div className="flex w-full flex-col p-4 lg:h-[calc(100dvh-4rem)]">
-      {/* One unified surface; five regions separated by dividers:
-          Save | Saved | Config | Text | Detections. */}
-      <div className="grid flex-1 divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:min-h-0 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,0.8fr)_minmax(0,0.9fr)_minmax(0,1.8fr)_minmax(0,0.9fr)] lg:divide-x lg:divide-y-0">
-        {/* 1. Save */}
-        <Region title={pg.saveDetector}>
+      <div className="grid flex-1 gap-4 overflow-hidden lg:min-h-0 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,3.6fr)]">
+        {/* Saved-detectors library — deliberately set apart (dashed, muted) from
+            the playground itself: it is browser-stored persistence, not the test
+            surface. Holds the save form and the saved list. */}
+        <aside className="flex min-h-0 flex-col gap-4 overflow-auto rounded-xl border border-dashed bg-muted/30 p-4">
           <div className="space-y-2">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {pg.savedDetectors}
+            </h2>
             <input
               className="w-full rounded-md border bg-background px-2.5 py-1.5 text-sm"
               placeholder={pg.detectorName}
@@ -142,43 +145,44 @@ export function DetectorPlayground() {
               {pg.saveDetector}
             </Button>
           </div>
-        </Region>
 
-        {/* 2. Saved detectors */}
-        <Region title={pg.savedDetectors}>
-          {saved.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{pg.noSaved}</p>
-          ) : (
-            <ul className="space-y-2">
-              {saved.map((d) => (
-                <li key={d.name} className="rounded-md bg-muted/40 p-2 text-sm">
-                  <p className="truncate font-mono">{d.name}</p>
-                  <p className="mb-1 text-xs text-muted-foreground">{pg.detectorTypes[d.config.type]}</p>
-                  <span className="flex gap-3">
-                    <button
-                      type="button"
-                      className="text-xs text-muted-foreground"
-                      onClick={() => {
-                        setConfig(d.config);
-                        setName(d.name);
-                      }}
-                    >
-                      {pg.loadLabel}
-                    </button>
-                    <button
-                      type="button"
-                      className="text-xs text-destructive"
-                      onClick={() => setSaved(deleteSaved(d.name))}
-                    >
-                      {pg.deleteLabel}
-                    </button>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Region>
+          <div className="flex min-h-0 flex-1 flex-col">
+            {saved.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{pg.noSaved}</p>
+            ) : (
+              <ul className="space-y-2">
+                {saved.map((d) => (
+                  <li key={d.name} className="rounded-md border bg-background p-2 text-sm">
+                    <p className="truncate font-mono">{d.name}</p>
+                    <p className="mb-1 text-xs text-muted-foreground">{pg.detectorTypes[d.config.type]}</p>
+                    <span className="flex gap-3">
+                      <button
+                        type="button"
+                        className="text-xs text-muted-foreground"
+                        onClick={() => {
+                          setConfig(d.config);
+                          setName(d.name);
+                        }}
+                      >
+                        {pg.loadLabel}
+                      </button>
+                      <button
+                        type="button"
+                        className="text-xs text-destructive"
+                        onClick={() => setSaved(deleteSaved(d.name))}
+                      >
+                        {pg.deleteLabel}
+                      </button>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </aside>
 
+        {/* The playground itself: one unified panel, Config | Text | Detections. */}
+        <div className="grid divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:min-h-0 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,2fr)_minmax(0,0.9fr)] lg:divide-x lg:divide-y-0">
         {/* 3. Configuration */}
         <Region title={pg.configTitle}>
           <div className="space-y-4">
@@ -383,6 +387,7 @@ export function DetectorPlayground() {
             </>
           )}
         </Region>
+        </div>
       </div>
     </div>
   );
