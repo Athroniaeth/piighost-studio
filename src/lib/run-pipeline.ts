@@ -104,3 +104,23 @@ export function assemblePipeline(
 
   return { entities: kept, anonymized };
 }
+
+/** Run the whole pipeline in the browser: every ENABLED detector runs (filtered
+ *  by its own threshold), then the stages are applied. The llm detector is
+ *  skipped (it does not run in the browser). */
+export async function runPipeline(
+  pipeline: ConfigPipeline,
+  text: string,
+): Promise<{ entities: Entity[]; anonymized: string }> {
+  const detections: Entity[] = [];
+  for (const d of pipeline.detectors) {
+    if (!d.enabled || d.config.type === "llm") continue;
+    const result = await runDetector(d.config, text);
+    const threshold =
+      d.config.type === "transformers" || d.config.type === "gliner2" ? d.config.threshold : 0;
+    for (const entity of result) {
+      if (entity.score >= threshold) detections.push(entity);
+    }
+  }
+  return assemblePipeline(detections, pipeline, text);
+}
