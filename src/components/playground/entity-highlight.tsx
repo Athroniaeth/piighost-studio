@@ -1,6 +1,7 @@
 "use client";
 
 import { toSegments, type Entity } from "@/lib/ner";
+import { hashLabelColor } from "@/lib/labels";
 
 const LABEL_STYLES: Record<string, string> = {
   PER: "bg-primary/10 text-primary",
@@ -11,7 +12,7 @@ const LABEL_STYLES: Record<string, string> = {
 
 /** Tailwind classes (background + text color) for an entity label. */
 export function labelStyle(label: string): string {
-  return LABEL_STYLES[label] ?? "bg-muted text-foreground";
+  return LABEL_STYLES[label] ?? hashLabelColor(label);
 }
 
 export function EntityHighlight({ text, entities }: { text: string; entities: Entity[] }) {

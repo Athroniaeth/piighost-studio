@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { parseLabels } from "./labels";
+import { hashLabelColor, LABEL_PALETTE } from "./labels";
 
 describe("parseLabels", () => {
   it("splits on commas and trims", () => {
@@ -16,5 +17,20 @@ describe("parseLabels", () => {
 
   it("returns an empty array for blank input", () => {
     expect(parseLabels("   ")).toEqual([]);
+  });
+});
+
+describe("hashLabelColor", () => {
+  it("is deterministic for the same label", () => {
+    expect(hashLabelColor("email")).toBe(hashLabelColor("email"));
+  });
+
+  it("returns a class string from the palette", () => {
+    expect(LABEL_PALETTE).toContain(hashLabelColor("phone number"));
+  });
+
+  it("maps different labels to (generally) different buckets", () => {
+    const colors = new Set(["email", "person", "iban", "address"].map(hashLabelColor));
+    expect(colors.size).toBeGreaterThan(1);
   });
 });
