@@ -142,7 +142,11 @@ export function NerPlayground() {
                   const next = e.target.value as ModelId | GlinerModelId;
                   setModel(next);
                   const entry = MODELS.find((m) => m.id === next);
-                  if (entry?.defaultLabels) setGlinerLabels(entry.defaultLabels);
+                  setGlinerLabels(entry?.defaultLabels ?? "");
+                  // A different model can't have produced the showing results.
+                  setAllEntities([]);
+                  setAnalyzed("");
+                  setStatus("idle");
                 }}
               >
                 <optgroup label={pg.modelGroups.classic}>
