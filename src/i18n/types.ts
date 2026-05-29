@@ -147,9 +147,6 @@ export type Dictionary = {
     errorTitle: string;
     retry: string;
     emptyHint: string;
-    pipelineTitle: string;
-    addDetector: string;
-    validate: string;
     test: string;
     remove: string;
     moveUp: string;
@@ -159,10 +156,8 @@ export type Dictionary = {
     llmDeploymentNote: string;
     patternsLabel: string;
     patternsHint: string;
-    providerLabel: string;
     pipelineNameLabel: string;
     emptyPipeline: string;
-    exportTitle: string;
     exportToml: string;
     exportPython: string;
     saveDetector: string;
@@ -174,13 +169,11 @@ export type Dictionary = {
     editInPlayground: string;
     detectorsTitle: string;
     addFromSaved: string;
-    enabledLabel: string;
     stagesTitle: string;
     spanResolverLabel: string;
     entityLinkerLabel: string;
     entityResolverLabel: string;
     anonymizerLabel: string;
-    placeholderStyle: string;
     phHashLength: string;
     phMaskChar: string;
     phLocale: string;
