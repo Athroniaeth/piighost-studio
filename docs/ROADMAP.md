@@ -44,18 +44,19 @@ shadcn/ui variante base-ui, i18n maison (contexte React + dictionnaires
   - Spec : `docs/superpowers/specs/2026-05-29-gliner-zero-shot-design.md`
   - Plan : `docs/superpowers/plans/2026-05-29-gliner-zero-shot.md`
 
-- **Phase 2 — Playground de config piighost : livrée.** `/playground` est
-  désormais un constructeur de pipeline (maître-détail) : à gauche la liste
-  ordonnée de détecteurs (ajout / réordonnancement / suppression), à droite un
-  banc d'essai qui configure et teste un détecteur dans le navigateur, puis
-  « Valider » l'ajoute à la pipeline. Détecteurs testables : `regex` (RegExp JS),
-  `transformers` (NER classique), `gliner2` (GLiNER navigateur) ; `llm` est
-  configurable mais grisé (« disponible au déploiement »). Export **TOML**
-  (compatible `load_pipeline`) et **Python** (via `load_pipeline`). Toujours sans
-  backend. Les 4 étapes non-détecteur (span_resolver / entity_linker /
-  entity_resolver / anonymizer) sont omises de l'export → défauts de la lib.
-  - Spec : `docs/superpowers/specs/2026-05-29-config-playground-design.md`
-  - Plan : `docs/superpowers/plans/2026-05-29-config-playground.md`
+- **Phase 2 — Playground de config piighost : livrée.** Deux pages reliées,
+  sans backend. **`/playground`** : banc de test d'un détecteur (`regex` RegExp JS,
+  `transformers` NER classique, `gliner2` GLiNER navigateur ; `llm` grisé), avec
+  surlignage / entités / tri / temps d'inférence, puis **sauvegarde** du détecteur
+  nommé dans le navigateur (localStorage) et liste rechargeable/supprimable.
+  **`/config`** : pipeline complet — on ajoute des détecteurs depuis les
+  sauvegardés (activer/désactiver, réordonner, retirer, éditer via
+  `/playground?edit=`), on bascule les étapes (span_resolver / entity_linker /
+  entity_resolver entre leur variante par défaut et `disabled`), et on choisit le
+  style de jeton de l'anonymizer (placeholder factory). Export **TOML**
+  (compatible `load_pipeline`) et **Python**.
+  - Spec : `docs/superpowers/specs/2026-05-29-config-playground-v2-design.md`
+  - Plan : `docs/superpowers/plans/2026-05-29-config-playground-v2.md`
 
 ## Feuille de route (validée en brainstorming)
 
