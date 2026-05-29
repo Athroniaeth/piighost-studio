@@ -44,6 +44,19 @@ shadcn/ui variante base-ui, i18n maison (contexte React + dictionnaires
   - Spec : `docs/superpowers/specs/2026-05-29-gliner-zero-shot-design.md`
   - Plan : `docs/superpowers/plans/2026-05-29-gliner-zero-shot.md`
 
+- **Phase 2 — Playground de config piighost : livrée.** `/playground` est
+  désormais un constructeur de pipeline (maître-détail) : à gauche la liste
+  ordonnée de détecteurs (ajout / réordonnancement / suppression), à droite un
+  banc d'essai qui configure et teste un détecteur dans le navigateur, puis
+  « Valider » l'ajoute à la pipeline. Détecteurs testables : `regex` (RegExp JS),
+  `transformers` (NER classique), `gliner2` (GLiNER navigateur) ; `llm` est
+  configurable mais grisé (« disponible au déploiement »). Export **TOML**
+  (compatible `load_pipeline`) et **Python** (via `load_pipeline`). Toujours sans
+  backend. Les 4 étapes non-détecteur (span_resolver / entity_linker /
+  entity_resolver / anonymizer) sont omises de l'export → défauts de la lib.
+  - Spec : `docs/superpowers/specs/2026-05-29-config-playground-design.md`
+  - Plan : `docs/superpowers/plans/2026-05-29-config-playground.md`
+
 ## Feuille de route (validée en brainstorming)
 
 Chaque phase est livrable seule. Contrainte directrice : **éviter au maximum
