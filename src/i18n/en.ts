@@ -8,6 +8,7 @@ export const en: Dictionary = {
     proofreader: "piighost-proofreader",
     projects: "Projects",
     philosophy: "Philosophy",
+    playground: "Playground",
     github: "GitHub",
     toggleTheme: "Toggle theme",
     toggleLanguage: "Switch to French",
@@ -242,6 +243,30 @@ export const en: Dictionary = {
     description: "Install piighost, wire your detector, and keep PII out of the model.",
     readTheDocs: "Read the docs",
     starOnGitHub: "Star on GitHub",
+  },
+  playground: {
+    eyebrow: "Playground",
+    title: "Detect PII in your browser",
+    description:
+      "This runs a named-entity recognition model entirely in your browser. No text leaves your machine. Pick a model, paste some text, and see what gets flagged.",
+    modelLabel: "Model",
+    models: {
+      multilingual: "Multilingual (EN, FR, ...)",
+      english: "English only",
+    },
+    inputLabel: "Your text",
+    example:
+      "Hi, my name is Sarah Connor. I work at Cyberdyne Systems in Los Angeles, and my colleague James Reese is based in London.",
+    analyze: "Analyze",
+    analyzing: "Analyzing...",
+    loadingModel: "Downloading the model...",
+    firstLoadNote:
+      "The first run downloads the model to your browser (tens to a few hundred MB). It is cached afterwards, so later runs are instant.",
+    resultsTitle: "Detected entities",
+    noEntities: "No entities detected.",
+    columns: { text: "Text", label: "Label", score: "Score" },
+    errorTitle: "Something went wrong",
+    retry: "Try again",
   },
   philosophy: {
     eyebrow: "Philosophy",

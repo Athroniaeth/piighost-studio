@@ -36,6 +36,7 @@ export type Dictionary = {
     proofreader: string;
     projects: string;
     philosophy: string;
+    playground: string;
     github: string;
     toggleTheme: string;
     toggleLanguage: string;
@@ -111,4 +112,22 @@ export type Dictionary = {
     starOnGitHub: string;
   };
   philosophy: PhilosophyDict;
+  playground: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    modelLabel: string;
+    models: { multilingual: string; english: string };
+    inputLabel: string;
+    example: string;
+    analyze: string;
+    analyzing: string;
+    loadingModel: string;
+    firstLoadNote: string;
+    resultsTitle: string;
+    noEntities: string;
+    columns: { text: string; label: string; score: string };
+    errorTitle: string;
+    retry: string;
+  };
 };
