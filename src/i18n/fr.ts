@@ -251,7 +251,13 @@ export const fr: Dictionary = {
     models: {
       multilingual: "Multilingue (EN, FR, ...)",
       english: "Anglais uniquement",
+      glinerSmall: "Zero-shot, généraliste (~183 Mo)",
+      glinerPii: "Zero-shot, spécialisé PII, multilingue (~349 Mo)",
     },
+    modelGroups: { classic: "NER classique", gliner: "GLiNER (zero-shot)" },
+    glinerLabelsLabel: "Types à détecter",
+    glinerLabelsPlaceholder: "person, email, phone number, address",
+    glinerLabelsHint: "Séparés par des virgules. Relancez l'analyse pour appliquer.",
     labelsLabel: "Labels autorisés",
     thresholdLabel: "Seuil",
     inputLabel: "Votre texte",

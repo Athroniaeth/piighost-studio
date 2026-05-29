@@ -250,7 +250,13 @@ export const en: Dictionary = {
     models: {
       multilingual: "Multilingual (EN, FR, ...)",
       english: "English only",
+      glinerSmall: "Zero-shot, general purpose (~183 MB)",
+      glinerPii: "Zero-shot, PII-tuned, multilingual (~349 MB)",
     },
+    modelGroups: { classic: "Classic NER", gliner: "GLiNER (zero-shot)" },
+    glinerLabelsLabel: "Types to detect",
+    glinerLabelsPlaceholder: "person, email, phone number, address",
+    glinerLabelsHint: "Comma-separated. Re-run the analysis to apply new types.",
     labelsLabel: "Allowed labels",
     thresholdLabel: "Threshold",
     inputLabel: "Your text",

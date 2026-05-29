@@ -115,7 +115,16 @@ export type Dictionary = {
   playground: {
     configTitle: string;
     modelLabel: string;
-    models: { multilingual: string; english: string };
+    models: {
+      multilingual: string;
+      english: string;
+      glinerSmall: string;
+      glinerPii: string;
+    };
+    modelGroups: { classic: string; gliner: string };
+    glinerLabelsLabel: string;
+    glinerLabelsPlaceholder: string;
+    glinerLabelsHint: string;
     labelsLabel: string;
     thresholdLabel: string;
     inputLabel: string;
