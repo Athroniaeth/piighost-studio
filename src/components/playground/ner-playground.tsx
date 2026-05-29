@@ -5,13 +5,33 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EntityHighlight, labelStyle } from "@/components/playground/entity-highlight";
 import { loadNer, runNer, type Entity, type ModelId, type ProgressEvent } from "@/lib/ner";
+import { type GlinerModelId } from "@/lib/gliner";
 import { useT } from "@/i18n/use-t";
 
 type Status = "idle" | "loading" | "analyzing" | "done" | "error";
 
-const MODELS: { id: ModelId; key: "multilingual" | "english" }[] = [
-  { id: "Xenova/bert-base-multilingual-cased-ner-hrl", key: "multilingual" },
-  { id: "Xenova/bert-base-NER", key: "english" },
+type ModelEntry = {
+  id: ModelId | GlinerModelId;
+  family: "classic" | "gliner";
+  descKey: "multilingual" | "english" | "glinerSmall" | "glinerPii";
+  defaultLabels?: string;
+};
+
+const MODELS: ModelEntry[] = [
+  { id: "Xenova/bert-base-multilingual-cased-ner-hrl", family: "classic", descKey: "multilingual" },
+  { id: "Xenova/bert-base-NER", family: "classic", descKey: "english" },
+  {
+    id: "onnx-community/gliner_small-v2.1",
+    family: "gliner",
+    descKey: "glinerSmall",
+    defaultLabels: "person, organization, location, date",
+  },
+  {
+    id: "onnx-community/gliner_multi_pii-v1",
+    family: "gliner",
+    descKey: "glinerPii",
+    defaultLabels: "person, email, phone number, address, organization",
+  },
 ];
 
 const LABELS = ["PER", "ORG", "LOC", "MISC"] as const;
@@ -38,7 +58,7 @@ function Region({ title, children }: { title: string; children: ReactNode }) {
 export function NerPlayground() {
   const { t } = useT();
   const pg = t.playground;
-  const [model, setModel] = useState<ModelId>(MODELS[0].id);
+  const [model, setModel] = useState<ModelId | GlinerModelId>(MODELS[0].id);
   const [text, setText] = useState(pg.example);
   const [status, setStatus] = useState<Status>("idle");
   const [progress, setProgress] = useState(0);
@@ -62,13 +82,13 @@ export function NerPlayground() {
     try {
       setStatus("loading");
       setProgress(0);
-      await loadNer(model, (e: ProgressEvent) => {
+      await loadNer(model as ModelId, (e: ProgressEvent) => {
         if (e.status === "progress" && typeof e.progress === "number") {
           setProgress(Math.round(e.progress));
         }
       });
       setStatus("analyzing");
-      const result = await runNer(model, text);
+      const result = await runNer(model as ModelId, text);
       setAllEntities(result);
       setAnalyzed(text);
       setStatus("done");
@@ -104,15 +124,24 @@ export function NerPlayground() {
                 value={model}
                 disabled={busy}
                 // value is constrained to the option elements rendered below
-                onChange={(e) => setModel(e.target.value as ModelId)}
+                onChange={(e) => setModel(e.target.value as ModelId | GlinerModelId)}
               >
-                {MODELS.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.id}
-                  </option>
-                ))}
+                <optgroup label={pg.modelGroups.classic}>
+                  {MODELS.filter((m) => m.family === "classic").map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.id}
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label={pg.modelGroups.gliner}>
+                  {MODELS.filter((m) => m.family === "gliner").map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.id}
+                    </option>
+                  ))}
+                </optgroup>
               </select>
-              <p className="text-xs text-muted-foreground">{pg.models[selectedModel.key]}</p>
+              <p className="text-xs text-muted-foreground">{pg.models[selectedModel.descKey]}</p>
             </div>
 
             <div className="space-y-2">
