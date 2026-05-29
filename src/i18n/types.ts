@@ -181,6 +181,10 @@ export type Dictionary = {
     entityLinkerHelp: string;
     entityResolverHelp: string;
     anonymizerHelp: string;
+    liveTestTitle: string;
+    anonymizedLabel: string;
+    approximationNote: string;
+    noEnabledDetectors: string;
     savePipeline: string;
     save: string;
     cancel: string;
