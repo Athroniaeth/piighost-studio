@@ -37,7 +37,73 @@ export type DetectorConfig =
   | LlmDetectorConfig;
 
 export type DetectorType = DetectorConfig["type"];
-export type Pipeline = { name: string; detectors: DetectorConfig[] };
+export type PipelineDetector = { name: string; config: DetectorConfig; enabled: boolean };
+
+export type Placeholder =
+  | { type: "label_counter" }
+  | { type: "label" }
+  | { type: "redact_counter" }
+  | { type: "redact" }
+  | { type: "label_hash"; hashLength: number }
+  | { type: "redact_hash"; hashLength: number }
+  | { type: "mask"; maskChar: string }
+  | { type: "faker_counter"; locale: string }
+  | { type: "faker"; locale: string }
+  | { type: "faker_hash"; locale: string; hashLength: number };
+
+export type PlaceholderType = Placeholder["type"];
+
+export const PLACEHOLDER_TYPES: PlaceholderType[] = [
+  "label_counter",
+  "label_hash",
+  "label",
+  "mask",
+  "redact_counter",
+  "redact_hash",
+  "redact",
+  "faker_counter",
+  "faker_hash",
+  "faker",
+];
+
+export type ConfigPipeline = {
+  name: string;
+  detectors: PipelineDetector[];
+  spanResolver: boolean;
+  entityLinker: boolean;
+  entityResolver: boolean;
+  placeholder: Placeholder;
+};
+
+/** A reasonable starting pipeline: no detectors, all stages on, counter tokens. */
+export function defaultPipeline(): ConfigPipeline {
+  return {
+    name: "my-pipeline",
+    detectors: [],
+    spanResolver: true,
+    entityLinker: true,
+    entityResolver: true,
+    placeholder: { type: "label_counter" },
+  };
+}
+
+/** Build a placeholder of a given type with sensible default fields. */
+export function defaultPlaceholder(type: PlaceholderType): Placeholder {
+  switch (type) {
+    case "label_hash":
+    case "redact_hash":
+      return { type, hashLength: 8 };
+    case "mask":
+      return { type: "mask", maskChar: "*" };
+    case "faker_counter":
+    case "faker":
+      return { type, locale: "en_US" };
+    case "faker_hash":
+      return { type: "faker_hash", locale: "en_US", hashLength: 8 };
+    default:
+      return { type };
+  }
+}
 
 /** Which detector types can actually run in the browser. */
 export const RUNNABLE: Record<DetectorType, boolean> = {

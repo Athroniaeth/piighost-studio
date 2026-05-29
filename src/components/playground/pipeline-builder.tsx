@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/copy-button";
 import { DetectorBench } from "@/components/playground/detector-bench";
-import { defaultConfig, type DetectorConfig, type Pipeline } from "@/lib/detector-config";
+import { defaultConfig, defaultPipeline, type DetectorConfig, type ConfigPipeline } from "@/lib/detector-config";
 import { toToml, toPython } from "@/lib/pipeline-export";
 import { useT } from "@/i18n/use-t";
 
@@ -32,7 +32,12 @@ export function PipelineBuilder() {
   const [draft, setDraft] = useState<DetectorConfig>(defaultConfig("regex"));
   const [showExport, setShowExport] = useState(false);
 
-  const pipeline: Pipeline = { name, detectors };
+  const base = defaultPipeline();
+  const pipeline: ConfigPipeline = {
+    ...base,
+    name,
+    detectors: detectors.map((config) => ({ name: config.type, config, enabled: true })),
+  };
 
   function validate() {
     setDetectors((prev) => [...prev, draft]);
