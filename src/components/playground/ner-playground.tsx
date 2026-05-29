@@ -5,7 +5,8 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EntityHighlight, labelStyle } from "@/components/playground/entity-highlight";
 import { loadNer, runNer, type Entity, type ModelId, type ProgressEvent } from "@/lib/ner";
-import { type GlinerModelId } from "@/lib/gliner";
+import { loadGliner, runGliner, type GlinerModelId } from "@/lib/gliner";
+import { parseLabels } from "@/lib/labels";
 import { useT } from "@/i18n/use-t";
 
 type Status = "idle" | "loading" | "analyzing" | "done" | "error";
@@ -68,6 +69,9 @@ export function NerPlayground() {
   const [allowed, setAllowed] = useState<Record<string, boolean>>(
     Object.fromEntries(LABELS.map((l) => [l, true])),
   );
+  const [glinerLabels, setGlinerLabels] = useState(
+    MODELS.find((m) => m.id === model)?.defaultLabels ?? "",
+  );
 
   // Threshold and label filters apply live, without re-running the model.
   const entities = useMemo(
@@ -76,19 +80,29 @@ export function NerPlayground() {
   );
 
   const selectedModel = MODELS.find((m) => m.id === model) ?? MODELS[0];
+  const isGliner = selectedModel.family === "gliner";
   const busy = status === "loading" || status === "analyzing";
 
   async function analyze() {
     try {
       setStatus("loading");
       setProgress(0);
-      await loadNer(model as ModelId, (e: ProgressEvent) => {
-        if (e.status === "progress" && typeof e.progress === "number") {
-          setProgress(Math.round(e.progress));
-        }
-      });
-      setStatus("analyzing");
-      const result = await runNer(model as ModelId, text);
+      let result: Entity[];
+      if (selectedModel.family === "gliner") {
+        const gid = model as GlinerModelId;
+        await loadGliner(gid);
+        setStatus("analyzing");
+        result = await runGliner(gid, parseLabels(glinerLabels), text);
+      } else {
+        const cid = model as ModelId;
+        await loadNer(cid, (e: ProgressEvent) => {
+          if (e.status === "progress" && typeof e.progress === "number") {
+            setProgress(Math.round(e.progress));
+          }
+        });
+        setStatus("analyzing");
+        result = await runNer(cid, text);
+      }
       setAllEntities(result);
       setAnalyzed(text);
       setStatus("done");
@@ -124,7 +138,12 @@ export function NerPlayground() {
                 value={model}
                 disabled={busy}
                 // value is constrained to the option elements rendered below
-                onChange={(e) => setModel(e.target.value as ModelId | GlinerModelId)}
+                onChange={(e) => {
+                  const next = e.target.value as ModelId | GlinerModelId;
+                  setModel(next);
+                  const entry = MODELS.find((m) => m.id === next);
+                  if (entry?.defaultLabels) setGlinerLabels(entry.defaultLabels);
+                }}
               >
                 <optgroup label={pg.modelGroups.classic}>
                   {MODELS.filter((m) => m.family === "classic").map((m) => (
@@ -144,22 +163,39 @@ export function NerPlayground() {
               <p className="text-xs text-muted-foreground">{pg.models[selectedModel.descKey]}</p>
             </div>
 
-            <div className="space-y-2">
-              <p className="text-sm font-medium">{pg.labelsLabel}</p>
-              <div className="flex flex-wrap gap-x-4 gap-y-2">
-                {LABELS.map((l) => (
-                  <label key={l} className="flex cursor-pointer items-center gap-1.5">
-                    <input
-                      type="checkbox"
-                      className="size-4 accent-primary"
-                      checked={allowed[l] !== false}
-                      onChange={(e) => setAllowed((prev) => ({ ...prev, [l]: e.target.checked }))}
-                    />
-                    <LabelTag label={l} />
-                  </label>
-                ))}
+            {isGliner ? (
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium" htmlFor="gliner-labels">
+                  {pg.glinerLabelsLabel}
+                </label>
+                <textarea
+                  id="gliner-labels"
+                  className="min-h-20 w-full resize-none rounded-md border bg-background px-2.5 py-1.5 font-mono text-xs"
+                  value={glinerLabels}
+                  disabled={busy}
+                  placeholder={pg.glinerLabelsPlaceholder}
+                  onChange={(e) => setGlinerLabels(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">{pg.glinerLabelsHint}</p>
               </div>
-            </div>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-sm font-medium">{pg.labelsLabel}</p>
+                <div className="flex flex-wrap gap-x-4 gap-y-2">
+                  {LABELS.map((l) => (
+                    <label key={l} className="flex cursor-pointer items-center gap-1.5">
+                      <input
+                        type="checkbox"
+                        className="size-4 accent-primary"
+                        checked={allowed[l] !== false}
+                        onChange={(e) => setAllowed((prev) => ({ ...prev, [l]: e.target.checked }))}
+                      />
+                      <LabelTag label={l} />
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-sm">
@@ -181,7 +217,11 @@ export function NerPlayground() {
             <Button
               className="w-full"
               onClick={analyze}
-              disabled={busy || text.trim().length === 0}
+              disabled={
+                busy ||
+                text.trim().length === 0 ||
+                (isGliner && parseLabels(glinerLabels).length === 0)
+              }
             >
               {busy && <Loader2 className="mr-2 size-4 animate-spin" />}
               {buttonLabel}
