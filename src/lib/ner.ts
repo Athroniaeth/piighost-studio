@@ -62,3 +62,23 @@ export function groupEntities(tokens: RawToken[], text: string): Entity[] {
   flush();
   return entities;
 }
+
+export type Segment = { value: string; entity?: Entity };
+
+/** Split text into plain and entity segments, ordered by character position. */
+export function toSegments(text: string, entities: Entity[]): Segment[] {
+  const sorted = [...entities].sort((a, b) => a.start - b.start);
+  const segments: Segment[] = [];
+  let cursor = 0;
+  for (const entity of sorted) {
+    if (entity.start > cursor) {
+      segments.push({ value: text.slice(cursor, entity.start) });
+    }
+    segments.push({ value: text.slice(entity.start, entity.end), entity });
+    cursor = entity.end;
+  }
+  if (cursor < text.length) {
+    segments.push({ value: text.slice(cursor) });
+  }
+  return segments;
+}

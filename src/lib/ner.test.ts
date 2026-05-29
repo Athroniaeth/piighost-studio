@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { groupEntities, type RawToken } from "./ner";
+import { groupEntities, toSegments, type RawToken } from "./ner";
 
 const tok = (
   entity: string,
@@ -38,5 +38,42 @@ describe("groupEntities", () => {
 
   it("returns an empty array for no tokens", () => {
     expect(groupEntities([], text)).toEqual([]);
+  });
+});
+
+describe("toSegments", () => {
+  const e = (text: string, label: string, start: number, end: number) => ({
+    text,
+    label,
+    score: 1,
+    start,
+    end,
+  });
+
+  it("wraps a single entity in the middle", () => {
+    const text = "I am Bob now";
+    const segs = toSegments(text, [e("Bob", "PER", 5, 8)]);
+    expect(segs).toEqual([
+      { value: "I am " },
+      { value: "Bob", entity: e("Bob", "PER", 5, 8) },
+      { value: " now" },
+    ]);
+  });
+
+  it("handles an entity at the very start", () => {
+    const text = "Bob waved";
+    const segs = toSegments(text, [e("Bob", "PER", 0, 3)]);
+    expect(segs[0]).toEqual({ value: "Bob", entity: e("Bob", "PER", 0, 3) });
+    expect(segs[1]).toEqual({ value: " waved" });
+  });
+
+  it("returns the whole text when there are no entities", () => {
+    expect(toSegments("plain text", [])).toEqual([{ value: "plain text" }]);
+  });
+
+  it("keeps entities ordered by position", () => {
+    const text = "Bob and Ann";
+    const segs = toSegments(text, [e("Ann", "PER", 8, 11), e("Bob", "PER", 0, 3)]);
+    expect(segs.map((s) => s.value)).toEqual(["Bob", " and ", "Ann"]);
   });
 });
