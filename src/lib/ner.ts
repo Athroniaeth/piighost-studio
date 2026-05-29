@@ -152,6 +152,9 @@ async function getPipeline(model: ModelId, onProgress?: (e: ProgressEvent) => vo
     return pipeline("token-classification", model, {
       progress_callback: onProgress,
       device,
+      // Quantized int8 weights (model_quantized.onnx): ~178 MB / ~109 MB instead
+      // of the 700+ MB fp32, and faster inference. Matches the stated sizes.
+      dtype: "q8",
     });
   })();
 

@@ -248,8 +248,8 @@ export const en: Dictionary = {
     configTitle: "Configuration",
     modelLabel: "Model",
     models: {
-      multilingual: "Multilingual (EN, FR, ...)",
-      english: "English only",
+      multilingual: "Classic NER, multilingual, fixed labels (~178 MB)",
+      english: "Classic NER, English, fixed labels (~109 MB)",
       glinerSmall: "Zero-shot, general purpose (~183 MB)",
       glinerPii: "Zero-shot, PII-tuned, multilingual (~349 MB)",
     },
