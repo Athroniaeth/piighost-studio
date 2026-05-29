@@ -69,13 +69,12 @@ describe("requiredExtras", () => {
     expect(requiredExtras(pipeline)).toEqual(["config", "gliner2"]);
   });
 
-  it("ignores disabled detectors and adds faker for faker token styles", () => {
-    const fakerPipe: ConfigPipeline = {
+  it("ignores disabled detectors", () => {
+    const offPipe: ConfigPipeline = {
       ...pipeline,
       detectors: [{ name: "off", enabled: false, config: { type: "gliner2", model: "onnx-community/gliner_small-v2.1", labels: ["x"], threshold: 0.5, flatNer: true } }],
-      placeholder: { type: "faker", locale: "en_US" },
     };
-    expect(requiredExtras(fakerPipe)).toEqual(["config", "faker"]);
+    expect(requiredExtras(offPipe)).toEqual(["config"]);
   });
 });
 

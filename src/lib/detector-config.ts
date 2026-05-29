@@ -46,10 +46,7 @@ export type Placeholder =
   | { type: "redact" }
   | { type: "label_hash"; hashLength: number }
   | { type: "redact_hash"; hashLength: number }
-  | { type: "mask"; maskChar: string }
-  | { type: "faker_counter"; locale: string }
-  | { type: "faker"; locale: string }
-  | { type: "faker_hash"; locale: string; hashLength: number };
+  | { type: "mask"; maskChar: string };
 
 export type PlaceholderType = Placeholder["type"];
 
@@ -61,9 +58,6 @@ export const PLACEHOLDER_TYPES: PlaceholderType[] = [
   "redact_counter",
   "redact_hash",
   "redact",
-  "faker_counter",
-  "faker_hash",
-  "faker",
 ];
 
 export type ConfigPipeline = {
@@ -95,11 +89,6 @@ export function defaultPlaceholder(type: PlaceholderType): Placeholder {
       return { type, hashLength: 8 };
     case "mask":
       return { type: "mask", maskChar: "*" };
-    case "faker_counter":
-    case "faker":
-      return { type, locale: "en_US" };
-    case "faker_hash":
-      return { type: "faker_hash", locale: "en_US", hashLength: 8 };
     default:
       return { type };
   }

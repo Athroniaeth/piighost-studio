@@ -46,14 +46,11 @@ function detectorToml(d: DetectorConfig, name?: string): string {
 
 function placeholderToml(p: Placeholder): string {
   const lines = [`placeholder_factory.type = ${basicString(p.type)}`];
-  if (p.type === "label_hash" || p.type === "redact_hash" || p.type === "faker_hash") {
+  if (p.type === "label_hash" || p.type === "redact_hash") {
     lines.push(`placeholder_factory.hash_length = ${p.hashLength}`);
   }
   if (p.type === "mask") {
     lines.push(`placeholder_factory.mask_char = ${basicString(p.maskChar)}`);
-  }
-  if (p.type === "faker" || p.type === "faker_counter" || p.type === "faker_hash") {
-    lines.push(`placeholder_factory.locale = ${basicString(p.locale)}`);
   }
   return lines.join("\n");
 }
@@ -82,8 +79,8 @@ const DETECTOR_EXTRA: Partial<Record<DetectorConfig["type"], string>> = {
 };
 
 /** The piighost extras needed to actually load and run this pipeline. `config`
- *  is always required (that is where load_pipeline lives); enabled detectors and
- *  faker token styles each pull their own optional dependency. */
+ *  is always required (that is where load_pipeline lives); enabled detectors each
+ *  pull their own optional dependency. */
 export function requiredExtras(pipeline: ConfigPipeline): string[] {
   const extras = new Set<string>(["config"]);
   for (const d of pipeline.detectors) {
@@ -91,7 +88,6 @@ export function requiredExtras(pipeline: ConfigPipeline): string[] {
     const extra = DETECTOR_EXTRA[d.config.type];
     if (extra) extras.add(extra);
   }
-  if (pipeline.placeholder.type.startsWith("faker")) extras.add("faker");
   return [...extras].sort();
 }
 

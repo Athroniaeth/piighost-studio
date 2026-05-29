@@ -47,10 +47,6 @@ function tokenExample(ph: Placeholder): string {
       return "<<REDACT:a1b2c3d4>>";
     case "redact":
       return "<<REDACT>>";
-    case "faker_counter":
-    case "faker_hash":
-    case "faker":
-      return "Jordan Hale";
   }
 }
 
@@ -197,11 +193,8 @@ export function ConfigBuilder() {
               {pg.tokenExample} :{" "}
               <code className="rounded bg-muted px-1 py-0.5 font-mono">{tokenExample(ph)}</code>
             </p>
-            {ph.type.startsWith("faker") && (
-              <p className="text-xs text-muted-foreground">{pg.fakerNote}</p>
-            )}
 
-            {(ph.type === "label_hash" || ph.type === "redact_hash" || ph.type === "faker_hash") && (
+            {(ph.type === "label_hash" || ph.type === "redact_hash") && (
               <label className="flex items-center justify-between gap-2 text-sm">
                 <span className="text-muted-foreground">{pg.phHashLength}</span>
                 <input
@@ -225,18 +218,6 @@ export function ConfigBuilder() {
                   value={ph.maskChar}
                   onChange={(e) =>
                     setPipeline((p) => ({ ...p, placeholder: { type: "mask", maskChar: e.target.value } }))
-                  }
-                />
-              </label>
-            )}
-            {(ph.type === "faker" || ph.type === "faker_counter" || ph.type === "faker_hash") && (
-              <label className="flex items-center justify-between gap-2 text-sm">
-                <span className="text-muted-foreground">{pg.phLocale}</span>
-                <input
-                  className="w-32 rounded-md border bg-background px-2 py-1 text-xs"
-                  value={ph.locale}
-                  onChange={(e) =>
-                    setPipeline((p) => ({ ...p, placeholder: { ...ph, locale: e.target.value } }))
                   }
                 />
               </label>
