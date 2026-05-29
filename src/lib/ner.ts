@@ -82,3 +82,51 @@ export function toSegments(text: string, entities: Entity[]): Segment[] {
   }
   return segments;
 }
+
+export type ModelId =
+  | "Xenova/bert-base-multilingual-cased-ner-hrl"
+  | "Xenova/bert-base-NER";
+
+export type ProgressEvent = {
+  status: string;
+  file?: string;
+  progress?: number;
+};
+
+// One cached pipeline per model id.
+const pipelines = new Map<ModelId, Promise<unknown>>();
+
+async function getPipeline(model: ModelId, onProgress?: (e: ProgressEvent) => void) {
+  let existing = pipelines.get(model);
+  if (existing) return existing;
+
+  const created = (async () => {
+    const { pipeline, env } = await import("@huggingface/transformers");
+    // Never look for local model files; always fetch from the HF CDN and use
+    // the browser cache.
+    env.allowLocalModels = false;
+    const device =
+      typeof navigator !== "undefined" && "gpu" in navigator ? "webgpu" : "wasm";
+    return pipeline("token-classification", model, {
+      progress_callback: onProgress,
+      device,
+    });
+  })();
+
+  pipelines.set(model, created);
+  return created;
+}
+
+/** Pre-load a model (download + warmup). Safe to call repeatedly. */
+export async function loadNer(model: ModelId, onProgress?: (e: ProgressEvent) => void) {
+  await getPipeline(model, onProgress);
+}
+
+/** Run NER on the given text and return grouped entities. */
+export async function runNer(model: ModelId, text: string): Promise<Entity[]> {
+  const pipe = (await getPipeline(model)) as (
+    input: string,
+  ) => Promise<RawToken[]>;
+  const tokens = await pipe(text);
+  return groupEntities(tokens, text);
+}
