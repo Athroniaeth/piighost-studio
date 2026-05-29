@@ -302,7 +302,7 @@ export const en: Dictionary = {
     exportPython: "Python",
     downloadToml: "Download .toml",
     tokenExample: "Example (indicative)",
-    fakerNote: "All faker variants emit a realistic fake value; the suffix changes how repeats stay consistent (cache / counter / hash), not the look.",
+    fakerNote: "All faker variants emit a realistic fake value; the suffix changes how repeats stay consistent (cache / counter / hash), not the look. Requires the piighost[faker] extra.",
     saveDetector: "Save detector",
     detectorName: "Detector name",
     savedDetectors: "Saved detectors",

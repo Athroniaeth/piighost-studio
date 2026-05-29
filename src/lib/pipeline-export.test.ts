@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { toToml, toPython } from "./pipeline-export";
+import { toToml, toPython, requiredExtras } from "./pipeline-export";
 import type { ConfigPipeline } from "./detector-config";
 
 const pipeline: ConfigPipeline = {
@@ -64,11 +64,30 @@ describe("toToml", () => {
   });
 });
 
+describe("requiredExtras", () => {
+  it("always includes config and the extras of enabled detectors", () => {
+    expect(requiredExtras(pipeline)).toEqual(["config", "gliner2"]);
+  });
+
+  it("ignores disabled detectors and adds faker for faker token styles", () => {
+    const fakerPipe: ConfigPipeline = {
+      ...pipeline,
+      detectors: [{ name: "off", enabled: false, config: { type: "gliner2", model: "onnx-community/gliner_small-v2.1", labels: ["x"], threshold: 0.5, flatNer: true } }],
+      placeholder: { type: "faker", locale: "en_US" },
+    };
+    expect(requiredExtras(fakerPipe)).toEqual(["config", "faker"]);
+  });
+});
+
 describe("toPython", () => {
   it("loads the exported TOML via load_pipeline", () => {
     const py = toPython(pipeline);
     expect(py).toContain("from piighost.config import load_pipeline");
     expect(py).toContain('load_pipeline("pipeline.toml")');
+  });
+
+  it("lists the required extras in the install line", () => {
+    expect(toPython(pipeline)).toContain("piighost[config,gliner2]");
   });
 
   it("summarizes only enabled detectors", () => {

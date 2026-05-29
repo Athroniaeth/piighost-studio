@@ -74,18 +74,41 @@ export function toToml(pipeline: ConfigPipeline): string {
   return parts.join("\n\n") + "\n";
 }
 
+/** Optional piighost extra required by each detector type (regex needs none). */
+const DETECTOR_EXTRA: Partial<Record<DetectorConfig["type"], string>> = {
+  transformers: "transformers",
+  gliner2: "gliner2",
+  llm: "llm",
+};
+
+/** The piighost extras needed to actually load and run this pipeline. `config`
+ *  is always required (that is where load_pipeline lives); enabled detectors and
+ *  faker token styles each pull their own optional dependency. */
+export function requiredExtras(pipeline: ConfigPipeline): string[] {
+  const extras = new Set<string>(["config"]);
+  for (const d of pipeline.detectors) {
+    if (!d.enabled) continue;
+    const extra = DETECTOR_EXTRA[d.config.type];
+    if (extra) extras.add(extra);
+  }
+  if (pipeline.placeholder.type.startsWith("faker")) extras.add("faker");
+  return [...extras].sort();
+}
+
 /** Faithful, runnable Python: save the TOML, then load it with the official
  *  loader (direct detector instantiation is fragile, e.g. transformers needs a
- *  prebuilt HuggingFace pipeline object). */
+ *  prebuilt HuggingFace pipeline object). The install line lists the extras the
+ *  chosen detectors and token style actually require. */
 export function toPython(pipeline: ConfigPipeline): string {
   const summary = pipeline.detectors
     .filter((d) => d.enabled)
     .map((d) => (d.config.type === "regex" ? `regex(${Object.keys(d.config.patterns).join(", ")})` : d.config.type))
     .join(", ");
+  const extras = requiredExtras(pipeline).join(",");
   return [
     `# Pipeline "${pipeline.name}": ${summary}`,
     `# 1. Save the exported configuration as pipeline.toml`,
-    `# 2. uv add piighost   (or: pip install piighost)`,
+    `# 2. uv add 'piighost[${extras}]'   (or: pip install 'piighost[${extras}]')`,
     ``,
     `from piighost.config import load_pipeline`,
     ``,
