@@ -68,6 +68,10 @@ export function groupEntities(tokens: RawToken[], text: string): Entity[] {
   let cursor = 0;
   for (const group of groups) {
     const surface = reconstruct(group.words);
+    // NOTE: reconstruct() separates non-"##" tokens with a single space, so
+    // surfaces with internal punctuation ("O'Brien" -> "O ' Brien",
+    // "Jean-Pierre" -> "Jean - Pierre") will not match the original text and
+    // are dropped. Accepted MVP limitation; revisit if such names matter.
     const start = text.indexOf(surface, cursor);
     if (start === -1) continue;
     const end = start + surface.length;
@@ -132,7 +136,7 @@ async function pickDevice(): Promise<"webgpu" | "wasm"> {
 }
 
 async function getPipeline(model: ModelId, onProgress?: (e: ProgressEvent) => void) {
-  let existing = pipelines.get(model);
+  const existing = pipelines.get(model);
   if (existing) return existing;
 
   const created = (async () => {
@@ -147,6 +151,9 @@ async function getPipeline(model: ModelId, onProgress?: (e: ProgressEvent) => vo
     });
   })();
 
+  // Evict on failure so a later call (e.g. the Retry button) downloads again
+  // instead of replaying a cached rejection forever.
+  created.catch(() => pipelines.delete(model));
   pipelines.set(model, created);
   return created;
 }

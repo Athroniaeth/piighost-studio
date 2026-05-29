@@ -49,6 +49,14 @@ export function NerPlayground() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
+      <header className="space-y-3 text-center">
+        <p className="text-sm font-semibold uppercase tracking-wide text-primary">
+          {pg.eyebrow}
+        </p>
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{pg.title}</h1>
+        <p className="mx-auto max-w-2xl text-muted-foreground">{pg.description}</p>
+      </header>
+
       <div className="flex flex-wrap items-center gap-3">
         <label className="text-sm font-medium" htmlFor="ner-model">
           {pg.modelLabel}
@@ -58,6 +66,7 @@ export function NerPlayground() {
           className="rounded-md border bg-background px-3 py-1.5 text-sm"
           value={model}
           disabled={busy}
+          // value is constrained to the option elements rendered below
           onChange={(e) => setModel(e.target.value as ModelId)}
         >
           {MODELS.map((m) => (
@@ -119,9 +128,9 @@ export function NerPlayground() {
               <table className="w-full text-left text-sm">
                 <thead className="text-muted-foreground">
                   <tr>
-                    <th className="py-1 pr-4 font-medium">{pg.columns.text}</th>
-                    <th className="py-1 pr-4 font-medium">{pg.columns.label}</th>
-                    <th className="py-1 font-medium">{pg.columns.score}</th>
+                    <th scope="col" className="py-1 pr-4 font-medium">{pg.columns.text}</th>
+                    <th scope="col" className="py-1 pr-4 font-medium">{pg.columns.label}</th>
+                    <th scope="col" className="py-1 font-medium">{pg.columns.score}</th>
                   </tr>
                 </thead>
                 <tbody>
