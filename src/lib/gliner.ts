@@ -78,7 +78,9 @@ async function getGliner(model: GlinerModelId) {
       },
       transformersSettings: { allowLocalModels: false, useBrowserCache: true },
       maxWidth: 12, // max span width in tokens the model considers
-      modelType: "gliner",
+      // The onnx-community gliner v2.1 / multi_pii models are span-level
+      // architectures (they feed span_idx); the token decoder would crash.
+      modelType: "span-level",
     });
     await g.initialize();
     return g;
