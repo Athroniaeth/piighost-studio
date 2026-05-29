@@ -113,9 +113,6 @@ export type Dictionary = {
   };
   philosophy: PhilosophyDict;
   playground: {
-    eyebrow: string;
-    title: string;
-    description: string;
     configTitle: string;
     modelLabel: string;
     models: { multilingual: string; english: string };

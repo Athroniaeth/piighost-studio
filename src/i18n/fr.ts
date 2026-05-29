@@ -246,10 +246,6 @@ export const fr: Dictionary = {
     starOnGitHub: "Étoiler sur GitHub",
   },
   playground: {
-    eyebrow: "Playground",
-    title: "Détectez les données personnelles dans votre navigateur",
-    description:
-      "Ceci exécute un modèle de reconnaissance d'entités nommées entièrement dans votre navigateur. Aucun texte ne quitte votre machine. Choisissez un modèle, collez un texte, et voyez ce qui est repéré.",
     configTitle: "Configuration",
     modelLabel: "Modèle",
     models: {

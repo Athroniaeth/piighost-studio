@@ -245,10 +245,6 @@ export const en: Dictionary = {
     starOnGitHub: "Star on GitHub",
   },
   playground: {
-    eyebrow: "Playground",
-    title: "Detect PII in your browser",
-    description:
-      "This runs a named-entity recognition model entirely in your browser. No text leaves your machine. Pick a model, paste some text, and see what gets flagged.",
     configTitle: "Configuration",
     modelLabel: "Model",
     models: {
