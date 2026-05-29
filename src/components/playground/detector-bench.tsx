@@ -223,6 +223,22 @@ export function DetectorBench({
             {entities.length === 0 ? (
               <p className="text-sm text-muted-foreground">{pg.noEntities}</p>
             ) : (
+              <>
+              <div className="mb-2 flex items-center gap-2">
+                <label className="text-xs text-muted-foreground" htmlFor="bench-sort">
+                  {pg.sortLabel}
+                </label>
+                <select
+                  id="bench-sort"
+                  className="rounded-md border bg-background px-2 py-1 text-xs"
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value as EntitySort)}
+                >
+                  <option value="appearance">{pg.sortByAppearance}</option>
+                  <option value="scoreDesc">{pg.sortByScoreDesc}</option>
+                  <option value="scoreAsc">{pg.sortByScoreAsc}</option>
+                </select>
+              </div>
               <ul className="space-y-2">
                 {sortedEntities.map((e, i) => (
                   <li
@@ -243,6 +259,7 @@ export function DetectorBench({
                   </li>
                 ))}
               </ul>
+              </>
             )}
           </>
         )}

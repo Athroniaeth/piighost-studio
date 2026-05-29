@@ -1,7 +1,7 @@
-import { NerPlayground } from "@/components/playground/ner-playground";
+import { PipelineBuilder } from "@/components/playground/pipeline-builder";
 
 export const metadata = { title: "Playground" };
 
 export default function PlaygroundPage() {
-  return <NerPlayground />;
+  return <PipelineBuilder />;
 }
