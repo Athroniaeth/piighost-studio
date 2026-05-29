@@ -87,10 +87,10 @@ export function NerPlayground() {
 
   return (
     <div className="flex w-full flex-col p-4 lg:h-[calc(100dvh-4rem)]">
-      {/* One unified surface filling the window; the four stages are separated
-          by internal dividers. The two text columns are wider than the
-          configuration and entities columns. */}
-      <div className="grid flex-1 divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:min-h-0 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.5fr)_minmax(0,1.5fr)_minmax(0,0.9fr)] lg:divide-x lg:divide-y-0">
+      {/* One unified surface filling the window; the three stages are separated
+          by internal dividers. The text column is the widest — it holds both
+          the editable input and, once analyzed, the highlighted result. */}
+      <div className="grid flex-1 divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:min-h-0 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,2fr)_minmax(0,0.9fr)] lg:divide-x lg:divide-y-0">
         {/* 1. Configuration */}
         <Region title={pg.configTitle}>
           <div className="space-y-6">
@@ -160,19 +160,10 @@ export function NerPlayground() {
           </div>
         </Region>
 
-        {/* 2. Input */}
+        {/* 2. Text — editable input, or the highlighted result once analyzed.
+            Clicking the highlighted text (or the Edit button) returns to the
+            editable textarea and clears the highlights until the next run. */}
         <Region title={pg.inputLabel}>
-          <textarea
-            className="min-h-48 w-full flex-1 resize-none rounded-lg border bg-background p-3 text-sm"
-            value={text}
-            disabled={busy}
-            onChange={(e) => setText(e.target.value)}
-          />
-          <p className="mt-2 shrink-0 text-xs text-muted-foreground">{pg.firstLoadNote}</p>
-        </Region>
-
-        {/* 3. Output */}
-        <Region title={pg.outputTitle}>
           {status === "error" ? (
             <div className="space-y-3">
               <p className="text-sm text-destructive">{pg.errorTitle}</p>
@@ -181,13 +172,39 @@ export function NerPlayground() {
               </Button>
             </div>
           ) : status === "done" ? (
-            <EntityHighlight text={analyzed} entities={entities} />
+            <div className="flex min-h-0 flex-1 flex-col">
+              <div
+                role="button"
+                tabIndex={0}
+                title={pg.edit}
+                onClick={() => setStatus("idle")}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") setStatus("idle");
+                }}
+                className="min-h-48 flex-1 cursor-text overflow-auto rounded-lg border bg-background p-3 text-sm"
+              >
+                <EntityHighlight text={analyzed} entities={entities} />
+              </div>
+              <div className="mt-2 flex shrink-0 justify-end">
+                <Button variant="outline" size="sm" onClick={() => setStatus("idle")}>
+                  {pg.edit}
+                </Button>
+              </div>
+            </div>
           ) : (
-            <p className="text-sm text-muted-foreground">{pg.emptyHint}</p>
+            <>
+              <textarea
+                className="min-h-48 w-full flex-1 resize-none rounded-lg border bg-background p-3 text-sm"
+                value={text}
+                disabled={busy}
+                onChange={(e) => setText(e.target.value)}
+              />
+              <p className="mt-2 shrink-0 text-xs text-muted-foreground">{pg.firstLoadNote}</p>
+            </>
           )}
         </Region>
 
-        {/* 4. Entities */}
+        {/* 3. Entities */}
         <Region title={pg.resultsTitle}>
           {status !== "done" ? (
             <p className="text-sm text-muted-foreground">{pg.emptyHint}</p>

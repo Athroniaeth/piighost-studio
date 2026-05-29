@@ -256,13 +256,13 @@ export const fr: Dictionary = {
     thresholdLabel: "Seuil",
     inputLabel: "Votre texte",
     example:
-      "Bonjour, je m'appelle Marie Lambert. Je travaille chez Société Générale à Paris, et mon collègue Jean Moreau est basé à Lyon.",
+      "Bonjour, je m'appelle Marie Lambert. Je travaille chez Société Générale à Paris, et mon collègue Jean Moreau vient d'être muté au bureau de Lyon. Nous collaborons avec une équipe de Berlin et présentons nos travaux à l'Organisation des Nations unies.",
     analyze: "Analyser",
     analyzing: "Analyse en cours...",
     loadingModel: "Téléchargement du modèle...",
     firstLoadNote:
       "Le premier lancement télécharge le modèle dans votre navigateur (de quelques dizaines à quelques centaines de Mo). Il est ensuite mis en cache, donc les analyses suivantes sont instantanées.",
-    outputTitle: "Sortie",
+    edit: "Modifier",
     resultsTitle: "Entités détectées",
     noEntities: "Aucune entité détectée.",
     columns: { text: "Texte", label: "Label", score: "Score" },

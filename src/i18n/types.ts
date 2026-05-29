@@ -124,7 +124,7 @@ export type Dictionary = {
     analyzing: string;
     loadingModel: string;
     firstLoadNote: string;
-    outputTitle: string;
+    edit: string;
     resultsTitle: string;
     noEntities: string;
     columns: { text: string; label: string; score: string };

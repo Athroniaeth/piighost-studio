@@ -255,13 +255,13 @@ export const en: Dictionary = {
     thresholdLabel: "Threshold",
     inputLabel: "Your text",
     example:
-      "Hi, my name is Sarah Connor. I work at Cyberdyne Systems in Los Angeles, and my colleague James Reese is based in London.",
+      "Sarah Connor, an American engineer, joined Cyberdyne Systems in Los Angeles last spring. Her German colleague Klaus Vogel had transferred from the Berlin office, while James Reese coordinated the London team. The project drew on research first presented at the United Nations.",
     analyze: "Analyze",
     analyzing: "Analyzing...",
     loadingModel: "Downloading the model...",
     firstLoadNote:
       "The first run downloads the model to your browser (tens to a few hundred MB). It is cached afterwards, so later runs are instant.",
-    outputTitle: "Output",
+    edit: "Edit",
     resultsTitle: "Detected entities",
     noEntities: "No entities detected.",
     columns: { text: "Text", label: "Label", score: "Score" },
