@@ -1,9 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EntityHighlight, labelStyle } from "@/components/playground/entity-highlight";
 import { loadNer, runNer, type Entity, type ModelId, type ProgressEvent } from "@/lib/ner";
 import { useT } from "@/i18n/use-t";
@@ -22,6 +21,17 @@ function LabelTag({ label }: { label: string }) {
     <span className={`rounded px-1.5 py-0.5 text-xs font-medium ${labelStyle(label)}`}>
       {label}
     </span>
+  );
+}
+
+function Region({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section className="flex flex-col p-5">
+      <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        {title}
+      </h2>
+      <div className="flex-1">{children}</div>
+    </section>
   );
 }
 
@@ -83,97 +93,96 @@ export function NerPlayground() {
         <p className="mx-auto max-w-2xl text-muted-foreground">{pg.description}</p>
       </header>
 
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-        {/* 1. Configuration */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">{pg.configTitle}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium" htmlFor="ner-model">
-                {pg.modelLabel}
-              </label>
-              <select
-                id="ner-model"
-                className="w-full rounded-md border bg-background px-3 py-1.5 font-mono text-xs"
-                value={model}
-                disabled={busy}
-                // value is constrained to the option elements rendered below
-                onChange={(e) => setModel(e.target.value as ModelId)}
+      {/* One unified surface; the four stages are separated by internal
+          dividers rather than living in detached cards. */}
+      <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
+        <div className="grid divide-y divide-border lg:grid-cols-[minmax(0,17rem)_minmax(0,1.3fr)_minmax(0,1.3fr)_minmax(0,1fr)] lg:divide-x lg:divide-y-0">
+          {/* 1. Configuration */}
+          <Region title={pg.configTitle}>
+            <div className="space-y-6">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium" htmlFor="ner-model">
+                  {pg.modelLabel}
+                </label>
+                <select
+                  id="ner-model"
+                  className="w-full rounded-md border bg-background px-2.5 py-1.5 font-mono text-xs"
+                  value={model}
+                  disabled={busy}
+                  // value is constrained to the option elements rendered below
+                  onChange={(e) => setModel(e.target.value as ModelId)}
+                >
+                  {MODELS.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.id}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-muted-foreground">{pg.models[selectedModel.key]}</p>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-sm font-medium">{pg.labelsLabel}</p>
+                <div className="flex flex-wrap gap-x-4 gap-y-2">
+                  {LABELS.map((l) => (
+                    <label key={l} className="flex cursor-pointer items-center gap-1.5">
+                      <input
+                        type="checkbox"
+                        className="size-4 accent-primary"
+                        checked={allowed[l] !== false}
+                        onChange={(e) =>
+                          setAllowed((prev) => ({ ...prev, [l]: e.target.checked }))
+                        }
+                      />
+                      <LabelTag label={l} />
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium">{pg.thresholdLabel}</span>
+                  <span className="text-muted-foreground">{threshold.toFixed(2)}</span>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.05}
+                  value={threshold}
+                  onChange={(e) => setThreshold(Number(e.target.value))}
+                  className="w-full accent-primary"
+                  aria-label={pg.thresholdLabel}
+                />
+              </div>
+
+              <Button
+                className="w-full"
+                onClick={analyze}
+                disabled={busy || text.trim().length === 0}
               >
-                {MODELS.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.id}
-                  </option>
-                ))}
-              </select>
-              <p className="text-xs text-muted-foreground">{pg.models[selectedModel.key]}</p>
+                {busy && <Loader2 className="mr-2 size-4 animate-spin" />}
+                {buttonLabel}
+              </Button>
             </div>
+          </Region>
 
-            <div className="space-y-2">
-              <p className="text-sm font-medium">{pg.labelsLabel}</p>
-              <div className="flex flex-wrap gap-3">
-                {LABELS.map((l) => (
-                  <label key={l} className="flex cursor-pointer items-center gap-1.5">
-                    <input
-                      type="checkbox"
-                      className="size-4 accent-primary"
-                      checked={allowed[l] !== false}
-                      onChange={(e) => setAllowed((prev) => ({ ...prev, [l]: e.target.checked }))}
-                    />
-                    <LabelTag label={l} />
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">{pg.thresholdLabel}</span>
-                <span className="text-muted-foreground">{threshold.toFixed(2)}</span>
-              </div>
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.05}
-                value={threshold}
-                onChange={(e) => setThreshold(Number(e.target.value))}
-                className="w-full accent-primary"
-                aria-label={pg.thresholdLabel}
+          {/* 2. Input */}
+          <Region title={pg.inputLabel}>
+            <div className="flex h-full flex-col gap-2">
+              <textarea
+                className="min-h-64 w-full flex-1 resize-y rounded-lg border bg-background p-3 text-sm"
+                value={text}
+                disabled={busy}
+                onChange={(e) => setText(e.target.value)}
               />
+              <p className="text-xs text-muted-foreground">{pg.firstLoadNote}</p>
             </div>
+          </Region>
 
-            <Button className="w-full" onClick={analyze} disabled={busy || text.trim().length === 0}>
-              {busy && <Loader2 className="mr-2 size-4 animate-spin" />}
-              {buttonLabel}
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* 2. Input */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">{pg.inputLabel}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <textarea
-              className="min-h-72 w-full resize-y rounded-lg border bg-background p-3 text-sm"
-              value={text}
-              disabled={busy}
-              onChange={(e) => setText(e.target.value)}
-            />
-            <p className="text-xs text-muted-foreground">{pg.firstLoadNote}</p>
-          </CardContent>
-        </Card>
-
-        {/* 3. Output */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">{pg.outputTitle}</CardTitle>
-          </CardHeader>
-          <CardContent>
+          {/* 3. Output */}
+          <Region title={pg.outputTitle}>
             {status === "error" ? (
               <div className="space-y-3">
                 <p className="text-sm text-destructive">{pg.errorTitle}</p>
@@ -186,15 +195,10 @@ export function NerPlayground() {
             ) : (
               <p className="text-sm text-muted-foreground">{pg.emptyHint}</p>
             )}
-          </CardContent>
-        </Card>
+          </Region>
 
-        {/* 4. Entities */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">{pg.resultsTitle}</CardTitle>
-          </CardHeader>
-          <CardContent>
+          {/* 4. Entities */}
+          <Region title={pg.resultsTitle}>
             {status !== "done" ? (
               <p className="text-sm text-muted-foreground">{pg.emptyHint}</p>
             ) : entities.length === 0 ? (
@@ -204,7 +208,7 @@ export function NerPlayground() {
                 {entities.map((e, i) => (
                   <li
                     key={`${e.start}-${i}`}
-                    className="flex items-center justify-between gap-2 rounded-md border p-2"
+                    className="flex items-center justify-between gap-2 rounded-md bg-muted/40 p-2"
                   >
                     <div className="flex min-w-0 items-center gap-2">
                       <LabelTag label={e.label} />
@@ -217,8 +221,8 @@ export function NerPlayground() {
                 ))}
               </ul>
             )}
-          </CardContent>
-        </Card>
+          </Region>
+        </div>
       </div>
     </div>
   );
