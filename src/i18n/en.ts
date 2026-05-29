@@ -249,11 +249,14 @@ export const en: Dictionary = {
     title: "Detect PII in your browser",
     description:
       "This runs a named-entity recognition model entirely in your browser. No text leaves your machine. Pick a model, paste some text, and see what gets flagged.",
+    configTitle: "Configuration",
     modelLabel: "Model",
     models: {
       multilingual: "Multilingual (EN, FR, ...)",
       english: "English only",
     },
+    labelsLabel: "Allowed labels",
+    thresholdLabel: "Threshold",
     inputLabel: "Your text",
     example:
       "Hi, my name is Sarah Connor. I work at Cyberdyne Systems in Los Angeles, and my colleague James Reese is based in London.",
@@ -262,11 +265,13 @@ export const en: Dictionary = {
     loadingModel: "Downloading the model...",
     firstLoadNote:
       "The first run downloads the model to your browser (tens to a few hundred MB). It is cached afterwards, so later runs are instant.",
+    outputTitle: "Output",
     resultsTitle: "Detected entities",
     noEntities: "No entities detected.",
     columns: { text: "Text", label: "Label", score: "Score" },
     errorTitle: "Something went wrong",
     retry: "Try again",
+    emptyHint: "Run an analysis to see results.",
   },
   philosophy: {
     eyebrow: "Philosophy",

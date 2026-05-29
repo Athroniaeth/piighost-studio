@@ -250,11 +250,14 @@ export const fr: Dictionary = {
     title: "Détectez les données personnelles dans votre navigateur",
     description:
       "Ceci exécute un modèle de reconnaissance d'entités nommées entièrement dans votre navigateur. Aucun texte ne quitte votre machine. Choisissez un modèle, collez un texte, et voyez ce qui est repéré.",
+    configTitle: "Configuration",
     modelLabel: "Modèle",
     models: {
       multilingual: "Multilingue (EN, FR, ...)",
       english: "Anglais uniquement",
     },
+    labelsLabel: "Labels autorisés",
+    thresholdLabel: "Seuil",
     inputLabel: "Votre texte",
     example:
       "Bonjour, je m'appelle Marie Lambert. Je travaille chez Société Générale à Paris, et mon collègue Jean Moreau est basé à Lyon.",
@@ -263,11 +266,13 @@ export const fr: Dictionary = {
     loadingModel: "Téléchargement du modèle...",
     firstLoadNote:
       "Le premier lancement télécharge le modèle dans votre navigateur (de quelques dizaines à quelques centaines de Mo). Il est ensuite mis en cache, donc les analyses suivantes sont instantanées.",
+    outputTitle: "Sortie",
     resultsTitle: "Entités détectées",
     noEntities: "Aucune entité détectée.",
     columns: { text: "Texte", label: "Label", score: "Score" },
     errorTitle: "Une erreur est survenue",
     retry: "Réessayer",
+    emptyHint: "Lancez une analyse pour voir les résultats.",
   },
   philosophy: {
     eyebrow: "Philosophie",
