@@ -6,4 +6,5 @@
 // "Cannot convert undefined or null to object". Aliasing fs/path to this empty
 // object lets the probe see `{}` and correctly conclude it is not running in
 // Node, falling back to the browser code paths.
-export default {};
+const emptyModule = {};
+export default emptyModule;
