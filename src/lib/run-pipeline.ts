@@ -84,7 +84,8 @@ export function assemblePipeline(
   const ctx = createTokenContext();
   const groupToken = new Map<string, string>();
   const tokenFor = (entity: Entity, index: number): string => {
-    const key = grouping ? `${entity.label} ${norm(entity.text)}` : `i:${index}`;
+    // Null-byte separator: never present in labels or natural-language text.
+    const key = grouping ? `${entity.label}\u0000${norm(entity.text)}` : `i:${index}`;
     let token = groupToken.get(key);
     if (token === undefined) {
       token = assignToken(pipeline.placeholder, entity.label, entity.text, ctx);

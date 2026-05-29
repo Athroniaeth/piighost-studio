@@ -40,6 +40,8 @@ describe("assignToken", () => {
     const ctx = createTokenContext();
     const tok = assignToken({ type: "label_hash", hashLength: 8 }, "PER", "Marie", ctx);
     expect(tok).toBe(`<<PER:${hashValue("Marie", 8)}>>`);
+    const red = assignToken({ type: "redact_hash", hashLength: 6 }, "PER", "Marie", ctx);
+    expect(red).toBe(`<<REDACT:${hashValue("Marie", 6)}>>`);
   });
 });
 
