@@ -39,7 +39,8 @@ export function NerPlayground() {
       setEntities(result);
       setAnalyzed(text);
       setStatus("done");
-    } catch {
+    } catch (err) {
+      console.error("NER playground failed", err);
       setStatus("error");
     }
   }

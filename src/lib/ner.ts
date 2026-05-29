@@ -1,10 +1,10 @@
 export type RawToken = {
   entity: string;
   score: number;
-  index: number;
   word: string;
-  start: number | null;
-  end: number | null;
+  index?: number;
+  start?: number | null;
+  end?: number | null;
 };
 
 export type Entity = {
@@ -20,46 +20,61 @@ function baseLabel(entity: string): string {
 }
 
 /**
- * Merge per-token BIO predictions into whole entities, using the character
- * offsets to slice the original text (avoids subword "##" reconstruction).
- * A new entity starts on a "B-" tag, on a label change, or on a gap.
+ * Rebuild an entity's surface form from its WordPiece tokens: "##" pieces glue
+ * onto the previous word, everything else is separated by a single space.
+ * "Cyber" + "##dyn" + "##e" + "Systems" -> "Cyberdyne Systems".
+ */
+function reconstruct(words: string[]): string {
+  let surface = "";
+  for (const word of words) {
+    if (word.startsWith("##")) surface += word.slice(2);
+    else surface += (surface ? " " : "") + word;
+  }
+  return surface;
+}
+
+type Group = { label: string; words: string[]; scores: number[] };
+
+/**
+ * Merge per-token BIO predictions into whole entities. transformers.js
+ * token-classification returns no character offsets, so we rebuild each
+ * entity's text from its WordPiece tokens and locate it in the original text
+ * with a forward-moving cursor (so repeated values map to successive spans).
+ * A new entity starts on a "B-" tag, on a label change, or after an "O" token.
  */
 export function groupEntities(tokens: RawToken[], text: string): Entity[] {
-  const entities: Entity[] = [];
-  let current: { label: string; start: number; end: number; scores: number[] } | null = null;
-
-  const flush = () => {
-    if (!current) return;
-    const score = current.scores.reduce((a, b) => a + b, 0) / current.scores.length;
-    entities.push({
-      text: text.slice(current.start, current.end),
-      label: current.label,
-      score,
-      start: current.start,
-      end: current.end,
-    });
-    current = null;
-  };
+  const groups: Group[] = [];
+  let current: Group | null = null;
 
   for (const t of tokens) {
-    if (t.entity === "O" || t.start == null || t.end == null) {
-      flush();
+    if (t.entity === "O") {
+      current = null;
       continue;
     }
     const label = baseLabel(t.entity);
     const isBegin = t.entity.startsWith("B-");
-    const continues =
-      current !== null && !isBegin && current.label === label && t.start <= current.end + 1;
+    const continues = current !== null && !isBegin && current.label === label;
 
     if (continues && current) {
-      current.end = t.end;
+      current.words.push(t.word);
       current.scores.push(t.score);
     } else {
-      flush();
-      current = { label, start: t.start, end: t.end, scores: [t.score] };
+      current = { label, words: [t.word], scores: [t.score] };
+      groups.push(current);
     }
   }
-  flush();
+
+  const entities: Entity[] = [];
+  let cursor = 0;
+  for (const group of groups) {
+    const surface = reconstruct(group.words);
+    const start = text.indexOf(surface, cursor);
+    if (start === -1) continue;
+    const end = start + surface.length;
+    cursor = end;
+    const score = group.scores.reduce((a, b) => a + b, 0) / group.scores.length;
+    entities.push({ text: surface, label: group.label, score, start, end });
+  }
   return entities;
 }
 
@@ -96,6 +111,26 @@ export type ProgressEvent = {
 // One cached pipeline per model id.
 const pipelines = new Map<ModelId, Promise<unknown>>();
 
+/**
+ * Use WebGPU only when an adapter is actually available. The presence of
+ * `navigator.gpu` is not enough: the property can exist while `requestAdapter`
+ * returns null (headless browsers, no GPU), and onnxruntime does not fall back
+ * to WASM on its own when WebGPU is requested. Probe, then choose.
+ */
+async function pickDevice(): Promise<"webgpu" | "wasm"> {
+  const gpu =
+    typeof navigator !== "undefined"
+      ? (navigator as Navigator & { gpu?: { requestAdapter(): Promise<unknown> } }).gpu
+      : undefined;
+  if (!gpu) return "wasm";
+  try {
+    const adapter = await gpu.requestAdapter();
+    return adapter ? "webgpu" : "wasm";
+  } catch {
+    return "wasm";
+  }
+}
+
 async function getPipeline(model: ModelId, onProgress?: (e: ProgressEvent) => void) {
   let existing = pipelines.get(model);
   if (existing) return existing;
@@ -105,8 +140,7 @@ async function getPipeline(model: ModelId, onProgress?: (e: ProgressEvent) => vo
     // Never look for local model files; always fetch from the HF CDN and use
     // the browser cache.
     env.allowLocalModels = false;
-    const device =
-      typeof navigator !== "undefined" && "gpu" in navigator ? "webgpu" : "wasm";
+    const device = await pickDevice();
     return pipeline("token-classification", model, {
       progress_callback: onProgress,
       device,
