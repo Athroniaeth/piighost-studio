@@ -60,23 +60,33 @@ export const PLACEHOLDER_TYPES: PlaceholderType[] = [
   "redact",
 ];
 
+export type SpanResolverType = "confidence" | "disabled";
+export type EntityLinkerType = "exact" | "disabled";
+export type EntityResolverType = "merge" | "fuzzy" | "disabled";
+
+export const SPAN_RESOLVER_TYPES: SpanResolverType[] = ["confidence", "disabled"];
+export const ENTITY_LINKER_TYPES: EntityLinkerType[] = ["exact", "disabled"];
+export const ENTITY_RESOLVER_TYPES: EntityResolverType[] = ["merge", "fuzzy", "disabled"];
+
 export type ConfigPipeline = {
   name: string;
   detectors: PipelineDetector[];
-  spanResolver: boolean;
-  entityLinker: boolean;
-  entityResolver: boolean;
+  spanResolver: SpanResolverType;
+  entityLinker: EntityLinkerType;
+  entityResolver: EntityResolverType;
+  entityResolverThreshold: number; // used when entityResolver === "fuzzy"
   placeholder: Placeholder;
 };
 
-/** A reasonable starting pipeline: no detectors, all stages on, counter tokens. */
+/** A reasonable starting pipeline: no detectors, default stages, counter tokens. */
 export function defaultPipeline(): ConfigPipeline {
   return {
     name: "my-pipeline",
     detectors: [],
-    spanResolver: true,
-    entityLinker: true,
-    entityResolver: true,
+    spanResolver: "confidence",
+    entityLinker: "exact",
+    entityResolver: "merge",
+    entityResolverThreshold: 0.85,
     placeholder: { type: "label_counter" },
   };
 }

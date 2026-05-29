@@ -64,9 +64,13 @@ export function toToml(pipeline: ConfigPipeline): string {
   for (const d of pipeline.detectors) {
     if (d.enabled) parts.push(detectorToml(d.config, d.name));
   }
-  parts.push(`[span_resolver]\ntype = "${pipeline.spanResolver ? "confidence" : "disabled"}"`);
-  parts.push(`[entity_linker]\ntype = "${pipeline.entityLinker ? "exact" : "disabled"}"`);
-  parts.push(`[entity_resolver]\ntype = "${pipeline.entityResolver ? "merge" : "disabled"}"`);
+  parts.push(`[span_resolver]\ntype = "${pipeline.spanResolver}"`);
+  parts.push(`[entity_linker]\ntype = "${pipeline.entityLinker}"`);
+  const entityResolver = [`[entity_resolver]`, `type = "${pipeline.entityResolver}"`];
+  if (pipeline.entityResolver === "fuzzy") {
+    entityResolver.push(`threshold = ${pipeline.entityResolverThreshold}`);
+  }
+  parts.push(entityResolver.join("\n"));
   parts.push(`[anonymizer]\n${placeholderToml(pipeline.placeholder)}`);
   return parts.join("\n\n") + "\n";
 }

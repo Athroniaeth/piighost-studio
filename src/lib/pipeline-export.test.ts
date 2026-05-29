@@ -19,9 +19,10 @@ const pipeline: ConfigPipeline = {
     },
     { name: "off", enabled: false, config: { type: "regex", patterns: { X: "x" } } },
   ],
-  spanResolver: true,
-  entityLinker: false,
-  entityResolver: true,
+  spanResolver: "confidence",
+  entityLinker: "disabled",
+  entityResolver: "merge",
+  entityResolverThreshold: 0.85,
   placeholder: { type: "mask", maskChar: "*" },
 };
 
@@ -54,6 +55,12 @@ describe("toToml", () => {
     expect(toml).toContain('[span_resolver]\ntype = "confidence"');
     expect(toml).toContain('[entity_linker]\ntype = "disabled"');
     expect(toml).toContain('[entity_resolver]\ntype = "merge"');
+  });
+
+  it("emits the entity_resolver threshold only for fuzzy", () => {
+    expect(toToml(pipeline)).not.toContain("threshold = 0.85");
+    const fuzzy = toToml({ ...pipeline, entityResolver: "fuzzy" });
+    expect(fuzzy).toContain('[entity_resolver]\ntype = "fuzzy"\nthreshold = 0.85');
   });
 
   it("emits the anonymizer placeholder factory with its field", () => {

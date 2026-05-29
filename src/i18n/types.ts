@@ -176,6 +176,14 @@ export type Dictionary = {
     entityLinkerLabel: string;
     entityResolverLabel: string;
     anonymizerLabel: string;
+    detectorsHelp: string;
+    spanResolverHelp: string;
+    entityLinkerHelp: string;
+    entityResolverHelp: string;
+    anonymizerHelp: string;
+    savePipeline: string;
+    save: string;
+    cancel: string;
     phHashLength: string;
     phMaskChar: string;
   };
