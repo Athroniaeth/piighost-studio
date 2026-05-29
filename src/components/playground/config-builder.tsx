@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { CopyButton } from "@/components/copy-button";
 import {
   defaultPipeline,
@@ -50,10 +51,11 @@ export function ConfigBuilder() {
   function addDetector(name: string) {
     const found = saved.find((d) => d.name === name);
     if (!found) return;
-    setPipeline((p) => ({
-      ...p,
-      detectors: [...p.detectors, { name: found.name, config: found.config, enabled: true }],
-    }));
+    setPipeline((p) =>
+      p.detectors.some((d) => d.name === name)
+        ? p
+        : { ...p, detectors: [...p.detectors, { name: found.name, config: found.config, enabled: true }] },
+    );
   }
   function toggleDetector(i: number) {
     setPipeline((p) => ({
@@ -108,7 +110,7 @@ export function ConfigBuilder() {
           ) : (
             <ol className="space-y-2">
               {pipeline.detectors.map((d, i) => (
-                <li key={i} className="flex items-center justify-between gap-2 rounded-md bg-muted/40 p-2 text-sm">
+                <li key={d.name} className="flex items-center justify-between gap-2 rounded-md bg-muted/40 p-2 text-sm">
                   <label className="flex min-w-0 cursor-pointer items-center gap-2">
                     <input
                       type="checkbox"
@@ -121,7 +123,7 @@ export function ConfigBuilder() {
                   <span className="flex shrink-0 gap-2 text-muted-foreground">
                     <button type="button" className="text-xs" onClick={() => moveDetector(i, -1)} title={pg.moveUp}>↑</button>
                     <button type="button" className="text-xs" onClick={() => moveDetector(i, 1)} title={pg.moveDown}>↓</button>
-                    <a className="text-xs" href={`/playground?edit=${encodeURIComponent(d.name)}`}>{pg.editInPlayground}</a>
+                    <Link className="text-xs" href={`/playground?edit=${encodeURIComponent(d.name)}`}>{pg.editInPlayground}</Link>
                     <button type="button" className="text-xs text-destructive" onClick={() => removeDetector(i)} title={pg.remove}>✕</button>
                   </span>
                 </li>
@@ -171,6 +173,7 @@ export function ConfigBuilder() {
               <label className="flex items-center justify-between gap-2 text-sm">
                 <span className="text-muted-foreground">{pg.phMaskChar}</span>
                 <input
+                  maxLength={1}
                   className="w-24 rounded-md border bg-background px-2 py-1 text-xs"
                   value={ph.maskChar}
                   onChange={(e) =>

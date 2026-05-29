@@ -21,8 +21,7 @@ export function DetectorPlayground() {
 
   useEffect(() => {
     const list = loadSaved();
-    const edit =
-      typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("edit") : null;
+    const edit = new URLSearchParams(window.location.search).get("edit");
     const found = edit ? list.find((d) => d.name === edit) : undefined;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSaved(list);
