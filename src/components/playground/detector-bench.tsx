@@ -50,11 +50,9 @@ function textToPatterns(text: string): Record<string, string> {
 export function DetectorBench({
   config,
   onChange,
-  onValidate,
 }: {
   config: DetectorConfig;
   onChange: (next: DetectorConfig) => void;
-  onValidate: () => void;
 }) {
   const { t } = useT();
   const pg = t.playground;
@@ -170,15 +168,10 @@ export function DetectorBench({
           </p>
         )}
 
-        <div className="flex gap-2">
-          <Button onClick={test} disabled={busy || !runnable || text.trim().length === 0}>
-            {busy && <Loader2 className="mr-2 size-4 animate-spin" />}
-            {pg.test}
-          </Button>
-          <Button variant="outline" onClick={onValidate}>
-            {pg.validate}
-          </Button>
-        </div>
+        <Button onClick={test} disabled={busy || !runnable || text.trim().length === 0}>
+          {busy && <Loader2 className="mr-2 size-4 animate-spin" />}
+          {pg.test}
+        </Button>
       </section>
 
       {/* Right: text + results (reused from the phase-1 bench) */}

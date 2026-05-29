@@ -111,7 +111,7 @@ export function PipelineBuilder() {
 
         {/* Right: detector bench */}
         <section className="flex min-h-0 flex-col overflow-hidden rounded-xl border bg-card p-4 shadow-sm">
-          <DetectorBench config={draft} onChange={setDraft} onValidate={validate} />
+          <DetectorBench config={draft} onChange={setDraft} />
         </section>
       </div>
 
