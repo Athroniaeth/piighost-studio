@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/copy-button";
@@ -22,6 +22,11 @@ import { toToml, toPython } from "@/lib/pipeline-export";
 import { loadSaved, type SavedDetector } from "@/lib/saved-detectors";
 import { savePipeline } from "@/lib/saved-pipelines";
 import { useT } from "@/i18n/use-t";
+import { EntityHighlight } from "@/components/playground/entity-highlight";
+import { assignLabelColors, labelStyle } from "@/lib/labels";
+import { runPipeline } from "@/lib/run-pipeline";
+import { Loader2 } from "lucide-react";
+import type { Entity } from "@/lib/ner";
 
 /** Indicative example of what each token style produces for a PERSON entity. */
 function tokenExample(ph: Placeholder): string {
@@ -146,6 +151,13 @@ export function ConfigBuilder() {
   const [exportTab, setExportTab] = useState<"toml" | "python">("toml");
   const [showSave, setShowSave] = useState(false);
   const [saveName, setSaveName] = useState("");
+  const [testText, setTestText] = useState(pg.example);
+  const [testStatus, setTestStatus] = useState<"idle" | "running" | "done" | "error">("idle");
+  const [testEntities, setTestEntities] = useState<Entity[]>([]);
+  const [testAnonymized, setTestAnonymized] = useState("");
+  const [testAnalyzed, setTestAnalyzed] = useState("");
+  const testColors = useMemo(() => assignLabelColors(testEntities.map((e) => e.label)), [testEntities]);
+  const hasEnabledDetector = pipeline.detectors.some((d) => d.enabled && d.config.type !== "llm");
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -192,6 +204,20 @@ export function ConfigBuilder() {
     URL.revokeObjectURL(url);
   }
 
+  async function runTest() {
+    try {
+      setTestStatus("running");
+      const result = await runPipeline(pipeline, testText);
+      setTestEntities(result.entities);
+      setTestAnonymized(result.anonymized);
+      setTestAnalyzed(testText);
+      setTestStatus("done");
+    } catch (err) {
+      console.error("pipeline test failed", err);
+      setTestStatus("error");
+    }
+  }
+
   function openSave() {
     setSaveName(pipeline.name);
     setShowSave(true);
@@ -207,7 +233,7 @@ export function ConfigBuilder() {
   return (
     <div className="flex w-full flex-col p-4 lg:h-[calc(100dvh-4rem)]">
       {/* Pipeline, left to right, centered: one block per stage joined by arrows. */}
-      <div className="flex flex-1 items-center justify-center overflow-x-auto">
+      <div className="flex shrink-0 items-center justify-center overflow-x-auto pb-2">
         <div className="flex items-stretch gap-2">
           {/* Detect */}
           <section className="flex w-72 shrink-0 flex-col rounded-xl border bg-card p-3 shadow-sm">
@@ -347,6 +373,85 @@ export function ConfigBuilder() {
             )}
           </section>
         </div>
+      </div>
+
+      {/* Live pipeline test (browser approximation) */}
+      <div className="grid min-h-0 flex-1 gap-4 lg:grid-cols-2">
+        <section className="flex min-h-0 flex-col rounded-xl border bg-card p-3 shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {pg.liveTestTitle}
+            </h2>
+            <span className="text-xs text-muted-foreground">{pg.approximationNote}</span>
+          </div>
+          <textarea
+            className="min-h-32 w-full flex-1 resize-none rounded-lg border bg-background p-3 text-sm"
+            value={testText}
+            disabled={testStatus === "running"}
+            onChange={(e) => setTestText(e.target.value)}
+          />
+          <div className="mt-2 flex items-center gap-2">
+            <Button
+              onClick={runTest}
+              disabled={testStatus === "running" || !hasEnabledDetector || testText.trim().length === 0}
+            >
+              {testStatus === "running" && <Loader2 className="mr-2 size-4 animate-spin" />}
+              {pg.test}
+            </Button>
+            {!hasEnabledDetector && (
+              <span className="text-xs text-muted-foreground">{pg.noEnabledDetectors}</span>
+            )}
+          </div>
+        </section>
+
+        <section className="flex min-h-0 flex-col gap-3 overflow-auto rounded-xl border bg-card p-3 shadow-sm">
+          {testStatus === "error" ? (
+            <div className="space-y-2">
+              <p className="text-sm text-destructive">{pg.errorTitle}</p>
+              <Button variant="outline" size="sm" onClick={runTest}>{pg.retry}</Button>
+            </div>
+          ) : testStatus !== "done" ? (
+            <p className="text-sm text-muted-foreground">{pg.emptyHint}</p>
+          ) : (
+            <>
+              <div className="rounded-lg border bg-background p-3 text-sm">
+                <EntityHighlight text={testAnalyzed} entities={testEntities} colors={testColors} />
+              </div>
+              <div>
+                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {pg.anonymizedLabel}
+                </p>
+                <pre className="overflow-x-auto whitespace-pre-wrap rounded-lg border bg-muted/30 p-3 font-mono text-xs">
+                  {testAnonymized}
+                </pre>
+              </div>
+              {testEntities.length === 0 ? (
+                <p className="text-sm text-muted-foreground">{pg.noEntities}</p>
+              ) : (
+                <ul className="space-y-2">
+                  {testEntities.map((e, i) => (
+                    <li
+                      key={`${e.start}-${i}`}
+                      className="flex items-center justify-between gap-2 rounded-md bg-muted/40 p-2"
+                    >
+                      <div className="flex min-w-0 items-center gap-2">
+                        <span
+                          className={`rounded px-1.5 py-0.5 text-xs font-medium ${testColors.get(e.label) ?? labelStyle(e.label)}`}
+                        >
+                          {e.label}
+                        </span>
+                        <span className="truncate font-mono text-sm">{e.text}</span>
+                      </div>
+                      <span className="shrink-0 text-xs text-muted-foreground">
+                        {(e.score * 100).toFixed(0)}%
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
+          )}
+        </section>
       </div>
 
       {/* Actions */}
