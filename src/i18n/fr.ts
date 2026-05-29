@@ -312,7 +312,6 @@ export const fr: Dictionary = {
     editInPlayground: "Éditer",
     detectorsTitle: "Détecteurs",
     addFromSaved: "Ajouter depuis les sauvegardés",
-    stagesTitle: "Étapes du pipeline",
     spanResolverLabel: "Résolveur de spans",
     entityLinkerLabel: "Lieur d'entités",
     entityResolverLabel: "Résolveur d'entités",

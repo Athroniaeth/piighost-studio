@@ -172,7 +172,6 @@ export type Dictionary = {
     editInPlayground: string;
     detectorsTitle: string;
     addFromSaved: string;
-    stagesTitle: string;
     spanResolverLabel: string;
     entityLinkerLabel: string;
     entityResolverLabel: string;

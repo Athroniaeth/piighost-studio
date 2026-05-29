@@ -50,12 +50,38 @@ function tokenExample(ph: Placeholder): string {
   }
 }
 
-function Toggle({ label, on, onToggle }: { label: string; on: boolean; onToggle: () => void }) {
+/** Flow arrow between pipeline blocks. */
+function Arrow() {
   return (
-    <label className="flex cursor-pointer items-center justify-between gap-2 rounded-md bg-muted/40 p-2 text-sm">
-      <span>{label}</span>
-      <input type="checkbox" className="size-4 accent-primary" checked={on} onChange={onToggle} />
-    </label>
+    <div className="flex shrink-0 items-center px-1 text-xl text-muted-foreground" aria-hidden>
+      →
+    </div>
+  );
+}
+
+/** A togglable pipeline stage block (span resolver / entity linker / entity
+ *  resolver). Shows the variant that will be exported, dims when disabled. */
+function StageBlock({
+  label,
+  on,
+  variant,
+  onToggle,
+}: {
+  label: string;
+  on: boolean;
+  variant: string;
+  onToggle: () => void;
+}) {
+  return (
+    <section
+      className={`flex w-44 shrink-0 flex-col rounded-xl border bg-card p-3 shadow-sm ${on ? "" : "opacity-60"}`}
+    >
+      <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</h2>
+      <label className="mt-auto flex cursor-pointer items-center justify-between gap-2 text-sm">
+        <code className="font-mono text-xs">{on ? variant : "disabled"}</code>
+        <input type="checkbox" className="size-4 accent-primary" checked={on} onChange={onToggle} />
+      </label>
+    </section>
   );
 }
 
@@ -114,17 +140,26 @@ export function ConfigBuilder() {
 
   return (
     <div className="flex w-full flex-col gap-4 p-4">
-      <div className="grid gap-4 lg:grid-cols-2">
-        <section className="rounded-xl border bg-card p-4 shadow-sm">
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      {/* Pipeline name */}
+      <div className="max-w-sm">
+        <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {pg.pipelineNameLabel}
+        </label>
+        <input
+          className="w-full rounded-md border bg-background px-2.5 py-1.5 text-sm"
+          value={pipeline.name}
+          aria-label={pg.pipelineNameLabel}
+          onChange={(e) => setPipeline((p) => ({ ...p, name: e.target.value }))}
+        />
+      </div>
+
+      {/* The pipeline, left to right: one block per stage, joined by arrows. */}
+      <div className="flex items-stretch gap-2 overflow-x-auto pb-2">
+        {/* Detect */}
+        <section className="flex w-72 shrink-0 flex-col rounded-xl border bg-card p-3 shadow-sm">
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             {pg.detectorsTitle}
           </h2>
-          <input
-            className="mb-3 w-full rounded-md border bg-background px-2.5 py-1.5 text-sm"
-            value={pipeline.name}
-            aria-label={pg.pipelineNameLabel}
-            onChange={(e) => setPipeline((p) => ({ ...p, name: e.target.value }))}
-          />
           <select
             className="mb-3 w-full rounded-md border bg-background px-2.5 py-1.5 text-xs"
             value=""
@@ -168,61 +203,78 @@ export function ConfigBuilder() {
           )}
         </section>
 
-        <section className="space-y-4 rounded-xl border bg-card p-4 shadow-sm">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {pg.stagesTitle}
+        <Arrow />
+        <StageBlock
+          label={pg.spanResolverLabel}
+          on={pipeline.spanResolver}
+          variant="confidence"
+          onToggle={() => setPipeline((p) => ({ ...p, spanResolver: !p.spanResolver }))}
+        />
+        <Arrow />
+        <StageBlock
+          label={pg.entityLinkerLabel}
+          on={pipeline.entityLinker}
+          variant="exact"
+          onToggle={() => setPipeline((p) => ({ ...p, entityLinker: !p.entityLinker }))}
+        />
+        <Arrow />
+        <StageBlock
+          label={pg.entityResolverLabel}
+          on={pipeline.entityResolver}
+          variant="merge"
+          onToggle={() => setPipeline((p) => ({ ...p, entityResolver: !p.entityResolver }))}
+        />
+        <Arrow />
+
+        {/* Anonymize */}
+        <section className="flex w-60 shrink-0 flex-col rounded-xl border bg-card p-3 shadow-sm">
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {pg.anonymizerLabel}
           </h2>
-          <Toggle label={pg.spanResolverLabel} on={pipeline.spanResolver} onToggle={() => setPipeline((p) => ({ ...p, spanResolver: !p.spanResolver }))} />
-          <Toggle label={pg.entityLinkerLabel} on={pipeline.entityLinker} onToggle={() => setPipeline((p) => ({ ...p, entityLinker: !p.entityLinker }))} />
-          <Toggle label={pg.entityResolverLabel} on={pipeline.entityResolver} onToggle={() => setPipeline((p) => ({ ...p, entityResolver: !p.entityResolver }))} />
+          <select
+            className="w-full rounded-md border bg-background px-2.5 py-1.5 text-xs"
+            value={ph.type}
+            onChange={(e) =>
+              setPipeline((p) => ({ ...p, placeholder: defaultPlaceholder(e.target.value as PlaceholderType) }))
+            }
+          >
+            {PLACEHOLDER_TYPES.map((ty) => (
+              <option key={ty} value={ty}>{ty}</option>
+            ))}
+          </select>
+          <p className="mt-1.5 text-xs text-muted-foreground">
+            {pg.tokenExample} :{" "}
+            <code className="rounded bg-muted px-1 py-0.5 font-mono">{tokenExample(ph)}</code>
+          </p>
 
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium">{pg.anonymizerLabel}</label>
-            <select
-              className="w-full rounded-md border bg-background px-2.5 py-1.5 text-xs"
-              value={ph.type}
-              onChange={(e) =>
-                setPipeline((p) => ({ ...p, placeholder: defaultPlaceholder(e.target.value as PlaceholderType) }))
-              }
-            >
-              {PLACEHOLDER_TYPES.map((ty) => (
-                <option key={ty} value={ty}>{ty}</option>
-              ))}
-            </select>
-            <p className="text-xs text-muted-foreground">
-              {pg.tokenExample} :{" "}
-              <code className="rounded bg-muted px-1 py-0.5 font-mono">{tokenExample(ph)}</code>
-            </p>
-
-            {(ph.type === "label_hash" || ph.type === "redact_hash") && (
-              <label className="flex items-center justify-between gap-2 text-sm">
-                <span className="text-muted-foreground">{pg.phHashLength}</span>
-                <input
-                  type="number"
-                  min={4}
-                  max={64}
-                  className="w-24 rounded-md border bg-background px-2 py-1 text-xs"
-                  value={ph.hashLength}
-                  onChange={(e) =>
-                    setPipeline((p) => ({ ...p, placeholder: { ...ph, hashLength: Number(e.target.value) } }))
-                  }
-                />
-              </label>
-            )}
-            {ph.type === "mask" && (
-              <label className="flex items-center justify-between gap-2 text-sm">
-                <span className="text-muted-foreground">{pg.phMaskChar}</span>
-                <input
-                  maxLength={1}
-                  className="w-24 rounded-md border bg-background px-2 py-1 text-xs"
-                  value={ph.maskChar}
-                  onChange={(e) =>
-                    setPipeline((p) => ({ ...p, placeholder: { type: "mask", maskChar: e.target.value } }))
-                  }
-                />
-              </label>
-            )}
-          </div>
+          {(ph.type === "label_hash" || ph.type === "redact_hash") && (
+            <label className="mt-2 flex items-center justify-between gap-2 text-sm">
+              <span className="text-muted-foreground">{pg.phHashLength}</span>
+              <input
+                type="number"
+                min={4}
+                max={64}
+                className="w-20 rounded-md border bg-background px-2 py-1 text-xs"
+                value={ph.hashLength}
+                onChange={(e) =>
+                  setPipeline((p) => ({ ...p, placeholder: { ...ph, hashLength: Number(e.target.value) } }))
+                }
+              />
+            </label>
+          )}
+          {ph.type === "mask" && (
+            <label className="mt-2 flex items-center justify-between gap-2 text-sm">
+              <span className="text-muted-foreground">{pg.phMaskChar}</span>
+              <input
+                maxLength={1}
+                className="w-16 rounded-md border bg-background px-2 py-1 text-xs"
+                value={ph.maskChar}
+                onChange={(e) =>
+                  setPipeline((p) => ({ ...p, placeholder: { type: "mask", maskChar: e.target.value } }))
+                }
+              />
+            </label>
+          )}
         </section>
       </div>
 

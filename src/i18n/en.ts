@@ -311,7 +311,6 @@ export const en: Dictionary = {
     editInPlayground: "Edit",
     detectorsTitle: "Detectors",
     addFromSaved: "Add from saved",
-    stagesTitle: "Pipeline stages",
     spanResolverLabel: "Span resolver",
     entityLinkerLabel: "Entity linker",
     entityResolverLabel: "Entity resolver",
