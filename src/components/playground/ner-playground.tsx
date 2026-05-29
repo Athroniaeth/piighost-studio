@@ -3,10 +3,10 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { EntityHighlight, labelStyle } from "@/components/playground/entity-highlight";
+import { EntityHighlight } from "@/components/playground/entity-highlight";
 import { loadNer, runNer, type Entity, type ModelId, type ProgressEvent } from "@/lib/ner";
 import { loadGliner, runGliner, type GlinerModelId } from "@/lib/gliner";
-import { parseLabels } from "@/lib/labels";
+import { parseLabels, assignLabelColors, labelStyle } from "@/lib/labels";
 import { useT } from "@/i18n/use-t";
 
 type Status = "idle" | "loading" | "analyzing" | "done" | "error";
@@ -37,9 +37,9 @@ const MODELS: ModelEntry[] = [
 
 const LABELS = ["PER", "ORG", "LOC", "MISC"] as const;
 
-function LabelTag({ label }: { label: string }) {
+function LabelTag({ label, className }: { label: string; className: string }) {
   return (
-    <span className={`rounded px-1.5 py-0.5 text-xs font-medium ${labelStyle(label)}`}>
+    <span className={`rounded px-1.5 py-0.5 text-xs font-medium ${className}`}>
       {label}
     </span>
   );
@@ -77,6 +77,13 @@ export function NerPlayground() {
   const entities = useMemo(
     () => allEntities.filter((e) => allowed[e.label] !== false && e.score >= threshold),
     [allEntities, allowed, threshold],
+  );
+
+  // Colors are assigned per distinct label from the full result, so they stay
+  // stable while the threshold filters entities in and out.
+  const colors = useMemo(
+    () => assignLabelColors(allEntities.map((e) => e.label)),
+    [allEntities],
   );
 
   const selectedModel = MODELS.find((m) => m.id === model) ?? MODELS[0];
@@ -194,7 +201,7 @@ export function NerPlayground() {
                         checked={allowed[l] !== false}
                         onChange={(e) => setAllowed((prev) => ({ ...prev, [l]: e.target.checked }))}
                       />
-                      <LabelTag label={l} />
+                      <LabelTag label={l} className={labelStyle(l)} />
                     </label>
                   ))}
                 </div>
@@ -256,7 +263,7 @@ export function NerPlayground() {
                 }}
                 className="min-h-48 flex-1 cursor-text overflow-auto rounded-lg border bg-background p-3 text-sm"
               >
-                <EntityHighlight text={analyzed} entities={entities} />
+                <EntityHighlight text={analyzed} entities={entities} colors={colors} />
               </div>
               <div className="mt-2 flex shrink-0 justify-end">
                 <Button variant="outline" size="sm" onClick={() => setStatus("idle")}>
@@ -291,7 +298,7 @@ export function NerPlayground() {
                   className="flex items-center justify-between gap-2 rounded-md bg-muted/40 p-2"
                 >
                   <div className="flex min-w-0 items-center gap-2">
-                    <LabelTag label={e.label} />
+                    <LabelTag label={e.label} className={colors.get(e.label) ?? labelStyle(e.label)} />
                     <span className="truncate font-mono text-sm">{e.text}</span>
                   </div>
                   <span className="shrink-0 text-xs text-muted-foreground">

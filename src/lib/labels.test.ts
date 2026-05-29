@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseLabels, hashLabelColor, LABEL_PALETTE } from "./labels";
+import { parseLabels, assignLabelColors, LABEL_STYLES } from "./labels";
 
 describe("parseLabels", () => {
   it("splits on commas and trims", () => {
@@ -19,18 +19,26 @@ describe("parseLabels", () => {
   });
 });
 
-describe("hashLabelColor", () => {
-  it("is deterministic for the same label", () => {
-    expect(hashLabelColor("email")).toBe(hashLabelColor("email"));
+describe("assignLabelColors", () => {
+  it("gives distinct labels distinct colors (person != organization)", () => {
+    const colors = assignLabelColors(["person", "organization"]);
+    expect(colors.get("person")).not.toBe(colors.get("organization"));
   });
 
-  it("returns a class string from the palette", () => {
-    expect(LABEL_PALETTE).toContain(hashLabelColor("phone number"));
+  it("assigns a distinct color to each of many labels (up to the palette size)", () => {
+    const labels = ["person", "email", "phone", "address", "iban", "company", "city", "date"];
+    const colors = assignLabelColors(labels);
+    expect(new Set(colors.values()).size).toBe(labels.length);
   });
 
-  it("spreads distinct labels across distinct buckets", () => {
-    // These five land in five different palette buckets.
-    const colors = new Set(["person", "email", "location", "date", "money"].map(hashLabelColor));
-    expect(colors.size).toBe(5);
+  it("keeps fixed NER labels on their dedicated styles", () => {
+    const colors = assignLabelColors(["PER", "ORG", "LOC", "MISC"]);
+    expect(colors.get("PER")).toBe(LABEL_STYLES.PER);
+    expect(colors.get("ORG")).toBe(LABEL_STYLES.ORG);
+  });
+
+  it("gives a repeated label the same color and ignores duplicates", () => {
+    const colors = assignLabelColors(["email", "person", "email"]);
+    expect(colors.size).toBe(2);
   });
 });
