@@ -6,6 +6,13 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true },
   trailingSlash: true,
   pageExtensions: ["ts", "tsx", "md", "mdx"],
+  // `gliner` statically imports `onnxruntime-web/webgl` and `.../webgpu`, whose
+  // `node` export condition is `null`. That makes them unresolvable in the
+  // server (SSR / static-prerender) bundle, even though the gliner runtime is
+  // only ever invoked in the browser. Keep gliner external to the server bundle
+  // so Turbopack never resolves those subpaths there; the browser bundle still
+  // resolves the real webgpu/wasm backends.
+  serverExternalPackages: ["gliner"],
   turbopack: {
     // The `gliner` dependency (@xenova/transformers@2.17.2) probes Node built-ins
     // at import time; Turbopack maps them to `undefined`, which crashes the probe.
