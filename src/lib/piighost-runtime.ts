@@ -144,7 +144,9 @@ export function loadPiighostRuntime(): Promise<PyodideInterface> {
         ? { indexURL: `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/` }
         : {},
     );
-    await py.loadPackage("micropip");
+    // pydantic ships with Pyodide; piighost's placeholder/anonymizer modules
+    // import config models that require it, so load it before running the glue.
+    await py.loadPackage(["micropip", "pydantic"]);
     const micropip = py.pyimport("micropip");
     await micropip.install(`piighost==${PIIGHOST_VERSION}`);
     micropip.destroy(); // release the PyProxy; Pyodide GC finalization is not guaranteed
