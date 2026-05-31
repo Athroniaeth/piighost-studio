@@ -184,6 +184,7 @@ export type Dictionary = {
     liveTestTitle: string;
     anonymizedLabel: string;
     approximationNote: string;
+    loadingRuntime: string;
     noEnabledDetectors: string;
     staleNote: string;
     savePipeline: string;

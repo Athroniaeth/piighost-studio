@@ -24,7 +24,9 @@ import { savePipeline } from "@/lib/saved-pipelines";
 import { useT } from "@/i18n/use-t";
 import { EntityHighlight } from "@/components/playground/entity-highlight";
 import { assignLabelColors, labelStyle } from "@/lib/labels";
-import { runPipeline, type AnonSegment } from "@/lib/run-pipeline";
+import { runPipeline } from "@/lib/run-pipeline";
+import { loadPiighostRuntime } from "@/lib/piighost-runtime";
+import type { AnonSegment, AssembleResult } from "@/lib/piighost-bridge";
 import { Loader2 } from "lucide-react";
 import type { Entity } from "@/lib/ner";
 
@@ -152,12 +154,16 @@ export function ConfigBuilder() {
   const [showSave, setShowSave] = useState(false);
   const [saveName, setSaveName] = useState("");
   const [testText, setTestText] = useState(pg.example);
-  const [testStatus, setTestStatus] = useState<"idle" | "running" | "done" | "error">("idle");
-  const [testEntities, setTestEntities] = useState<Entity[]>([]);
+  const [testStatus, setTestStatus] = useState<"idle" | "loading" | "running" | "done" | "error">("idle");
+  const [testHighlights, setTestHighlights] = useState<Entity[]>([]);
+  const [testRows, setTestRows] = useState<AssembleResult["entities"]>([]);
   const [testAnonSegments, setTestAnonSegments] = useState<AnonSegment[]>([]);
   const [testAnalyzed, setTestAnalyzed] = useState("");
   const [testSnapshot, setTestSnapshot] = useState("");
-  const testColors = useMemo(() => assignLabelColors(testEntities.map((e) => e.label)), [testEntities]);
+  const testColors = useMemo(
+    () => assignLabelColors(testHighlights.map((e) => e.label)),
+    [testHighlights],
+  );
   const hasEnabledDetector = pipeline.detectors.some((d) => d.enabled && d.config.type !== "llm");
   const hasEnabledLlm = pipeline.detectors.some((d) => d.enabled && d.config.type === "llm");
   // The shown result is stale if the pipeline or text changed since the run.
@@ -211,15 +217,29 @@ export function ConfigBuilder() {
 
   async function runTest() {
     try {
+      setTestStatus("loading");
+      await loadPiighostRuntime();
       setTestStatus("running");
       const result = await runPipeline(pipeline, testText);
-      setTestEntities(result.entities);
-      setTestAnonSegments(result.anonymizedSegments);
+      setTestHighlights(
+        result.highlights.map((h) => ({
+          text: h.text,
+          label: h.label,
+          score: h.score,
+          start: h.start,
+          end: h.end,
+        })),
+      );
+      setTestRows(result.entities);
+      setTestAnonSegments(result.segments);
       setTestAnalyzed(testText);
       setTestSnapshot(JSON.stringify({ pipeline, text: testText }));
       setTestStatus("done");
     } catch (err) {
       console.error("pipeline test failed", err);
+      setTestHighlights([]);
+      setTestRows([]);
+      setTestAnonSegments([]);
       setTestStatus("error");
     }
   }
@@ -381,7 +401,7 @@ export function ConfigBuilder() {
         </div>
       </div>
 
-      {/* Live pipeline test (browser approximation): input | anonymized | entities */}
+      {/* Live pipeline test (real piighost via Pyodide): input | anonymized | entities */}
       <div className="grid min-h-0 flex-1 gap-4 lg:grid-cols-3">
         {/* 1. Input — editable, or the colored highlight once a run is done
             (click it, or Edit, to go back to editing, as in the playground). */}
@@ -403,25 +423,35 @@ export function ConfigBuilder() {
               }}
               className="min-h-32 flex-1 cursor-text overflow-auto rounded-lg border bg-background p-3 text-sm"
             >
-              <EntityHighlight text={testAnalyzed} entities={testEntities} colors={testColors} />
+              <EntityHighlight text={testAnalyzed} entities={testHighlights} colors={testColors} />
             </div>
           ) : (
             <textarea
               className="min-h-32 w-full flex-1 resize-none rounded-lg border bg-background p-3 text-sm"
               aria-label={pg.liveTestTitle}
               value={testText}
-              disabled={testStatus === "running"}
+              disabled={testStatus === "running" || testStatus === "loading"}
               onChange={(e) => setTestText(e.target.value)}
             />
           )}
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <Button
               onClick={runTest}
-              disabled={testStatus === "running" || !hasEnabledDetector || testText.trim().length === 0}
+              disabled={
+                testStatus === "running" ||
+                testStatus === "loading" ||
+                !hasEnabledDetector ||
+                testText.trim().length === 0
+              }
             >
-              {testStatus === "running" && <Loader2 className="mr-2 size-4 animate-spin" />}
+              {(testStatus === "running" || testStatus === "loading") && (
+                <Loader2 className="mr-2 size-4 animate-spin" />
+              )}
               {pg.test}
             </Button>
+            {testStatus === "loading" && (
+              <span className="text-xs text-muted-foreground">{pg.loadingRuntime}</span>
+            )}
             {testStatus === "done" && (
               <Button variant="outline" size="sm" onClick={() => setTestStatus("idle")}>
                 {pg.edit}
@@ -470,13 +500,13 @@ export function ConfigBuilder() {
           </h2>
           {testStatus !== "done" ? (
             <p className="text-sm text-muted-foreground">{pg.emptyHint}</p>
-          ) : testEntities.length === 0 ? (
+          ) : testRows.length === 0 ? (
             <p className="text-sm text-muted-foreground">{pg.noEntities}</p>
           ) : (
             <ul className="space-y-2">
-              {testEntities.map((e, i) => (
+              {testRows.map((e, i) => (
                 <li
-                  key={`${e.start}-${i}`}
+                  key={`${e.token}-${i}`}
                   className="flex items-center justify-between gap-2 rounded-md bg-muted/40 p-2"
                 >
                   <div className="flex min-w-0 items-center gap-2">
