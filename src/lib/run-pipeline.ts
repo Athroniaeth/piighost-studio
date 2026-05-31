@@ -18,6 +18,11 @@ export function hashValue(value: string, length: number): string {
   return out.slice(0, length);
 }
 
+/** A piece of the anonymized output: plain text when `label` is absent, or a
+ *  replacement token carrying the label of the entity it stands in for (so the
+ *  UI can color it with the same palette as the source highlight). */
+export type AnonSegment = { value: string; label?: string };
+
 /** Mutable counters for token assignment within one pipeline run. */
 export type TokenContext = { labelCounters: Map<string, number>; global: { n: number } };
 
@@ -76,7 +81,7 @@ export function assemblePipeline(
   detections: Entity[],
   pipeline: ConfigPipeline,
   text: string,
-): { entities: Entity[]; anonymized: string } {
+): { entities: Entity[]; anonymized: string; anonymizedSegments: AnonSegment[] } {
   const kept = resolveSpans(detections, pipeline.spanResolver);
   const grouping = !(pipeline.entityLinker === "disabled" && pipeline.entityResolver === "disabled");
   const norm = (v: string) => (pipeline.entityResolver === "fuzzy" ? v.toLowerCase().trim() : v);
@@ -96,14 +101,21 @@ export function assemblePipeline(
 
   let cursor = 0;
   let anonymized = "";
+  const segments: AnonSegment[] = [];
   kept.forEach((entity, index) => {
     if (entity.start < cursor) return; // overlap leftover (only when resolver disabled)
-    anonymized += text.slice(cursor, entity.start) + tokenFor(entity, index);
+    const before = text.slice(cursor, entity.start);
+    const token = tokenFor(entity, index);
+    if (before) segments.push({ value: before });
+    segments.push({ value: token, label: entity.label });
+    anonymized += before + token;
     cursor = entity.end;
   });
-  anonymized += text.slice(cursor);
+  const tail = text.slice(cursor);
+  if (tail) segments.push({ value: tail });
+  anonymized += tail;
 
-  return { entities: kept, anonymized };
+  return { entities: kept, anonymized, anonymizedSegments: segments };
 }
 
 /** Run the whole pipeline in the browser: every ENABLED detector runs (filtered
@@ -112,7 +124,7 @@ export function assemblePipeline(
 export async function runPipeline(
   pipeline: ConfigPipeline,
   text: string,
-): Promise<{ entities: Entity[]; anonymized: string }> {
+): Promise<{ entities: Entity[]; anonymized: string; anonymizedSegments: AnonSegment[] }> {
   const detections: Entity[] = [];
   for (const d of pipeline.detectors) {
     if (!d.enabled || d.config.type === "llm") continue;
