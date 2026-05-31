@@ -26,8 +26,13 @@ library). Two things in one statically-exported Next.js app:
    (`piighost`, `api`, `chat`, `proofreader`) and a Philosophy page. EN/FR,
    light/dark, full-screen with scroll-snap.
 2. **Interactive tools** that run inference in the visitor's browser to avoid
-   hosting cost. Phase 1 (`/playground`) is a NER tool; later phases are
-   roadmapped in `docs/ROADMAP.md`.
+   hosting cost. Two linked, backend-free pages: **`/playground`** is a
+   single-detector test bench (regex / classic NER / browser GLiNER; the `llm`
+   detector is disabled here), with save-to-localStorage; **`/config`** composes
+   saved detectors into a full pipeline (detect → span resolve → entity link →
+   entity resolve → anonymize), runs a live in-browser test of it, and exports
+   the result as piighost TOML / Python. Later phases are roadmapped in
+   `docs/ROADMAP.md`.
 
 The guiding constraint is **avoid hosting as long as possible**: regex and NER
 run client-side and are free; paid/server work is deferred to the last roadmap
@@ -50,14 +55,27 @@ direction and decisions that aren't derivable from the code.
   `Dictionary` type and both dictionaries. Because locale lives in client state,
   pages that render copy are client components.
 
-- **Browser-side ML** (`src/lib/ner.ts`). transformers.js runs token
-  classification on ONNX models fetched from the HF CDN. Key details: pipelines
-  are cached per model id and evicted on failure (so Retry re-downloads);
-  `pickDevice()` probes for a real WebGPU adapter and falls back to WASM
-  (onnxruntime won't fall back on its own). transformers.js returns BIO tokens
-  with no character offsets, so `groupEntities()` rebuilds entity surfaces from
-  WordPiece tokens and locates them via a forward-moving cursor — entities with
-  internal punctuation are a known dropped case.
+- **Browser-side ML** (`src/lib/ner.ts`, `src/lib/gliner.ts`). transformers.js
+  runs classic token classification (`ner.ts`) on ONNX models fetched from the
+  HF CDN; the `gliner` package runs zero-shot span-level NER (`gliner.ts`). Both
+  cache instances per model id, evict on failure (so Retry re-downloads), and
+  probe for a real WebGPU adapter before falling back to WASM (onnxruntime won't
+  fall back on its own). transformers.js returns BIO tokens with no character
+  offsets, so `groupEntities()` rebuilds entity surfaces from WordPiece tokens
+  and locates them via a forward-moving cursor — entities with internal
+  punctuation are a known dropped case. GLiNER already gives character offsets.
+
+- **Detector + pipeline model** (`src/lib/detector-config.ts`,
+  `run-pipeline.ts`, `pipeline-export.ts`). A pipeline is a list of detector
+  configs (`regex` via `regex-detect.ts`, `transformers`, `gliner2`, `llm`) plus
+  post-detection stages. `runPipeline()` runs every enabled detector then
+  `assemblePipeline()` applies the stages and assigns placeholder tokens (the 7
+  styles must match piighost's real formats). The **`llm` detector never runs in
+  the browser** — it is filtered out of the live test and the UI says so;
+  `pipeline-export.ts` emits it for server-side execution and computes the
+  required piighost extras. Detectors/pipelines persist to localStorage
+  (`saved-detectors.ts`, `saved-pipelines.ts`); entity colors come from
+  `labels.ts`.
 
 - **UI components.** shadcn/ui in the **base-ui** variant (`@base-ui/react`,
   `style: "base-nova"` in `components.json`), Tailwind v4 (config-less, CSS vars
@@ -70,6 +88,17 @@ direction and decisions that aren't derivable from the code.
   drives nav links and per-project pages via `getProject(slug)`).
 
 - **Path alias** `@/*` → `src/*` (tsconfig + vitest config).
+
+- **onnxruntime / gliner bundling gotchas** (`next.config.ts`). The `gliner`
+  package and `@xenova/transformers@2.17.2` fight the bundler in two ways, both
+  worked around in `next.config.ts`: (1) Turbopack `resolveAlias` maps `fs` → an
+  empty module and `path` → `path-browserify`, so the transformers env-probe
+  doesn't crash on Node built-ins. (2) `gliner` statically imports
+  `onnxruntime-web/webgl` and `.../webgpu`, whose `node` export condition is
+  `null` and so cannot resolve in the server (SSR / static-prerender) bundle —
+  `serverExternalPackages: ["gliner"]` keeps it out of that bundle (its runtime
+  is browser-only anyway). Benign onnxruntime console warnings are filtered in
+  `src/lib/onnx-log-filter.ts` (the console is patched).
 
 ## Conventions
 
