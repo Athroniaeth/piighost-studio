@@ -1,0 +1,131 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "piighost" [ref=e5] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e6]:
+          - navigation [ref=e7]:
+            - list [ref=e8]:
+              - listitem [ref=e9]:
+                - button "Projects" [ref=e10]:
+                  - text: Projects
+                  - img [ref=e11]
+          - button "Playground" [ref=e13] [cursor=pointer]
+          - button "Config" [ref=e14] [cursor=pointer]
+          - button "Philosophy" [ref=e15] [cursor=pointer]
+        - generic [ref=e16]:
+          - button "GitHub" [ref=e17] [cursor=pointer]:
+            - img
+          - button "Switch to French" [ref=e18]:
+            - generic [ref=e19]: 🇬🇧
+            - generic [ref=e20]: English
+            - img
+          - button "Toggle theme" [ref=e21]:
+            - img
+    - main [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - generic [ref=e27]:
+              - heading "Detectors" [level=2] [ref=e28]
+              - generic "Detect PII in the text (regex, classic NER, GLiNER...)." [ref=e29]: "?"
+            - combobox [ref=e30]:
+              - option "Add from saved" [selected]
+            - paragraph [ref=e31]: No detectors yet. Add one from your saved detectors above.
+          - generic [ref=e32]: →
+          - generic [ref=e33]:
+            - generic [ref=e34]:
+              - heading "Span resolver" [level=2] [ref=e35]
+              - generic "Resolves overlapping detections into final spans." [ref=e36]: "?"
+            - combobox [ref=e37]:
+              - option "confidence" [selected]
+              - option "disabled"
+          - generic [ref=e38]: →
+          - generic [ref=e39]:
+            - generic [ref=e40]:
+              - heading "Entity linker" [level=2] [ref=e41]
+              - generic "Links repeats of the same value so they share a placeholder." [ref=e42]: "?"
+            - combobox [ref=e43]:
+              - option "exact" [selected]
+              - option "disabled"
+          - generic [ref=e44]: →
+          - generic [ref=e45]:
+            - generic [ref=e46]:
+              - heading "Entity resolver" [level=2] [ref=e47]
+              - generic "Merges linked entities; fuzzy also matches typos and case." [ref=e48]: "?"
+            - combobox [ref=e49]:
+              - option "merge" [selected]
+              - option "fuzzy"
+              - option "disabled"
+          - generic [ref=e50]: →
+          - generic [ref=e51]:
+            - generic [ref=e52]:
+              - heading "Anonymizer (token style)" [level=2] [ref=e53]
+              - generic "Replaces each entity with a placeholder token." [ref=e54]: "?"
+            - combobox [ref=e55]:
+              - option "label_counter" [selected]
+              - option "label_hash"
+              - option "label"
+              - option "mask"
+              - option "redact_counter"
+              - option "redact_hash"
+              - option "redact"
+            - paragraph [ref=e56]:
+              - text: "Example (indicative) :"
+              - code [ref=e57]: <<PERSON:1>>
+        - generic [ref=e58]:
+          - generic [ref=e59]:
+            - generic [ref=e60]:
+              - heading "Live test (preview)" [level=2] [ref=e61]
+              - generic [ref=e62]: Browser approximation. The real piighost engine may differ on edge cases.
+            - textbox "Live test (preview)" [ref=e63]: Sarah Connor, an American engineer, joined Cyberdyne Systems in Los Angeles last spring. Her German colleague Klaus Vogel had transferred from the Berlin office, while James Reese coordinated the London team. The project drew on research first presented at the United Nations.
+            - generic [ref=e64]:
+              - button "Test" [disabled]
+              - generic [ref=e65]: Enable at least one detector to test the pipeline.
+          - generic [ref=e66]:
+            - heading "Anonymized text" [level=2] [ref=e67]
+            - paragraph [ref=e68]: Run an analysis to see results.
+          - generic [ref=e69]:
+            - heading "Detected entities" [level=2] [ref=e70]
+            - paragraph [ref=e71]: Run an analysis to see results.
+        - generic [ref=e72]:
+          - button "Export" [ref=e73]
+          - button "Save pipeline" [ref=e74]
+    - contentinfo [ref=e75]:
+      - generic [ref=e76]:
+        - generic [ref=e77]:
+          - paragraph [ref=e78]: piighost
+          - paragraph [ref=e79]: Anonymize PII before it reaches the LLM.
+        - generic [ref=e80]:
+          - paragraph [ref=e81]: Projects
+          - list [ref=e82]:
+            - listitem [ref=e83]:
+              - link "piighost" [ref=e84] [cursor=pointer]:
+                - /url: /piighost/
+            - listitem [ref=e85]:
+              - link "piighost-api" [ref=e86] [cursor=pointer]:
+                - /url: /api/
+            - listitem [ref=e87]:
+              - link "piighost-chat" [ref=e88] [cursor=pointer]:
+                - /url: /chat/
+            - listitem [ref=e89]:
+              - link "piighost-proofreader" [ref=e90] [cursor=pointer]:
+                - /url: /proofreader/
+        - generic [ref=e91]:
+          - paragraph [ref=e92]: Links
+          - list [ref=e93]:
+            - listitem [ref=e94]:
+              - link "GitHub" [ref=e95] [cursor=pointer]:
+                - /url: https://github.com/Athroniaeth/piighost
+            - listitem [ref=e96]:
+              - link "PyPI" [ref=e97] [cursor=pointer]:
+                - /url: https://pypi.org/project/piighost/
+            - listitem [ref=e98]:
+              - link "Documentation" [ref=e99] [cursor=pointer]:
+                - /url: https://athroniaeth.github.io/piighost/
+      - generic [ref=e100]: MIT licensed. Built with Next.js and shadcn/ui.
+  - button "Scroll to top":
+    - img
+  - button "Open Next.js Dev Tools" [ref=e106] [cursor=pointer]:
+    - img [ref=e107]
