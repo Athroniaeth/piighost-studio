@@ -506,18 +506,21 @@ export function ConfigBuilder() {
           ) : (
             <ul className="space-y-2">
               {testRows.map((e, i) => (
-                <li key={`${e.token}-${i}`} className="rounded-md bg-muted/40 p-2">
-                  <div className="flex items-center gap-2">
+                <li
+                  key={`${e.token}-${i}`}
+                  className="flex items-center justify-between gap-2 rounded-md bg-muted/40 p-2"
+                >
+                  <div className="flex min-w-0 items-center gap-2">
                     <span
-                      className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${testColors.get(e.label) ?? labelStyle(e.label)}`}
+                      className={`rounded px-1.5 py-0.5 text-[11px] font-medium ${testColors.get(e.label) ?? labelStyle(e.label)}`}
                     >
                       {e.label}
                     </span>
-                    <span className="shrink-0 text-[10px] text-muted-foreground">
-                      {(e.score * 100).toFixed(0)}%
-                    </span>
+                    <span className="truncate font-mono text-[13px]">{e.text}</span>
                   </div>
-                  <span className="mt-1 block truncate font-mono text-xs">{e.text}</span>
+                  <span className="shrink-0 text-[11px] text-muted-foreground">
+                    {(e.score * 100).toFixed(0)}%
+                  </span>
                 </li>
               ))}
             </ul>
