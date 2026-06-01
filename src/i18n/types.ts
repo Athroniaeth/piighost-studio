@@ -37,7 +37,6 @@ export type Dictionary = {
     projects: string;
     philosophy: string;
     playground: string;
-    config: string;
     github: string;
     toggleTheme: string;
     toggleLanguage: string;
@@ -114,6 +113,8 @@ export type Dictionary = {
   };
   philosophy: PhilosophyDict;
   playground: {
+    tabDetector: string;
+    tabConfig: string;
     configTitle: string;
     modelLabel: string;
     models: {

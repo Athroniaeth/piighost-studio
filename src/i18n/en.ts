@@ -9,7 +9,6 @@ export const en: Dictionary = {
     projects: "Projects",
     philosophy: "Philosophy",
     playground: "Playground",
-    config: "Config",
     github: "GitHub",
     toggleTheme: "Toggle theme",
     toggleLanguage: "Switch to French",
@@ -246,6 +245,8 @@ export const en: Dictionary = {
     starOnGitHub: "Star on GitHub",
   },
   playground: {
+    tabDetector: "Detector",
+    tabConfig: "Config",
     configTitle: "Configuration",
     modelLabel: "Model",
     models: {
