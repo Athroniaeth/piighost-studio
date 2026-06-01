@@ -459,18 +459,6 @@ export function ConfigBuilder() {
                 </button>
               ))}
             </div>
-            {resultView === "input" && testStatus === "done" && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setResultView("input");
-                  setTestStatus("idle");
-                }}
-              >
-                {pg.edit}
-              </Button>
-            )}
           </div>
 
           {resultView === "input" ? (
