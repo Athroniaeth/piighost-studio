@@ -1,4 +1,4 @@
-import { loadPyodide, type PyodideInterface } from "pyodide";
+import type { PyodideInterface } from "pyodide";
 import {
   toBridgeConfig,
   detectionsToBridge,
@@ -130,6 +130,41 @@ def assemble(payload_json):
     })
 `;
 
+/** Signature of Pyodide's `loadPyodide` entry point (the bits we use). */
+type LoadPyodide = (config?: { indexURL?: string }) => Promise<PyodideInterface>;
+
+const PYODIDE_CDN = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
+
+let scriptPromise: Promise<void> | null = null;
+/** Inject the CDN pyodide.js once; it defines globalThis.loadPyodide. */
+function loadPyodideScript(): Promise<void> {
+  if (scriptPromise) return scriptPromise;
+  scriptPromise = new Promise<void>((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = `${PYODIDE_CDN}pyodide.js`;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error("Failed to load Pyodide from the CDN"));
+    document.head.appendChild(s);
+  });
+  return scriptPromise;
+}
+
+/** Resolve a `loadPyodide` function for the current environment. The npm
+ *  package's loader uses a dynamic require that Turbopack cannot resolve in the
+ *  browser bundle ("Cannot find module as expression is too dynamic"), so in the
+ *  browser we load the CDN build via a <script> tag instead. In Node (tests) we
+ *  use the npm package. */
+async function getLoadPyodide(): Promise<LoadPyodide> {
+  if (typeof window === "undefined") {
+    const mod = await import("pyodide");
+    return mod.loadPyodide as unknown as LoadPyodide;
+  }
+  await loadPyodideScript();
+  const fn = (globalThis as unknown as { loadPyodide?: LoadPyodide }).loadPyodide;
+  if (!fn) throw new Error("Pyodide failed to initialize from the CDN");
+  return fn;
+}
+
 let runtime: Promise<PyodideInterface> | null = null;
 
 /** Lazily load Pyodide, install piighost, and define the glue. Cached; evicted
@@ -139,11 +174,8 @@ export function loadPiighostRuntime(): Promise<PyodideInterface> {
 
   const created = (async () => {
     const inBrowser = typeof window !== "undefined";
-    const py = await loadPyodide(
-      inBrowser
-        ? { indexURL: `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/` }
-        : {},
-    );
+    const loadPyodide = await getLoadPyodide();
+    const py = await loadPyodide(inBrowser ? { indexURL: PYODIDE_CDN } : {});
     // pydantic ships with Pyodide; piighost's placeholder/anonymizer modules
     // import config models that require it, so load it before running the glue.
     await py.loadPackage(["micropip", "pydantic"]);
