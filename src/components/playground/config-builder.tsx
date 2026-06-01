@@ -267,7 +267,7 @@ export function ConfigBuilder() {
   }
 
   return (
-    <div className="flex w-full flex-col p-4 lg:h-[calc(100dvh-4rem)]">
+    <div className="mx-auto flex w-full max-w-[79rem] flex-col p-4 lg:h-[calc(100dvh-4rem)]">
       <PlaygroundTabs />
       {/* Pipeline, left to right, centered: one block per stage joined by arrows. */}
       <div className="flex shrink-0 items-center justify-center overflow-x-auto pb-2">
