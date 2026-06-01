@@ -55,7 +55,7 @@ function tokenExample(ph: Placeholder): string {
 function BlockTitle({ title, help }: { title: string; help: string }) {
   return (
     <div className="mb-2 flex items-center gap-1.5">
-      <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</h2>
+      <h2 className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-normal text-muted-foreground">{title}</h2>
       <span
         title={help}
         className="inline-flex size-4 cursor-help items-center justify-center rounded-full border text-[10px] text-muted-foreground"
@@ -162,6 +162,7 @@ export function ConfigBuilder() {
   const [testAnonSegments, setTestAnonSegments] = useState<AnonSegment[]>([]);
   const [testAnalyzed, setTestAnalyzed] = useState("");
   const [testSnapshot, setTestSnapshot] = useState("");
+  const [testDurationMs, setTestDurationMs] = useState<number | null>(null);
   const testColors = useMemo(
     () => assignLabelColors(testHighlights.map((e) => e.label)),
     [testHighlights],
@@ -230,7 +231,9 @@ export function ConfigBuilder() {
       setTestStatus("loading");
       await loadPiighostRuntime();
       setTestStatus("running");
+      const started = performance.now();
       const result = await runPipeline(pipeline, testText);
+      setTestDurationMs(performance.now() - started);
       setTestHighlights(
         result.highlights.map((h) => ({
           text: h.text,
@@ -250,6 +253,7 @@ export function ConfigBuilder() {
       setTestHighlights([]);
       setTestRows([]);
       setTestAnonSegments([]);
+      setTestDurationMs(null);
       setTestStatus("error");
     }
   }
@@ -430,8 +434,14 @@ export function ConfigBuilder() {
                 {runtimeStage === "downloading" ? pg.runtimeDownloading : pg.runtimeInstalling}
               </span>
             )}
-            {runtimeStage === "ready" && (
+            {runtimeStage === "ready" && testStatus !== "done" && (
               <span className="text-xs text-muted-foreground">{pg.runtimeReady}</span>
+            )}
+            {testStatus === "done" && testDurationMs !== null && (
+              <span className="text-xs text-muted-foreground">
+                {pg.inferenceTime}: {Math.round(testDurationMs)} ms · ~
+                {(1000 / testDurationMs).toFixed(1)} {pg.reqPerSecond}
+              </span>
             )}
           </div>
           {testStatus === "done" ? (

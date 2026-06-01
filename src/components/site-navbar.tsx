@@ -33,6 +33,7 @@ export function SiteNavbar() {
           piighost
         </Link>
         <div className="hidden items-center gap-1 md:flex">
+          <NavLink href="/" label={t.nav.home} />
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
@@ -73,8 +74,8 @@ export function SiteNavbar() {
           >
             <GithubIcon className="size-5" />
           </Button>
-          <LanguageToggle />
           <ThemeToggle />
+          <LanguageToggle />
         </div>
       </div>
     </header>

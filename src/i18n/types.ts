@@ -36,6 +36,7 @@ export type Dictionary = {
     proofreader: string;
     projects: string;
     philosophy: string;
+    home: string;
     playground: string;
     github: string;
     toggleTheme: string;

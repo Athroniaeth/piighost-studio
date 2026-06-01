@@ -45,15 +45,15 @@ export default function PhilosophyPage() {
         <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-primary">
           {p.eyebrow}
         </p>
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">{p.title}</h1>
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl 2xl:text-4xl">{p.title}</h1>
       </header>
       {p.intro && (
-        <p className="mb-12 text-justify text-lg leading-relaxed hyphens-auto text-muted-foreground">{p.intro}</p>
+        <p className="mb-12 text-justify text-lg leading-relaxed hyphens-auto text-muted-foreground 2xl:text-base">{p.intro}</p>
       )}
 
       {p.sections.map((section, si) => (
         <section key={section.id ?? si} id={section.id}>
-          <h2 className="mt-12 text-2xl font-semibold tracking-tight">{section.heading}</h2>
+          <h2 className="mt-12 text-2xl font-semibold tracking-tight 2xl:text-xl">{section.heading}</h2>
 
           {section.paragraphs.map((para, pi) => (
             <p key={pi} className="mt-4 text-justify hyphens-auto leading-7 text-muted-foreground">{para}</p>
@@ -72,7 +72,7 @@ export default function PhilosophyPage() {
           {section.subsections && section.subsections.map((sub, subi) => (
             <div key={subi}>
               {sub.heading && (
-                <h3 className="mt-8 text-xl font-semibold tracking-tight">{sub.heading}</h3>
+                <h3 className="mt-8 text-xl font-semibold tracking-tight 2xl:text-lg">{sub.heading}</h3>
               )}
               {sub.paragraphs.map((para, pi) => (
                 <p key={pi} className="mt-4 text-justify hyphens-auto leading-7 text-muted-foreground">{para}</p>

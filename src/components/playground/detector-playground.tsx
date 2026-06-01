@@ -125,7 +125,7 @@ export function DetectorPlayground() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[79rem] flex-col p-4 lg:h-[calc(100dvh-4rem)]">
+    <div className="mx-auto flex w-full max-w-[79rem] flex-col p-4 pb-8 lg:h-[calc(100dvh-4rem)]">
       <PlaygroundTabs />
       <div className="grid flex-1 gap-4 overflow-hidden lg:min-h-0 lg:grid-cols-[minmax(0,0.6fr)_minmax(0,3.6fr)]">
         {/* Saved-detectors library — deliberately set apart (dashed, muted) from
