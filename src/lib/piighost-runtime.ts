@@ -112,6 +112,8 @@ def assemble(payload_json):
     cursor = 0
     for start, end, token, label, score, surface in spans:
         if start < cursor:
+            # Span overlaps one already emitted (only possible when the span
+            # resolver is disabled); drop it from both views to stay consistent.
             continue
         if start > cursor:
             segments.append({"value": text[cursor:start]})
@@ -145,6 +147,11 @@ function loadPyodideScript(): Promise<void> {
     s.onload = () => resolve();
     s.onerror = () => reject(new Error("Failed to load Pyodide from the CDN"));
     document.head.appendChild(s);
+  });
+  // Evict on failure so a later Retry re-injects the script instead of replaying
+  // a cached rejection forever (same policy as `runtime`).
+  scriptPromise.catch(() => {
+    scriptPromise = null;
   });
   return scriptPromise;
 }
