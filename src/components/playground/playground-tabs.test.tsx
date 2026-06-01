@@ -18,24 +18,24 @@ describe("PlaygroundTabs", () => {
   it("links to both playground surfaces", () => {
     setPath("/playground");
     render(<PlaygroundTabs />);
-    expect(screen.getByRole("link", { name: "Detector" })).toHaveAttribute("href", "/playground");
-    expect(screen.getByRole("link", { name: "Pipeline" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Pipeline" })).toHaveAttribute("href", "/playground");
+    expect(screen.getByRole("link", { name: "Detector" })).toHaveAttribute(
       "href",
-      "/playground/pipeline",
+      "/playground/detector",
     );
   });
 
-  it("marks Detector active on /playground", () => {
+  it("marks Pipeline active on /playground", () => {
     setPath("/playground");
-    render(<PlaygroundTabs />);
-    expect(screen.getByRole("link", { name: "Detector" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: "Pipeline" })).not.toHaveAttribute("aria-current");
-  });
-
-  it("marks Pipeline active on /playground/pipeline", () => {
-    setPath("/playground/pipeline");
     render(<PlaygroundTabs />);
     expect(screen.getByRole("link", { name: "Pipeline" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("link", { name: "Detector" })).not.toHaveAttribute("aria-current");
+  });
+
+  it("marks Detector active on /playground/detector", () => {
+    setPath("/playground/detector");
+    render(<PlaygroundTabs />);
+    expect(screen.getByRole("link", { name: "Detector" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Pipeline" })).not.toHaveAttribute("aria-current");
   });
 });

@@ -6,15 +6,15 @@ import { useT } from "@/i18n/use-t";
 import { cn } from "@/lib/utils";
 
 /** Tab bar that switches between the two playground surfaces:
- *  Detector (/playground) and Pipeline (/playground/pipeline). Rendered at the top
+ *  Pipeline (/playground) and Detector (/playground/detector). Rendered at the top
  *  of both views so each can navigate to the other. */
 export function PlaygroundTabs() {
   const { t } = useT();
   const pathname = usePathname();
-  const onPipeline = pathname.startsWith("/playground/pipeline");
+  const onDetector = pathname.startsWith("/playground/detector");
   const tabs = [
-    { href: "/playground", label: t.playground.tabDetector, active: !onPipeline },
-    { href: "/playground/pipeline", label: t.playground.tabPipeline, active: onPipeline },
+    { href: "/playground", label: t.playground.tabPipeline, active: !onDetector },
+    { href: "/playground/detector", label: t.playground.tabDetector, active: onDetector },
   ];
 
   return (

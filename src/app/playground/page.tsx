@@ -1,7 +1,7 @@
-import { DetectorPlayground } from "@/components/playground/detector-playground";
+import { ConfigBuilder } from "@/components/playground/config-builder";
 
-export const metadata = { title: "Playground" };
+export const metadata = { title: "Pipeline" };
 
-export default function PlaygroundPage() {
-  return <DetectorPlayground />;
+export default function PipelinePage() {
+  return <ConfigBuilder />;
 }

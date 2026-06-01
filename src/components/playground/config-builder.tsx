@@ -309,7 +309,7 @@ export function ConfigBuilder() {
                     <span className="flex shrink-0 gap-2 text-muted-foreground">
                       <button type="button" className="text-xs" onClick={() => moveDetector(i, -1)} title={pg.moveUp}>↑</button>
                       <button type="button" className="text-xs" onClick={() => moveDetector(i, 1)} title={pg.moveDown}>↓</button>
-                      <Link className="text-xs" href={`/playground?edit=${encodeURIComponent(d.name)}`}>{pg.editInPlayground}</Link>
+                      <Link className="text-xs" href={`/playground/detector?edit=${encodeURIComponent(d.name)}`}>{pg.editInPlayground}</Link>
                       <button type="button" className="text-xs text-destructive" onClick={() => removeDetector(i)} title={pg.remove}>✕</button>
                     </span>
                   </li>
