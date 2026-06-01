@@ -118,6 +118,7 @@ export function ConfigBuilder() {
   const [testAnalyzed, setTestAnalyzed] = useState("");
   const [testSnapshot, setTestSnapshot] = useState("");
   const [testDurationMs, setTestDurationMs] = useState<number | null>(null);
+  const [resultView, setResultView] = useState<"input" | "anonymized">("input");
   const testColors = useMemo(
     () => assignLabelColors(testHighlights.map((e) => e.label)),
     [testHighlights],
@@ -202,6 +203,7 @@ export function ConfigBuilder() {
       setTestAnonSegments(result.segments);
       setTestAnalyzed(testText);
       setTestSnapshot(JSON.stringify({ pipeline, text: testText }));
+      setResultView("anonymized");
       setTestStatus("done");
     } catch (err) {
       console.error("pipeline test failed", err);
@@ -229,7 +231,7 @@ export function ConfigBuilder() {
     <div className="mx-auto flex w-full max-w-[79rem] flex-col p-4 lg:h-[calc(100dvh-4rem)]">
       <PlaygroundTabs />
       {/* Unified panel — like the detector view: Configuration | Texte | Anonymisé | Entités. */}
-      <div className="grid min-h-0 flex-1 divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.4fr)_minmax(0,1.3fr)_minmax(0,0.7fr)] lg:divide-x lg:divide-y-0">
+      <div className="grid min-h-0 flex-1 divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:grid-cols-[minmax(0,0.95fr)_minmax(0,2.4fr)_minmax(0,0.7fr)] lg:divide-x lg:divide-y-0">
         {/* Configuration — scrollable so future parameters can stack below. */}
         <section className="flex min-h-0 flex-col gap-4 overflow-auto p-4">
           <h2 className="shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -433,51 +435,77 @@ export function ConfigBuilder() {
           </div>
         </section>
 
-        {/* Texte — editable input, or the colored highlight once a run is done. */}
+        {/* Shared box: Saisie (input) ⇄ Anonymisé (result), toggled by a control.
+            A run auto-switches to Anonymisé; switching back to Saisie shows the
+            colored highlight (click it, or Edit, to return to editing). */}
         <section className="flex min-h-0 flex-col p-4">
-          <h2 className="mb-2 shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {pg.inputLabel}
-          </h2>
-          {testStatus === "done" ? (
-            <div
-              role="button"
-              tabIndex={0}
-              title={pg.edit}
-              onClick={() => setTestStatus("idle")}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") setTestStatus("idle");
-              }}
-              className="min-h-32 flex-1 cursor-text overflow-auto rounded-lg border bg-background p-3 text-sm"
-            >
-              <EntityHighlight text={testAnalyzed} entities={testHighlights} colors={testColors} />
+          <div className="mb-2 flex shrink-0 items-center justify-between gap-2">
+            <div className="flex gap-1">
+              {(
+                [
+                  ["input", pg.inputLabel],
+                  ["anonymized", pg.anonymizedLabel],
+                ] as const
+              ).map(([v, label]) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => setResultView(v)}
+                  className={`rounded-md px-3 py-1 text-xs font-medium ${
+                    resultView === v ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
-          ) : (
-            <textarea
-              className="min-h-32 w-full flex-1 resize-none rounded-lg border bg-background p-3 text-sm"
-              aria-label={pg.inputLabel}
-              value={testText}
-              disabled={testStatus === "running" || testStatus === "loading"}
-              onChange={(e) => setTestText(e.target.value)}
-            />
-          )}
-          {testStatus === "done" && (
-            <div className="mt-2 shrink-0">
-              <Button variant="outline" size="sm" onClick={() => setTestStatus("idle")}>
+            {resultView === "input" && testStatus === "done" && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setResultView("input");
+                  setTestStatus("idle");
+                }}
+              >
                 {pg.edit}
               </Button>
-            </div>
-          )}
-        </section>
+            )}
+          </div>
 
-        {/* Texte anonymisé — replacement tokens colored by label. */}
-        <section className="flex min-h-0 flex-col overflow-auto p-4">
-          <h2 className="mb-2 shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {pg.anonymizedLabel}
-          </h2>
-          {testStatus !== "done" ? (
+          {resultView === "input" ? (
+            testStatus === "done" ? (
+              <div
+                role="button"
+                tabIndex={0}
+                title={pg.edit}
+                onClick={() => {
+                  setResultView("input");
+                  setTestStatus("idle");
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    setResultView("input");
+                    setTestStatus("idle");
+                  }
+                }}
+                className="min-h-32 flex-1 cursor-text overflow-auto rounded-lg border bg-background p-3 text-sm"
+              >
+                <EntityHighlight text={testAnalyzed} entities={testHighlights} colors={testColors} />
+              </div>
+            ) : (
+              <textarea
+                className="min-h-32 w-full flex-1 resize-none rounded-lg border bg-background p-3 text-sm"
+                aria-label={pg.inputLabel}
+                value={testText}
+                disabled={testStatus === "running" || testStatus === "loading"}
+                onChange={(e) => setTestText(e.target.value)}
+              />
+            )
+          ) : testStatus !== "done" ? (
             <p className="text-sm text-muted-foreground">{pg.emptyHint}</p>
           ) : (
-            <p className="leading-relaxed whitespace-pre-wrap rounded-lg border bg-background p-3 font-mono text-xs">
+            <p className="min-h-32 flex-1 overflow-auto rounded-lg border bg-background p-3 font-mono text-xs leading-relaxed whitespace-pre-wrap">
               {testAnonSegments.map((seg, i) =>
                 seg.label ? (
                   <span
