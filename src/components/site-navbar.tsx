@@ -61,8 +61,7 @@ export function SiteNavbar() {
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
-          <NavLink href="/playground" label={t.nav.playground} />
-          <NavLink href="/config" label={t.nav.config} />
+          <NavLink href="/playground" label={t.nav.playground} matchSubpaths />
           <NavLink href="/philosophy" label={t.nav.philosophy} />
         </div>
         <div className="flex items-center gap-1">
