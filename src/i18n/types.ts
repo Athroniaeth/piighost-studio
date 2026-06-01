@@ -114,7 +114,7 @@ export type Dictionary = {
   philosophy: PhilosophyDict;
   playground: {
     tabDetector: string;
-    tabConfig: string;
+    tabPipeline: string;
     configTitle: string;
     modelLabel: string;
     models: {

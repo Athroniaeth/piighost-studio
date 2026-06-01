@@ -247,7 +247,7 @@ export const fr: Dictionary = {
   },
   playground: {
     tabDetector: "Détecteur",
-    tabConfig: "Config",
+    tabPipeline: "Pipeline",
     configTitle: "Configuration",
     modelLabel: "Modèle",
     models: {

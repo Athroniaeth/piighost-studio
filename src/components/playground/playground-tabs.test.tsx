@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 vi.mock("next/navigation", () => ({ usePathname: vi.fn() }));
 vi.mock("@/i18n/use-t", () => ({
-  useT: () => ({ t: { playground: { tabDetector: "Detector", tabConfig: "Config" } } }),
+  useT: () => ({ t: { playground: { tabDetector: "Detector", tabPipeline: "Pipeline" } } }),
 }));
 
 import { usePathname } from "next/navigation";
@@ -19,9 +19,9 @@ describe("PlaygroundTabs", () => {
     setPath("/playground");
     render(<PlaygroundTabs />);
     expect(screen.getByRole("link", { name: "Detector" })).toHaveAttribute("href", "/playground");
-    expect(screen.getByRole("link", { name: "Config" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Pipeline" })).toHaveAttribute(
       "href",
-      "/playground/config",
+      "/playground/pipeline",
     );
   });
 
@@ -29,13 +29,13 @@ describe("PlaygroundTabs", () => {
     setPath("/playground");
     render(<PlaygroundTabs />);
     expect(screen.getByRole("link", { name: "Detector" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: "Config" })).not.toHaveAttribute("aria-current");
+    expect(screen.getByRole("link", { name: "Pipeline" })).not.toHaveAttribute("aria-current");
   });
 
-  it("marks Config active on /playground/config", () => {
-    setPath("/playground/config");
+  it("marks Pipeline active on /playground/pipeline", () => {
+    setPath("/playground/pipeline");
     render(<PlaygroundTabs />);
-    expect(screen.getByRole("link", { name: "Config" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Pipeline" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("link", { name: "Detector" })).not.toHaveAttribute("aria-current");
   });
 });

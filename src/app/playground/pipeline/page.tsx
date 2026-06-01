@@ -1,7 +1,7 @@
 import { ConfigBuilder } from "@/components/playground/config-builder";
 
-export const metadata = { title: "Config" };
+export const metadata = { title: "Pipeline" };
 
-export default function ConfigPage() {
+export default function PipelinePage() {
   return <ConfigBuilder />;
 }

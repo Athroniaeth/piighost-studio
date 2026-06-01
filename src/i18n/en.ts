@@ -246,7 +246,7 @@ export const en: Dictionary = {
   },
   playground: {
     tabDetector: "Detector",
-    tabConfig: "Config",
+    tabPipeline: "Pipeline",
     configTitle: "Configuration",
     modelLabel: "Model",
     models: {
