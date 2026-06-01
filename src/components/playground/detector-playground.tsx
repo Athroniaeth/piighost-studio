@@ -374,13 +374,13 @@ export function DetectorPlayground() {
                   >
                     <div className="flex min-w-0 items-center gap-2">
                       <span
-                        className={`rounded px-1.5 py-0.5 text-xs font-medium ${colors.get(e.label) ?? labelStyle(e.label)}`}
+                        className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${colors.get(e.label) ?? labelStyle(e.label)}`}
                       >
                         {e.label}
                       </span>
-                      <span className="truncate font-mono text-sm">{e.text}</span>
+                      <span className="truncate font-mono text-xs">{e.text}</span>
                     </div>
-                    <span className="shrink-0 text-xs text-muted-foreground">
+                    <span className="shrink-0 text-[10px] text-muted-foreground">
                       {(e.score * 100).toFixed(0)}%
                     </span>
                   </li>
