@@ -516,7 +516,7 @@ export function ConfigBuilder() {
                     >
                       {e.label}
                     </span>
-                    <span className="truncate font-mono text-sm">{e.text}</span>
+                    <span className="truncate font-mono text-[0.8125rem]">{e.text}</span>
                   </div>
                   <span className="shrink-0 text-[11px] text-muted-foreground">
                     {(e.score * 100).toFixed(0)}%

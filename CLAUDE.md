@@ -111,3 +111,8 @@ direction and decisions that aren't derivable from the code.
   (`docs/superpowers/plans/`) → subagent-driven execution.
 - Tests use Vitest + Testing Library + jsdom; co-locate `*.test.ts(x)` next to
   the source.
+- **Responsive root font.** `globals.css` bumps the `html` font-size to `18px`
+  (≥1920px) and `21px` (≥2560px) — a deliberate zoom for large displays. Because
+  Tailwind sizes are in rem they scale with it. So **never use px arbitrary font
+  sizes** (`text-[13px]`): they ignore the zoom and look abruptly small on big
+  screens. Use the default scale (`text-sm`, …) or rem (`text-[0.8125rem]`).
