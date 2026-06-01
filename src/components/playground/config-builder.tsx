@@ -51,14 +51,14 @@ function tokenExample(ph: Placeholder): string {
   }
 }
 
-/** Block heading with a "?" help tooltip describing the pipeline stage. */
-function BlockTitle({ title, help }: { title: string; help: string }) {
+/** A config-column field label with a "?" help tooltip. */
+function FieldLabel({ label, help }: { label: string; help: string }) {
   return (
-    <div className="mb-2 flex items-center gap-1.5">
-      <h2 className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-normal text-muted-foreground">{title}</h2>
+    <div className="flex items-center gap-1.5">
+      <span className="text-sm font-medium">{label}</span>
       <span
         title={help}
-        className="inline-flex size-4 cursor-help items-center justify-center rounded-full border text-[10px] text-muted-foreground"
+        className="inline-flex size-4 shrink-0 cursor-help items-center justify-center rounded-full border text-[10px] text-muted-foreground"
       >
         ?
       </span>
@@ -66,52 +66,7 @@ function BlockTitle({ title, help }: { title: string; help: string }) {
   );
 }
 
-function Arrow() {
-  return (
-    <div className="flex shrink-0 items-center px-1 text-xl text-muted-foreground" aria-hidden>
-      →
-    </div>
-  );
-}
-
-/** A pipeline-stage block with a variant select (including "disabled"). */
-function StageBlock<T extends string>({
-  title,
-  help,
-  value,
-  options,
-  onChange,
-  children,
-}: {
-  title: string;
-  help: string;
-  value: T;
-  options: readonly T[];
-  onChange: (next: T) => void;
-  children?: ReactNode;
-}) {
-  return (
-    <section
-      className={`flex w-44 shrink-0 flex-col rounded-xl border bg-card p-3 shadow-sm ${
-        value === "disabled" ? "opacity-60" : ""
-      }`}
-    >
-      <BlockTitle title={title} help={help} />
-      <select
-        className="w-full rounded-md border bg-background px-2.5 py-1.5 font-mono text-xs"
-        value={value}
-        onChange={(e) => onChange(e.target.value as T)}
-      >
-        {options.map((o) => (
-          <option key={o} value={o}>
-            {o}
-          </option>
-        ))}
-      </select>
-      {children}
-    </section>
-  );
-}
+const STAGE_SELECT = "w-full rounded-md border bg-background px-2.5 py-1.5 font-mono text-xs";
 
 /** Centered modal dialog. */
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
@@ -273,14 +228,19 @@ export function ConfigBuilder() {
   return (
     <div className="mx-auto flex w-full max-w-[79rem] flex-col p-4 lg:h-[calc(100dvh-4rem)]">
       <PlaygroundTabs />
-      {/* Pipeline, left to right, centered: one block per stage joined by arrows. */}
-      <div className="flex shrink-0 items-center justify-center overflow-x-auto pb-2">
-        <div className="flex items-stretch gap-2">
-          {/* Detect */}
-          <section className="flex w-72 shrink-0 flex-col rounded-xl border bg-card p-3 shadow-sm">
-            <BlockTitle title={pg.detectorsTitle} help={pg.detectorsHelp} />
+      {/* Unified panel — like the detector view: Configuration | Texte | Anonymisé | Entités. */}
+      <div className="grid min-h-0 flex-1 divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.4fr)_minmax(0,1.3fr)_minmax(0,0.7fr)] lg:divide-x lg:divide-y-0">
+        {/* Configuration — scrollable so future parameters can stack below. */}
+        <section className="flex min-h-0 flex-col gap-4 overflow-auto p-4">
+          <h2 className="shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {pg.configTitle}
+          </h2>
+
+          {/* Détecteurs */}
+          <div className="space-y-2">
+            <FieldLabel label={pg.detectorsTitle} help={pg.detectorsHelp} />
             <select
-              className="mb-3 w-full rounded-md border bg-background px-2.5 py-1.5 text-xs"
+              className="w-full rounded-md border bg-background px-2.5 py-1.5 text-xs"
               value=""
               onChange={(e) => {
                 if (e.target.value) addDetector(e.target.value);
@@ -294,13 +254,15 @@ export function ConfigBuilder() {
                 </option>
               ))}
             </select>
-
             {pipeline.detectors.length === 0 ? (
               <p className="text-sm text-muted-foreground">{pg.emptyPipeline}</p>
             ) : (
               <ol className="space-y-2">
                 {pipeline.detectors.map((d, i) => (
-                  <li key={d.name} className="flex items-center justify-between gap-2 rounded-md bg-muted/40 p-2 text-sm">
+                  <li
+                    key={d.name}
+                    className="flex items-center justify-between gap-2 rounded-md bg-muted/40 p-2 text-sm"
+                  >
                     <label className="flex min-w-0 cursor-pointer items-center gap-2">
                       <input
                         type="checkbox"
@@ -320,34 +282,50 @@ export function ConfigBuilder() {
                 ))}
               </ol>
             )}
-          </section>
+          </div>
 
-          <Arrow />
-          <StageBlock<SpanResolverType>
-            title={pg.spanResolverLabel}
-            help={pg.spanResolverHelp}
-            value={pipeline.spanResolver}
-            options={SPAN_RESOLVER_TYPES}
-            onChange={(v) => setPipeline((p) => ({ ...p, spanResolver: v }))}
-          />
-          <Arrow />
-          <StageBlock<EntityLinkerType>
-            title={pg.entityLinkerLabel}
-            help={pg.entityLinkerHelp}
-            value={pipeline.entityLinker}
-            options={ENTITY_LINKER_TYPES}
-            onChange={(v) => setPipeline((p) => ({ ...p, entityLinker: v }))}
-          />
-          <Arrow />
-          <StageBlock<EntityResolverType>
-            title={pg.entityResolverLabel}
-            help={pg.entityResolverHelp}
-            value={pipeline.entityResolver}
-            options={ENTITY_RESOLVER_TYPES}
-            onChange={(v) => setPipeline((p) => ({ ...p, entityResolver: v }))}
-          >
+          {/* Résolveur de spans */}
+          <div className="space-y-1.5">
+            <FieldLabel label={pg.spanResolverLabel} help={pg.spanResolverHelp} />
+            <select
+              className={STAGE_SELECT}
+              value={pipeline.spanResolver}
+              onChange={(e) => setPipeline((p) => ({ ...p, spanResolver: e.target.value as SpanResolverType }))}
+            >
+              {SPAN_RESOLVER_TYPES.map((o) => (
+                <option key={o} value={o}>{o}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Lieur d'entités */}
+          <div className="space-y-1.5">
+            <FieldLabel label={pg.entityLinkerLabel} help={pg.entityLinkerHelp} />
+            <select
+              className={STAGE_SELECT}
+              value={pipeline.entityLinker}
+              onChange={(e) => setPipeline((p) => ({ ...p, entityLinker: e.target.value as EntityLinkerType }))}
+            >
+              {ENTITY_LINKER_TYPES.map((o) => (
+                <option key={o} value={o}>{o}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Résolveur d'entités */}
+          <div className="space-y-1.5">
+            <FieldLabel label={pg.entityResolverLabel} help={pg.entityResolverHelp} />
+            <select
+              className={STAGE_SELECT}
+              value={pipeline.entityResolver}
+              onChange={(e) => setPipeline((p) => ({ ...p, entityResolver: e.target.value as EntityResolverType }))}
+            >
+              {ENTITY_RESOLVER_TYPES.map((o) => (
+                <option key={o} value={o}>{o}</option>
+              ))}
+            </select>
             {pipeline.entityResolver === "fuzzy" && (
-              <label className="mt-2 flex items-center justify-between gap-2 text-sm">
+              <label className="flex items-center justify-between gap-2 text-sm">
                 <span className="text-muted-foreground">{pg.thresholdLabel}</span>
                 <input
                   type="number"
@@ -362,14 +340,13 @@ export function ConfigBuilder() {
                 />
               </label>
             )}
-          </StageBlock>
-          <Arrow />
+          </div>
 
-          {/* Anonymize */}
-          <section className="flex w-60 shrink-0 flex-col rounded-xl border bg-card p-3 shadow-sm">
-            <BlockTitle title={pg.anonymizerLabel} help={pg.anonymizerHelp} />
+          {/* Anonymiseur */}
+          <div className="space-y-1.5">
+            <FieldLabel label={pg.anonymizerLabel} help={pg.anonymizerHelp} />
             <select
-              className="w-full rounded-md border bg-background px-2.5 py-1.5 text-xs"
+              className={STAGE_SELECT}
               value={ph.type}
               onChange={(e) =>
                 setPipeline((p) => ({ ...p, placeholder: defaultPlaceholder(e.target.value as PlaceholderType) }))
@@ -379,13 +356,12 @@ export function ConfigBuilder() {
                 <option key={ty} value={ty}>{ty}</option>
               ))}
             </select>
-            <p className="mt-1.5 text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {pg.tokenExample} :{" "}
               <code className="rounded bg-muted px-1 py-0.5 font-mono">{tokenExample(ph)}</code>
             </p>
-
             {(ph.type === "label_hash" || ph.type === "redact_hash") && (
-              <label className="mt-2 flex items-center justify-between gap-2 text-sm">
+              <label className="flex items-center justify-between gap-2 text-sm">
                 <span className="text-muted-foreground">{pg.phHashLength}</span>
                 <input
                   type="number"
@@ -400,7 +376,7 @@ export function ConfigBuilder() {
               </label>
             )}
             {ph.type === "mask" && (
-              <label className="mt-2 flex items-center justify-between gap-2 text-sm">
+              <label className="flex items-center justify-between gap-2 text-sm">
                 <span className="text-muted-foreground">{pg.phMaskChar}</span>
                 <input
                   maxLength={1}
@@ -412,38 +388,56 @@ export function ConfigBuilder() {
                 />
               </label>
             )}
-          </section>
-        </div>
-      </div>
-
-      {/* Live pipeline test (real piighost via Pyodide): input | anonymized | entities */}
-      <div className="grid min-h-0 flex-1 gap-4 lg:grid-cols-3">
-        {/* 1. Input — editable, or the colored highlight once a run is done
-            (click it, or Edit, to go back to editing, as in the playground). */}
-        <section className="flex min-h-0 flex-col rounded-xl border bg-card p-3 shadow-sm">
-          <div className="mb-2 flex flex-col gap-1">
-            <div className="flex items-center justify-between gap-2">
-              <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {pg.liveTestTitle}
-              </h2>
-              <span className="text-xs text-muted-foreground">{pg.approximationNote}</span>
-            </div>
-            {(runtimeStage === "downloading" || runtimeStage === "installing") && (
-              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Loader2 className="size-3 animate-spin" />
-                {runtimeStage === "downloading" ? pg.runtimeDownloading : pg.runtimeInstalling}
-              </span>
-            )}
-            {runtimeStage === "ready" && testStatus !== "done" && (
-              <span className="text-xs text-muted-foreground">{pg.runtimeReady}</span>
-            )}
-            {testStatus === "done" && testDurationMs !== null && (
-              <span className="text-xs text-muted-foreground">
-                {pg.inferenceTime}: {Math.round(testDurationMs)} ms · ~
-                {(1000 / testDurationMs).toFixed(1)} {pg.reqPerSecond}
-              </span>
-            )}
           </div>
+
+          {/* Test + status notes */}
+          <div className="space-y-2">
+            <Button
+              className="w-full"
+              onClick={runTest}
+              disabled={
+                testStatus === "running" ||
+                testStatus === "loading" ||
+                !hasEnabledDetector ||
+                testText.trim().length === 0
+              }
+            >
+              {(testStatus === "running" || testStatus === "loading") && (
+                <Loader2 className="mr-2 size-4 animate-spin" />
+              )}
+              {pg.test}
+            </Button>
+            <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+              {testStatus === "loading" && <span>{pg.loadingRuntime}</span>}
+              {(runtimeStage === "downloading" || runtimeStage === "installing") && testStatus !== "loading" && (
+                <span className="flex items-center gap-1.5">
+                  <Loader2 className="size-3 animate-spin" />
+                  {runtimeStage === "downloading" ? pg.runtimeDownloading : pg.runtimeInstalling}
+                </span>
+              )}
+              {runtimeStage === "ready" && testStatus !== "done" && testStatus !== "loading" && (
+                <span>{pg.runtimeReady}</span>
+              )}
+              {testStatus === "done" && testDurationMs !== null && (
+                <span>
+                  {pg.inferenceTime}: {Math.round(testDurationMs)} ms · ~
+                  {(1000 / testDurationMs).toFixed(1)} {pg.reqPerSecond}
+                </span>
+              )}
+              {testStatus === "error" && <span className="text-destructive">{pg.errorTitle}</span>}
+              {!hasEnabledDetector && <span>{pg.noEnabledDetectors}</span>}
+              {hasEnabledLlm && <span>{pg.llmDeploymentNote}</span>}
+              {testStale && <span className="text-amber-600">{pg.staleNote}</span>}
+              <span>{pg.approximationNote}</span>
+            </div>
+          </div>
+        </section>
+
+        {/* Texte — editable input, or the colored highlight once a run is done. */}
+        <section className="flex min-h-0 flex-col p-4">
+          <h2 className="mb-2 shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {pg.inputLabel}
+          </h2>
           {testStatus === "done" ? (
             <div
               role="button"
@@ -460,48 +454,23 @@ export function ConfigBuilder() {
           ) : (
             <textarea
               className="min-h-32 w-full flex-1 resize-none rounded-lg border bg-background p-3 text-sm"
-              aria-label={pg.liveTestTitle}
+              aria-label={pg.inputLabel}
               value={testText}
               disabled={testStatus === "running" || testStatus === "loading"}
               onChange={(e) => setTestText(e.target.value)}
             />
           )}
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <Button
-              onClick={runTest}
-              disabled={
-                testStatus === "running" ||
-                testStatus === "loading" ||
-                !hasEnabledDetector ||
-                testText.trim().length === 0
-              }
-            >
-              {(testStatus === "running" || testStatus === "loading") && (
-                <Loader2 className="mr-2 size-4 animate-spin" />
-              )}
-              {pg.test}
-            </Button>
-            {testStatus === "loading" && (
-              <span className="text-xs text-muted-foreground">{pg.loadingRuntime}</span>
-            )}
-            {testStatus === "done" && (
+          {testStatus === "done" && (
+            <div className="mt-2 shrink-0">
               <Button variant="outline" size="sm" onClick={() => setTestStatus("idle")}>
                 {pg.edit}
               </Button>
-            )}
-            {testStatus === "error" && <span className="text-xs text-destructive">{pg.errorTitle}</span>}
-            {!hasEnabledDetector && (
-              <span className="text-xs text-muted-foreground">{pg.noEnabledDetectors}</span>
-            )}
-            {hasEnabledLlm && (
-              <span className="text-xs text-muted-foreground">{pg.llmDeploymentNote}</span>
-            )}
-            {testStale && <span className="text-xs text-amber-600">{pg.staleNote}</span>}
-          </div>
+            </div>
+          )}
         </section>
 
-        {/* 2. Anonymized text, with the replacement tokens colored by label. */}
-        <section className="flex min-h-0 flex-col overflow-auto rounded-xl border bg-card p-3 shadow-sm">
+        {/* Texte anonymisé — replacement tokens colored by label. */}
+        <section className="flex min-h-0 flex-col overflow-auto p-4">
           <h2 className="mb-2 shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             {pg.anonymizedLabel}
           </h2>
@@ -525,8 +494,8 @@ export function ConfigBuilder() {
           )}
         </section>
 
-        {/* 3. Detected entities. */}
-        <section className="flex min-h-0 flex-col overflow-auto rounded-xl border bg-card p-3 shadow-sm">
+        {/* Entités — narrow column. */}
+        <section className="flex min-h-0 flex-col overflow-auto p-4">
           <h2 className="mb-2 shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             {pg.resultsTitle}
           </h2>
@@ -537,21 +506,18 @@ export function ConfigBuilder() {
           ) : (
             <ul className="space-y-2">
               {testRows.map((e, i) => (
-                <li
-                  key={`${e.token}-${i}`}
-                  className="flex items-center justify-between gap-2 rounded-md bg-muted/40 p-2"
-                >
-                  <div className="flex min-w-0 items-center gap-2">
+                <li key={`${e.token}-${i}`} className="rounded-md bg-muted/40 p-2">
+                  <div className="flex items-center gap-2">
                     <span
                       className={`rounded px-1.5 py-0.5 text-xs font-medium ${testColors.get(e.label) ?? labelStyle(e.label)}`}
                     >
                       {e.label}
                     </span>
-                    <span className="truncate font-mono text-sm">{e.text}</span>
+                    <span className="shrink-0 text-xs text-muted-foreground">
+                      {(e.score * 100).toFixed(0)}%
+                    </span>
                   </div>
-                  <span className="shrink-0 text-xs text-muted-foreground">
-                    {(e.score * 100).toFixed(0)}%
-                  </span>
+                  <span className="mt-1 block truncate font-mono text-sm">{e.text}</span>
                 </li>
               ))}
             </ul>
