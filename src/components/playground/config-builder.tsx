@@ -505,7 +505,7 @@ export function ConfigBuilder() {
           ) : testStatus !== "done" ? (
             <p className="text-sm text-muted-foreground">{pg.emptyHint}</p>
           ) : (
-            <p className="min-h-32 flex-1 overflow-auto rounded-lg border bg-background p-3 font-mono text-xs leading-relaxed whitespace-pre-wrap">
+            <p className="min-h-32 flex-1 overflow-auto rounded-lg border bg-background p-3 text-sm leading-relaxed whitespace-pre-wrap">
               {testAnonSegments.map((seg, i) =>
                 seg.label ? (
                   <span
