@@ -23,6 +23,7 @@ import { loadSaved, type SavedDetector } from "@/lib/saved-detectors";
 import { savePipeline } from "@/lib/saved-pipelines";
 import { useT } from "@/i18n/use-t";
 import { EntityHighlight } from "@/components/playground/entity-highlight";
+import { PlaygroundTabs } from "@/components/playground/playground-tabs";
 import { assignLabelColors, labelStyle } from "@/lib/labels";
 import { runPipeline } from "@/lib/run-pipeline";
 import { loadPiighostRuntime, type RuntimeStage } from "@/lib/piighost-runtime";
@@ -267,6 +268,7 @@ export function ConfigBuilder() {
 
   return (
     <div className="flex w-full flex-col p-4 lg:h-[calc(100dvh-4rem)]">
+      <PlaygroundTabs />
       {/* Pipeline, left to right, centered: one block per stage joined by arrows. */}
       <div className="flex shrink-0 items-center justify-center overflow-x-auto pb-2">
         <div className="flex items-stretch gap-2">

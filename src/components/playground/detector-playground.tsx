@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EntityHighlight } from "@/components/playground/entity-highlight";
+import { PlaygroundTabs } from "@/components/playground/playground-tabs";
 import { type Entity, type ModelId, sortEntities, type EntitySort } from "@/lib/ner";
 import { type GlinerModelId } from "@/lib/gliner";
 import { assignLabelColors, labelStyle, parseLabels } from "@/lib/labels";
@@ -125,6 +126,7 @@ export function DetectorPlayground() {
 
   return (
     <div className="flex w-full flex-col p-4 lg:h-[calc(100dvh-4rem)]">
+      <PlaygroundTabs />
       <div className="grid flex-1 gap-4 overflow-hidden lg:min-h-0 lg:grid-cols-[minmax(0,0.6fr)_minmax(0,3.6fr)]">
         {/* Saved-detectors library — deliberately set apart (dashed, muted) from
             the playground itself: it is browser-stored persistence, not the test
