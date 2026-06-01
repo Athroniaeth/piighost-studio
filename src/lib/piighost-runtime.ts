@@ -10,7 +10,7 @@ import type { Entity } from "./ner";
 
 // Keep these in lockstep: the CDN assets must match the installed loader.
 const PYODIDE_VERSION = "0.29.4";
-const PIIGHOST_VERSION = "0.12.0";
+const PIIGHOST_VERSION = "0.12.1";
 
 // Python glue. NOTE: we import piighost SUBMODULES, never the top-level
 // `piighost` package — the top-level __init__ imports ph_factory.faker_hash,
