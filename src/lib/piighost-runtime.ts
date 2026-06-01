@@ -172,24 +172,35 @@ async function getLoadPyodide(): Promise<LoadPyodide> {
   return fn;
 }
 
+/** Coarse warm-up stages for UI feedback (Pyodide gives no byte-level progress). */
+export type RuntimeStage = "downloading" | "installing" | "ready";
+
 let runtime: Promise<PyodideInterface> | null = null;
 
 /** Lazily load Pyodide, install piighost, and define the glue. Cached; evicted
  *  on failure so a later Retry re-downloads instead of replaying a rejection. */
-export function loadPiighostRuntime(): Promise<PyodideInterface> {
-  if (runtime) return runtime;
+export function loadPiighostRuntime(
+  onStage?: (stage: RuntimeStage) => void,
+): Promise<PyodideInterface> {
+  if (runtime) {
+    onStage?.("ready");
+    return runtime;
+  }
 
   const created = (async () => {
     const inBrowser = typeof window !== "undefined";
+    onStage?.("downloading");
     const loadPyodide = await getLoadPyodide();
     const py = await loadPyodide(inBrowser ? { indexURL: PYODIDE_CDN } : {});
     // pydantic ships with Pyodide; piighost's placeholder/anonymizer modules
     // import config models that require it, so load it before running the glue.
+    onStage?.("installing");
     await py.loadPackage(["micropip", "pydantic"]);
     const micropip = py.pyimport("micropip");
     await micropip.install(`piighost==${PIIGHOST_VERSION}`);
     micropip.destroy(); // release the PyProxy; Pyodide GC finalization is not guaranteed
     py.runPython(GLUE);
+    onStage?.("ready");
     return py;
   })();
 

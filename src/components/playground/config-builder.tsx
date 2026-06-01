@@ -25,7 +25,7 @@ import { useT } from "@/i18n/use-t";
 import { EntityHighlight } from "@/components/playground/entity-highlight";
 import { assignLabelColors, labelStyle } from "@/lib/labels";
 import { runPipeline } from "@/lib/run-pipeline";
-import { loadPiighostRuntime } from "@/lib/piighost-runtime";
+import { loadPiighostRuntime, type RuntimeStage } from "@/lib/piighost-runtime";
 import type { AnonSegment, AssembleResult } from "@/lib/piighost-bridge";
 import { Loader2 } from "lucide-react";
 import type { Entity } from "@/lib/ner";
@@ -155,6 +155,7 @@ export function ConfigBuilder() {
   const [saveName, setSaveName] = useState("");
   const [testText, setTestText] = useState(pg.example);
   const [testStatus, setTestStatus] = useState<"idle" | "loading" | "running" | "done" | "error">("idle");
+  const [runtimeStage, setRuntimeStage] = useState<"cold" | RuntimeStage>("cold");
   const [testHighlights, setTestHighlights] = useState<Entity[]>([]);
   const [testRows, setTestRows] = useState<AssembleResult["entities"]>([]);
   const [testAnonSegments, setTestAnonSegments] = useState<AnonSegment[]>([]);
@@ -173,6 +174,14 @@ export function ConfigBuilder() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSaved(loadSaved());
+  }, []);
+
+  useEffect(() => {
+    loadPiighostRuntime((stage) => setRuntimeStage(stage)).catch(() => {
+      // Background warm-up failed (offline/CDN); stay cold. A click on Test will
+      // retry and surface the error there.
+      setRuntimeStage("cold");
+    });
   }, []);
 
   const ph = pipeline.placeholder;
@@ -406,11 +415,22 @@ export function ConfigBuilder() {
         {/* 1. Input — editable, or the colored highlight once a run is done
             (click it, or Edit, to go back to editing, as in the playground). */}
         <section className="flex min-h-0 flex-col rounded-xl border bg-card p-3 shadow-sm">
-          <div className="mb-2 flex items-center justify-between gap-2">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              {pg.liveTestTitle}
-            </h2>
-            <span className="text-xs text-muted-foreground">{pg.approximationNote}</span>
+          <div className="mb-2 flex flex-col gap-1">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {pg.liveTestTitle}
+              </h2>
+              <span className="text-xs text-muted-foreground">{pg.approximationNote}</span>
+            </div>
+            {(runtimeStage === "downloading" || runtimeStage === "installing") && (
+              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Loader2 className="size-3 animate-spin" />
+                {runtimeStage === "downloading" ? pg.runtimeDownloading : pg.runtimeInstalling}
+              </span>
+            )}
+            {runtimeStage === "ready" && (
+              <span className="text-xs text-muted-foreground">{pg.runtimeReady}</span>
+            )}
           </div>
           {testStatus === "done" ? (
             <div
