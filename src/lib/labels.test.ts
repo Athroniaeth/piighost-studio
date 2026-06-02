@@ -5,6 +5,9 @@ import {
   labelSpecToText,
   internalLabels,
   remapLabel,
+  rowsToLabelSpec,
+  labelSpecToRows,
+  type LabelRow,
 } from "./labels";
 
 describe("parseLabels", () => {
@@ -94,5 +97,59 @@ describe("remapLabel", () => {
   });
   it("falls back to the input when unmapped", () => {
     expect(remapLabel("date", { PERSONNE: "person" })).toBe("date");
+  });
+});
+
+describe("rowsToLabelSpec", () => {
+  const rows = (...pairs: [string, string][]) =>
+    pairs.map(([model, emitted]) => ({ model, emitted }));
+
+  it("returns a plain list when no row remaps", () => {
+    expect(rowsToLabelSpec(rows(["person", ""], ["location", ""]))).toEqual([
+      "person",
+      "location",
+    ]);
+  });
+  it("treats emitted === model as identity (still a list)", () => {
+    expect(rowsToLabelSpec(rows(["person", "person"]))).toEqual(["person"]);
+  });
+  it("returns an {emitted: model} dict when any row remaps", () => {
+    expect(rowsToLabelSpec(rows(["person", "PERSONNE"], ["location", ""]))).toEqual({
+      PERSONNE: "person",
+      location: "location",
+    });
+  });
+  it("trims fields and drops rows whose model is blank", () => {
+    expect(rowsToLabelSpec(rows([" person ", " PERSONNE "], ["  ", "X"]))).toEqual({
+      PERSONNE: "person",
+    });
+  });
+  it("dedupes by model, case-insensitively, keeping the first row", () => {
+    expect(rowsToLabelSpec(rows(["person", "A"], ["PERSON", "B"]))).toEqual({
+      A: "person",
+    });
+  });
+  it("returns an empty list for no usable rows", () => {
+    expect(rowsToLabelSpec(rows(["", ""]))).toEqual([]);
+  });
+});
+
+describe("labelSpecToRows", () => {
+  it("maps a list to rows with an empty emitted field", () => {
+    expect(labelSpecToRows(["person", "location"])).toEqual([
+      { model: "person", emitted: "" },
+      { model: "location", emitted: "" },
+    ]);
+  });
+  it("maps a dict to {model, emitted} rows", () => {
+    expect(labelSpecToRows({ PERSONNE: "person" })).toEqual([
+      { model: "person", emitted: "PERSONNE" },
+    ]);
+  });
+  it("collapses an identity dict entry to a blank emitted field", () => {
+    expect(labelSpecToRows({ person: "person", LIEU: "location" })).toEqual([
+      { model: "person", emitted: "" },
+      { model: "location", emitted: "LIEU" },
+    ]);
   });
 });

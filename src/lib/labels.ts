@@ -128,6 +128,45 @@ export function labelSpecToText(spec: LabelSpec): string {
     .join("\n");
 }
 
+/** One editable row of the label editor: the model-facing label, and the
+ *  emitted label (blank means "same as the model label"). */
+export type LabelRow = { model: string; emitted: string };
+
+/** Build a LabelSpec from editor rows. Trims both fields, drops rows whose
+ *  model side is blank, dedupes by model (case-insensitive, first wins). The
+ *  effective emitted label is `emitted || model`; if no row's emitted differs
+ *  from its model, returns a plain identity list, otherwise an
+ *  {emitted: model} dict. */
+export function rowsToLabelSpec(rows: LabelRow[]): LabelSpec {
+  const list: string[] = [];
+  const map: Record<string, string> = {};
+  const seen = new Set<string>();
+  let hasMapping = false;
+  for (const row of rows) {
+    const model = row.model.trim();
+    if (!model) continue;
+    const key = model.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const emitted = row.emitted.trim() || model;
+    if (emitted !== model) hasMapping = true;
+    list.push(model);
+    map[emitted] = model;
+  }
+  return hasMapping ? map : list;
+}
+
+/** Expand a LabelSpec into editor rows. A list yields rows with a blank emitted
+ *  field; a dict yields {model, emitted} rows, collapsing identity entries
+ *  (emitted === model) to a blank emitted field so they read cleanly. */
+export function labelSpecToRows(spec: LabelSpec): LabelRow[] {
+  if (Array.isArray(spec)) return spec.map((model) => ({ model, emitted: "" }));
+  return Object.entries(spec).map(([emitted, model]) => ({
+    model,
+    emitted: emitted === model ? "" : emitted,
+  }));
+}
+
 /** Labels passed to the model (the dict values, or the list itself). */
 export function internalLabels(spec: LabelSpec): string[] {
   return Array.isArray(spec) ? spec : Object.values(spec);
