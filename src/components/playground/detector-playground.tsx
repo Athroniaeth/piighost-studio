@@ -205,7 +205,10 @@ export function DetectorPlayground() {
                 {saved.map((d) => (
                   <li key={d.name} className="rounded-md border bg-background p-2 text-sm">
                     <p className="truncate font-mono">{d.name}</p>
-                    <p className="mb-1 text-xs text-muted-foreground">{pg.detectorTypes[d.config.type]}</p>
+                    <p className="mb-1 truncate text-xs text-muted-foreground">
+                      {pg.detectorTypes[d.config.type]}
+                      {"model" in d.config ? ` · ${d.config.model}` : ""}
+                    </p>
                     <span className="flex gap-3">
                       <button
                         type="button"
@@ -233,7 +236,7 @@ export function DetectorPlayground() {
         </aside>
 
         {/* The playground itself: one unified panel, Config | Text | Detections. */}
-        <div className="grid divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:min-h-0 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,2fr)_minmax(0,0.9fr)] lg:divide-x lg:divide-y-0">
+        <div className="grid divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:min-h-0 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.85fr)_minmax(0,1.05fr)] lg:divide-x lg:divide-y-0">
         {/* 3. Configuration */}
         <Region title={pg.configTitle}>
           <div className="space-y-4">
@@ -456,21 +459,21 @@ export function DetectorPlayground() {
                   <option value="scoreAsc">{pg.sortByScoreAsc}</option>
                 </select>
               </div>
-              <ul className="space-y-2">
+              <ul className="space-y-2 overflow-x-auto">
                 {sortedEntities.map((e, i) => (
                   <li
                     key={`${e.start}-${i}`}
                     className="flex items-center justify-between gap-2 rounded-md bg-muted/40 p-2"
                   >
-                    <div className="flex min-w-0 items-center gap-2">
+                    <div className="flex items-center gap-2">
                       <span
-                        className={`rounded px-1.5 py-0.5 text-[11px] font-medium ${colors.get(e.label) ?? labelStyle(e.label)}`}
+                        className={`rounded px-1.5 py-0.5 text-xs font-medium ${colors.get(e.label) ?? labelStyle(e.label)}`}
                       >
                         {e.label}
                       </span>
-                      <span className="truncate font-mono text-[0.8125rem]">{e.text}</span>
+                      <span className="whitespace-nowrap font-mono text-sm">{e.text}</span>
                     </div>
-                    <span className="shrink-0 text-[11px] text-muted-foreground">
+                    <span className="shrink-0 text-xs text-muted-foreground">
                       {(e.score * 100).toFixed(0)}%
                     </span>
                   </li>
