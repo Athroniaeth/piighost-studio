@@ -308,6 +308,7 @@ export const en: Dictionary = {
     saveDetector: "Save detector",
     detectorName: "Detector name",
     savedDetectors: "Saved detectors",
+    examplesTitle: "Examples",
     noSaved: "No saved detectors yet.",
     loadLabel: "Load",
     deleteLabel: "Delete",

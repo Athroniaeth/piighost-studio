@@ -309,6 +309,7 @@ export const fr: Dictionary = {
     saveDetector: "Sauvegarder le détecteur",
     detectorName: "Nom du détecteur",
     savedDetectors: "Détecteurs sauvegardés",
+    examplesTitle: "Exemples",
     noSaved: "Aucun détecteur sauvegardé.",
     loadLabel: "Charger",
     deleteLabel: "Supprimer",
