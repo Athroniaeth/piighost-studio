@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EntityHighlight } from "@/components/playground/entity-highlight";
 import { PlaygroundTabs } from "@/components/playground/playground-tabs";
-import { type Entity, type ModelId, type ProgressEvent, sortEntities, type EntitySort } from "@/lib/ner";
+import { type Entity, type ModelId, sortEntities, type EntitySort } from "@/lib/ner";
 import { type GlinerModelId } from "@/lib/gliner";
 import { assignLabelColors, labelStyle } from "@/lib/labels";
 import { LabelMappingEditor } from "@/components/playground/label-mapping-editor";
