@@ -9,6 +9,8 @@ import { type Entity, type ModelId, type ProgressEvent, sortEntities, type Entit
 import { type GlinerModelId } from "@/lib/gliner";
 import { assignLabelColors, labelStyle } from "@/lib/labels";
 import { LabelMappingEditor } from "@/components/playground/label-mapping-editor";
+import { PresetList } from "@/components/playground/preset-list";
+import { PRESET_DETECTORS } from "@/lib/presets";
 import {
   runDetector,
   loadDetector,
@@ -155,6 +157,15 @@ export function DetectorPlayground() {
             the playground itself: it is browser-stored persistence, not the test
             surface. Holds the save form and the saved list. */}
         <aside className="flex min-h-0 flex-col gap-4 overflow-auto rounded-xl border border-dashed bg-muted/30 p-4">
+          <PresetList
+            title={pg.examplesTitle}
+            items={PRESET_DETECTORS}
+            loadLabel={pg.loadLabel}
+            onLoad={(p) => {
+              setConfig(p.config);
+              setName(p.name);
+            }}
+          />
           <div className="space-y-2">
             <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {pg.savedDetectors}
