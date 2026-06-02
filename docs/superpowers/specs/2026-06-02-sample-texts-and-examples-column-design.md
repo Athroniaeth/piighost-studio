@@ -57,12 +57,17 @@ and resets stale results (`setStatus("idle")` / `setTestStatus("idle")`).
 
 - **Pipeline page:** wrap the current 3-column panel in an outer
   `aside | panel` grid (mirroring the detector page). The left `aside` (dashed,
-  muted) holds `<PresetList items={PRESET_PIPELINES} defaultOpen />`. The presets
-  move OUT of the configuration column, freeing config space.
-- **Detector page:** already has the aside; set its `PresetList` to
-  `defaultOpen` (the collapse was only needed when it crowded the config, which
-  no longer applies in a dedicated column). The "Your saved detectors" section
-  stays in the same aside below Examples.
+  muted) holds `<PresetList items={PRESET_PIPELINES} collapsible={false} />` —
+  always shown (no toggle), since its own column does not crowd the config. The
+  presets move OUT of the configuration column, freeing config space.
+- **Detector page:** already has the aside; its `PresetList` stays **collapsible
+  and collapsed by default**, so the saved-detectors area is visible without
+  scrolling past the examples. The "Your saved detectors" section stays in the
+  same aside below Examples.
+
+`PresetList` takes a `collapsible` prop (default `true`, with `defaultOpen`
+controlling the initial state) — `collapsible={false}` renders a plain heading
+and always shows the list.
 
 ### 5. Padding / width
 

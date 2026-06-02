@@ -241,7 +241,7 @@ export function ConfigBuilder() {
             title={pg.examplesTitle}
             items={PRESET_PIPELINES}
             loadLabel={pg.loadLabel}
-            defaultOpen
+            collapsible={false}
             onLoad={(p) => {
               setPipeline(p.pipeline);
               setSaveName(p.pipeline.name);
