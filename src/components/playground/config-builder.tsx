@@ -165,15 +165,16 @@ export function ConfigBuilder() {
   function removeDetector(i: number) {
     setPipeline((p) => ({ ...p, detectors: p.detectors.filter((_, j) => j !== i) }));
   }
-  function moveDetector(i: number, delta: number) {
-    setPipeline((p) => {
-      const next = [...p.detectors];
-      const j = i + delta;
-      if (j < 0 || j >= next.length) return p;
-      [next[i], next[j]] = [next[j], next[i]];
-      return { ...p, detectors: next };
-    });
-  }
+  // Detector order does not matter yet — the reorder arrows are disabled.
+  // function moveDetector(i: number, delta: number) {
+  //   setPipeline((p) => {
+  //     const next = [...p.detectors];
+  //     const j = i + delta;
+  //     if (j < 0 || j >= next.length) return p;
+  //     [next[i], next[j]] = [next[j], next[i]];
+  //     return { ...p, detectors: next };
+  //   });
+  // }
 
   function downloadToml() {
     const blob = new Blob([toToml(pipeline)], { type: "application/toml" });
@@ -244,13 +245,12 @@ export function ConfigBuilder() {
             onLoad={(p) => {
               setPipeline(p.pipeline);
               setSaveName(p.pipeline.name);
-              setTestText(p.sampleText);
               setTestStatus("idle");
             }}
           />
         </aside>
         {/* Unified panel — like the detector view: Configuration | Texte | Anonymisé | Entités. */}
-        <div className="grid min-h-0 flex-1 divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:grid-cols-[minmax(0,0.95fr)_minmax(0,2.4fr)_minmax(0,0.7fr)] lg:divide-x lg:divide-y-0">
+        <div className="grid min-h-0 flex-1 divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:grid-cols-[minmax(0,0.95fr)_minmax(0,2.2fr)_minmax(0,0.95fr)] lg:divide-x lg:divide-y-0">
         {/* Configuration — scrollable so future parameters can stack below. */}
         <section className="flex min-h-0 flex-col gap-4 overflow-auto p-4">
           <h2 className="shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -291,11 +291,14 @@ export function ConfigBuilder() {
                         checked={d.enabled}
                         onChange={() => toggleDetector(i)}
                       />
-                      <span className="truncate font-mono">{d.name}</span>
+                      <span className="flex min-w-0 flex-col">
+                        <span className="truncate font-mono">{d.name}</span>
+                        <span className="truncate text-xs text-muted-foreground">
+                          {"model" in d.config ? d.config.model : "regex"}
+                        </span>
+                      </span>
                     </label>
                     <span className="flex shrink-0 gap-2 text-muted-foreground">
-                      <button type="button" className="text-xs" onClick={() => moveDetector(i, -1)} title={pg.moveUp}>↑</button>
-                      <button type="button" className="text-xs" onClick={() => moveDetector(i, 1)} title={pg.moveDown}>↓</button>
                       <Link className="text-xs" href={`/playground/detector?edit=${encodeURIComponent(d.name)}`}>{pg.editInPlayground}</Link>
                       <button type="button" className="text-xs text-destructive" onClick={() => removeDetector(i)} title={pg.remove}>✕</button>
                     </span>
@@ -489,7 +492,19 @@ export function ConfigBuilder() {
             />
           </div>
 
-          {resultView === "input" ? (
+          {testStatus === "loading" || testStatus === "running" ? (
+            <div className="flex min-h-32 flex-1 flex-col items-center justify-center gap-4 rounded-lg border border-dashed bg-background p-6 text-center">
+              <Loader2 className="size-8 animate-spin text-muted-foreground" />
+              <p className="text-sm font-medium">
+                {testStatus === "loading" ||
+                runtimeStage === "downloading" ||
+                runtimeStage === "installing"
+                  ? pg.loadingRuntime
+                  : pg.loadingModel}
+              </p>
+              <p className="max-w-xs text-xs text-muted-foreground">{pg.firstLoadNote}</p>
+            </div>
+          ) : resultView === "input" ? (
             testStatus === "done" ? (
               <div
                 role="button"
@@ -514,7 +529,6 @@ export function ConfigBuilder() {
                 className="min-h-32 w-full flex-1 resize-none rounded-lg border bg-background p-3 text-sm"
                 aria-label={pg.inputLabel}
                 value={testText}
-                disabled={testStatus === "running" || testStatus === "loading"}
                 onChange={(e) => setTestText(e.target.value)}
               />
             )
@@ -548,21 +562,21 @@ export function ConfigBuilder() {
           ) : testRows.length === 0 ? (
             <p className="text-sm text-muted-foreground">{pg.noEntities}</p>
           ) : (
-            <ul className="space-y-2">
+            <ul className="space-y-2 overflow-x-auto">
               {testRows.map((e, i) => (
                 <li
                   key={`${e.token}-${i}`}
                   className="flex items-center justify-between gap-2 rounded-md bg-muted/40 p-2"
                 >
-                  <div className="flex min-w-0 items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <span
-                      className={`rounded px-1.5 py-0.5 text-[11px] font-medium ${testColors.get(e.label) ?? labelStyle(e.label)}`}
+                      className={`rounded px-1.5 py-0.5 text-xs font-medium ${testColors.get(e.label) ?? labelStyle(e.label)}`}
                     >
                       {e.label}
                     </span>
-                    <span className="truncate font-mono text-[0.8125rem]">{e.text}</span>
+                    <span className="whitespace-nowrap font-mono text-sm">{e.text}</span>
                   </div>
-                  <span className="shrink-0 text-[11px] text-muted-foreground">
+                  <span className="shrink-0 text-xs text-muted-foreground">
                     {(e.score * 100).toFixed(0)}%
                   </span>
                 </li>
