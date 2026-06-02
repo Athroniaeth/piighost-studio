@@ -29,6 +29,14 @@ describe("PresetList", () => {
     expect(screen.getByText("General PII")).toBeInTheDocument();
   });
 
+  it("always shows the list and no toggle when not collapsible", () => {
+    render(
+      <PresetList title="Examples" items={items} loadLabel="Load" onLoad={() => {}} collapsible={false} />,
+    );
+    expect(screen.getByText("General PII")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Examples/ })).not.toBeInTheDocument();
+  });
+
   it("calls onLoad with the clicked item", async () => {
     const onLoad = vi.fn();
     render(<PresetList title="Examples" items={items} loadLabel="Load" onLoad={onLoad} />);

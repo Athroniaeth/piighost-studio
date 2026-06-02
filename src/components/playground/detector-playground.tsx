@@ -173,7 +173,6 @@ export function DetectorPlayground() {
             title={pg.examplesTitle}
             items={PRESET_DETECTORS}
             loadLabel={pg.loadLabel}
-            defaultOpen
             onLoad={(p) => {
               setConfig(p.config);
               setName(p.name);
