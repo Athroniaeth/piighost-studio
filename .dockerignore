@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+.git
+.github
+.claude
+.playwright-mcp
+docs
+Dockerfile
+.dockerignore
+docker-compose.yml
+npm-debug.log*
