@@ -128,6 +128,7 @@ export type Dictionary = {
     glinerLabelsLabel: string;
     glinerLabelsPlaceholder: string;
     glinerLabelsHint: string;
+    labelsHint: string;
     labelsLabel: string;
     thresholdLabel: string;
     inputLabel: string;

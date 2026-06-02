@@ -7,7 +7,7 @@ import { EntityHighlight } from "@/components/playground/entity-highlight";
 import { PlaygroundTabs } from "@/components/playground/playground-tabs";
 import { type Entity, type ModelId, sortEntities, type EntitySort } from "@/lib/ner";
 import { type GlinerModelId } from "@/lib/gliner";
-import { assignLabelColors, internalLabels, labelStyle, parseLabels } from "@/lib/labels";
+import { assignLabelColors, labelStyle, parseLabelSpec, labelSpecToText } from "@/lib/labels";
 import {
   runDetector,
   RUNNABLE,
@@ -79,6 +79,7 @@ export function DetectorPlayground() {
   const [threshold, setThreshold] = useState(0.5);
   const [durationMs, setDurationMs] = useState<number | null>(null);
   const [sort, setSort] = useState<EntitySort>("appearance");
+  const [labelsText, setLabelsText] = useState("");
 
   useEffect(() => {
     const list = loadSaved();
@@ -92,6 +93,13 @@ export function DetectorPlayground() {
     }
   }, []);
 
+  useEffect(() => {
+    if (config.type === "gliner2" || config.type === "transformers") {
+      setLabelsText(labelSpecToText(config.labels ?? []));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config.type, "model" in config ? config.model : config.type, name]);
+
   const entities = useMemo(
     () => allEntities.filter((e) => e.score >= threshold),
     [allEntities, threshold],
@@ -103,11 +111,18 @@ export function DetectorPlayground() {
   const busy = status === "running";
 
   async function test() {
+    // Commit any uncommitted label edits first: clicking Test without blurring
+    // the labels textarea must still run with the freshly typed labels.
+    const cfg =
+      config.type === "gliner2" || config.type === "transformers"
+        ? { ...config, labels: parseLabelSpec(labelsText) }
+        : config;
+    if (cfg !== config) setConfig(cfg);
     try {
       setStatus("running");
       setDurationMs(null);
       const started = performance.now();
-      const result = await runDetector(config, text);
+      const result = await runDetector(cfg, text);
       setDurationMs(performance.now() - started);
       setAllEntities(result);
       setAnalyzed(text);
@@ -122,6 +137,12 @@ export function DetectorPlayground() {
     const trimmed = name.trim();
     if (!trimmed) return;
     setSaved(saveDetector(trimmed, config));
+  }
+
+  function commitLabels() {
+    if (config.type === "gliner2" || config.type === "transformers") {
+      setConfig({ ...config, labels: parseLabelSpec(labelsText) });
+    }
   }
 
   return (
@@ -218,19 +239,33 @@ export function DetectorPlayground() {
             )}
 
             {config.type === "transformers" && (
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium">{pg.modelLabel}</label>
-                <select
-                  className="w-full rounded-md border bg-background px-2.5 py-1.5 font-mono text-xs"
-                  value={config.model}
-                  disabled={busy}
-                  onChange={(e) => setConfig({ ...config, model: e.target.value as ModelId })}
-                >
-                  {CLASSIC_MODELS.map((m) => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-              </div>
+              <>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">{pg.modelLabel}</label>
+                  <select
+                    className="w-full rounded-md border bg-background px-2.5 py-1.5 font-mono text-xs"
+                    value={config.model}
+                    disabled={busy}
+                    onChange={(e) => setConfig({ ...config, model: e.target.value as ModelId })}
+                  >
+                    {CLASSIC_MODELS.map((m) => (
+                      <option key={m} value={m}>{m}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">{pg.glinerLabelsLabel}</label>
+                  <textarea
+                    className="min-h-20 w-full resize-none rounded-md border bg-background px-2.5 py-1.5 font-mono text-xs"
+                    value={labelsText}
+                    placeholder={pg.glinerLabelsPlaceholder}
+                    disabled={busy}
+                    onChange={(e) => setLabelsText(e.target.value)}
+                    onBlur={commitLabels}
+                  />
+                  <p className="text-xs text-muted-foreground">{pg.labelsHint}</p>
+                </div>
+              </>
             )}
 
             {config.type === "gliner2" && (
@@ -252,11 +287,13 @@ export function DetectorPlayground() {
                   <label className="text-sm font-medium">{pg.glinerLabelsLabel}</label>
                   <textarea
                     className="min-h-20 w-full resize-none rounded-md border bg-background px-2.5 py-1.5 font-mono text-xs"
-                    value={internalLabels(config.labels).join(", ")}
+                    value={labelsText}
                     placeholder={pg.glinerLabelsPlaceholder}
                     disabled={busy}
-                    onChange={(e) => setConfig({ ...config, labels: parseLabels(e.target.value) })}
+                    onChange={(e) => setLabelsText(e.target.value)}
+                    onBlur={commitLabels}
                   />
+                  <p className="text-xs text-muted-foreground">{pg.labelsHint}</p>
                 </div>
               </>
             )}
