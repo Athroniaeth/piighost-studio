@@ -110,13 +110,19 @@ export function DetectorPlayground() {
   const runnable = RUNNABLE[config.type];
   const busy = status === "running";
 
+  // Fold any uncommitted label edits into the config: clicking Test or Save
+  // without blurring the labels textarea must still use the freshly typed
+  // labels (commitLabels only runs on blur, and setConfig is async so the
+  // current render's `config` is stale).
+  function configWithLabels(): DetectorConfig {
+    if (config.type === "gliner2" || config.type === "transformers") {
+      return { ...config, labels: parseLabelSpec(labelsText) };
+    }
+    return config;
+  }
+
   async function test() {
-    // Commit any uncommitted label edits first: clicking Test without blurring
-    // the labels textarea must still run with the freshly typed labels.
-    const cfg =
-      config.type === "gliner2" || config.type === "transformers"
-        ? { ...config, labels: parseLabelSpec(labelsText) }
-        : config;
+    const cfg = configWithLabels();
     if (cfg !== config) setConfig(cfg);
     try {
       setStatus("running");
@@ -136,7 +142,9 @@ export function DetectorPlayground() {
   function save() {
     const trimmed = name.trim();
     if (!trimmed) return;
-    setSaved(saveDetector(trimmed, config));
+    const cfg = configWithLabels();
+    if (cfg !== config) setConfig(cfg);
+    setSaved(saveDetector(trimmed, cfg));
   }
 
   function commitLabels() {

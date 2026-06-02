@@ -10,14 +10,24 @@ function basicString(value: string): string {
   return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
 }
 
+// TOML bare keys allow only [A-Za-z0-9_-]; anything else (spaces, accents,
+// punctuation) must be a quoted key. Labels can be arbitrary words, so guard.
+function tomlKey(key: string): string {
+  return /^[A-Za-z0-9_-]+$/.test(key) ? key : basicString(key);
+}
+
 function patternsInline(patterns: Record<string, string>): string {
-  const entries = Object.entries(patterns).map(([label, pat]) => `${label} = ${tomlString(pat)}`);
+  const entries = Object.entries(patterns).map(
+    ([label, pat]) => `${tomlKey(label)} = ${tomlString(pat)}`,
+  );
   return `{ ${entries.join(", ")} }`;
 }
 
 function labelsToml(labels: LabelSpec): string {
   if (Array.isArray(labels)) return `[${labels.map(basicString).join(", ")}]`;
-  const entries = Object.entries(labels).map(([emitted, model]) => `${emitted} = ${basicString(model)}`);
+  const entries = Object.entries(labels).map(
+    ([emitted, model]) => `${tomlKey(emitted)} = ${basicString(model)}`,
+  );
   return `{ ${entries.join(", ")} }`;
 }
 

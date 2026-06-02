@@ -131,4 +131,10 @@ describe("toToml detector labels (mapping)", () => {
   it("emits an inline table for a mapping", () => {
     expect(toToml(withGliner({ PERSONNE: "person" }))).toContain('labels = { PERSONNE = "person" }');
   });
+
+  it("quotes an emitted-label key that is not bare-key safe", () => {
+    expect(toToml(withGliner({ "phone number": "phone" }))).toContain(
+      'labels = { "phone number" = "phone" }',
+    );
+  });
 });
