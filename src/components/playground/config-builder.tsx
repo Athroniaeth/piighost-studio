@@ -247,6 +247,8 @@ export function ConfigBuilder() {
             onLoad={(p) => {
               setPipeline(p.pipeline);
               setSaveName(p.pipeline.name);
+              setTestText(p.sampleText);
+              setTestStatus("idle");
             }}
           />
 
