@@ -83,3 +83,62 @@ export function assignLabelColors(labels: string[]): Map<string, string> {
 export function labelStyle(label: string): string {
   return LABEL_STYLES[label] ?? LABEL_PALETTE[0];
 }
+
+/** A labels spec: a plain list (identity) or an {emitted: model} mapping. */
+export type LabelSpec = string[] | Record<string, string>;
+
+/** Parse the "Types to detect" textarea: one entry per line. "EMITTED: model"
+ *  maps; a bare "label" is identity. Returns a plain list when every entry is
+ *  identity, otherwise an {emitted: model} dict (identity entries become
+ *  {label: label}). Trims, skips blanks, dedupes by emitted (case-insensitive). */
+export function parseLabelSpec(input: string): LabelSpec {
+  const list: string[] = [];
+  const map: Record<string, string> = {};
+  const seen = new Set<string>();
+  let hasMapping = false;
+  for (const line of input.split("\n")) {
+    const raw = line.trim();
+    if (!raw) continue;
+    const i = raw.indexOf(":");
+    let emitted: string;
+    let model: string;
+    if (i === -1) {
+      emitted = raw;
+      model = raw;
+    } else {
+      emitted = raw.slice(0, i).trim();
+      model = raw.slice(i + 1).trim();
+      if (!emitted || !model) continue;
+      if (emitted !== model) hasMapping = true;
+    }
+    const key = emitted.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    list.push(emitted);
+    map[emitted] = model;
+  }
+  return hasMapping ? map : list;
+}
+
+/** Render a LabelSpec back to the textarea text (one entry per line). */
+export function labelSpecToText(spec: LabelSpec): string {
+  if (Array.isArray(spec)) return spec.join("\n");
+  return Object.entries(spec)
+    .map(([emitted, model]) => (emitted === model ? emitted : `${emitted}: ${model}`))
+    .join("\n");
+}
+
+/** Labels passed to the model (the dict values, or the list itself). */
+export function internalLabels(spec: LabelSpec): string[] {
+  return Array.isArray(spec) ? spec : Object.values(spec);
+}
+
+/** Map a model-emitted (internal) label back to the external label. Identity for
+ *  a list or an unmapped label. */
+export function remapLabel(label: string, spec: LabelSpec): string {
+  if (Array.isArray(spec)) return label;
+  for (const [emitted, model] of Object.entries(spec)) {
+    if (model === label) return emitted;
+  }
+  return label;
+}

@@ -1,4 +1,5 @@
 import type { ConfigPipeline, DetectorConfig, Placeholder } from "./detector-config";
+import type { LabelSpec } from "./labels";
 
 function tomlString(value: string): string {
   if (!value.includes("'")) return `'${value}'`;
@@ -9,8 +10,24 @@ function basicString(value: string): string {
   return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
 }
 
+// TOML bare keys allow only [A-Za-z0-9_-]; anything else (spaces, accents,
+// punctuation) must be a quoted key. Labels can be arbitrary words, so guard.
+function tomlKey(key: string): string {
+  return /^[A-Za-z0-9_-]+$/.test(key) ? key : basicString(key);
+}
+
 function patternsInline(patterns: Record<string, string>): string {
-  const entries = Object.entries(patterns).map(([label, pat]) => `${label} = ${tomlString(pat)}`);
+  const entries = Object.entries(patterns).map(
+    ([label, pat]) => `${tomlKey(label)} = ${tomlString(pat)}`,
+  );
+  return `{ ${entries.join(", ")} }`;
+}
+
+function labelsToml(labels: LabelSpec): string {
+  if (Array.isArray(labels)) return `[${labels.map(basicString).join(", ")}]`;
+  const entries = Object.entries(labels).map(
+    ([emitted, model]) => `${tomlKey(emitted)} = ${basicString(model)}`,
+  );
   return `{ ${entries.join(", ")} }`;
 }
 
@@ -24,11 +41,12 @@ function detectorToml(d: DetectorConfig, name?: string): string {
       break;
     case "transformers":
       lines.push(`model = ${basicString(d.model)}`, `threshold = ${d.threshold}`);
+      if (d.labels) lines.push(`labels = ${labelsToml(d.labels)}`);
       break;
     case "gliner2":
       lines.push(
         `model = ${basicString(d.model)}`,
-        `labels = [${d.labels.map(basicString).join(", ")}]`,
+        `labels = ${labelsToml(d.labels)}`,
         `threshold = ${d.threshold}`,
         `flat_ner = ${d.flatNer}`,
       );
@@ -37,7 +55,7 @@ function detectorToml(d: DetectorConfig, name?: string): string {
       lines.push(
         `provider = ${basicString(d.provider)}`,
         `model = ${basicString(d.model)}`,
-        `labels = [${d.labels.map(basicString).join(", ")}]`,
+        `labels = ${labelsToml(d.labels)}`,
       );
       break;
   }

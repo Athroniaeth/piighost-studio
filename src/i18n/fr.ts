@@ -261,6 +261,7 @@ export const fr: Dictionary = {
     glinerLabelsLabel: "Types à détecter",
     glinerLabelsPlaceholder: "person, email, phone number, address",
     glinerLabelsHint: "Séparés par des virgules. Relancez l'analyse pour appliquer.",
+    labelsHint: "Une par ligne. Mappez avec « ÉMIS: modèle » (ex. PERSONNE: person), ou un label seul pour l’identité.",
     labelsLabel: "Labels autorisés",
     thresholdLabel: "Seuil",
     inputLabel: "Votre texte",

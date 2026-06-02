@@ -260,6 +260,7 @@ export const en: Dictionary = {
     glinerLabelsLabel: "Types to detect",
     glinerLabelsPlaceholder: "person, email, phone number, address",
     glinerLabelsHint: "Comma-separated. Re-run the analysis to apply new types.",
+    labelsHint: "One per line. Map with \"EMITTED: model\" (e.g. PERSON: person), or a bare label for identity.",
     labelsLabel: "Allowed labels",
     thresholdLabel: "Threshold",
     inputLabel: "Your text",
