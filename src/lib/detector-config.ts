@@ -125,7 +125,7 @@ export function defaultConfig(type: DetectorType): DetectorConfig {
       return {
         type: "gliner2",
         model: "onnx-community/gliner_small-v2.1",
-        labels: ["person", "organization", "location", "date"],
+        labels: { PERSON: "person", ORGANIZATION: "organization", LOCATION: "location", DATE: "date" },
         threshold: 0.5,
         flatNer: true,
       };
