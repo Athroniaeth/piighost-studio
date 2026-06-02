@@ -19,6 +19,7 @@ export const en: Dictionary = {
     repository: "Repository",
     docs: "Docs",
     pypi: "PyPI",
+    app: "Live demo",
   },
   projects: {
     piighost: {
@@ -150,7 +151,7 @@ export const en: Dictionary = {
   hero: {
     title: "Anonymize PII before it reaches the LLM",
     description:
-      "piighost is a Python library for PII anonymization pipelines. It swaps personal data for stable placeholders the model can reason about, then restores the real values for your tools and your users. Your agent code does not change.",
+      "piighost is a Python library for building PII anonymization pipelines. It swaps personal data for stable placeholders the model can reason about, then restores the real values for your tools and your users. Your agent code does not change.",
     getStarted: "Get started",
     github: "GitHub",
   },
@@ -160,11 +161,11 @@ export const en: Dictionary = {
     items: [
       {
         title: "Hosted clouds leak raw data",
-        body: "OpenAI, Anthropic, and Google ship the best models on the market. But every byte of context you send them, including raw user PII, leaves your jurisdiction the moment the request hits the wire. A single prompt becomes a data export, and 'we will redact it later' is not a story that survives a real audit.",
+        body: "OpenAI, Anthropic, and Google ship the best models on the market. But every byte of context you send them, including raw user PII, leaves your jurisdiction the moment the request hits the wire. A single prompt becomes a data export.",
       },
       {
         title: "Local models trade quality",
-        body: "Self-hosting keeps the data inside your network, but you give up part of the state of the art and you take on the GPU bill, the patching, and the eval pipeline. The privacy gain comes with a permanent operational cost, and the model you can run is rarely the model you wish you were running.",
+        body: "Self-hosting keeps the data inside your network, but you give up part of the state of the art and you take on the GPU bill and the patching. The privacy gain comes with a permanent operational cost, and the model you can run is rarely the model you wish you were running.",
       },
       {
         title: "Compliance does not wait",
@@ -186,7 +187,7 @@ export const en: Dictionary = {
       deanonymize: "Deanonymize",
     },
     detectCaption:
-      "piighost runs your detectors over the message and flags every PII span it finds: names, emails, identifiers, anything the model does not need to see. Overlapping detections from multiple detectors are arbitrated by confidence before anything is replaced.",
+      "piighost runs your detectors over the message and reports every PII span it finds: names, emails, identifiers, anything the model does not need to see. Overlapping detections from multiple detectors are arbitrated by confidence before anything is replaced.",
     anonymizeCaption:
       "Each PII value gets a stable counter scoped to its type. The three people in this message become <<PERSON:1>>, <<PERSON:2>>, and <<PERSON:3>>; the two distinct emails become <<EMAIL:1>> and <<EMAIL:2>>. The same value keeps the same identifier across every later message, every tool call, and every retry.",
     toolsCaption:

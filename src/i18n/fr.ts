@@ -19,6 +19,7 @@ export const fr: Dictionary = {
     repository: "Dépôt",
     docs: "Docs",
     pypi: "PyPI",
+    app: "Démo en ligne",
   },
   projects: {
     piighost: {
@@ -150,7 +151,7 @@ export const fr: Dictionary = {
   hero: {
     title: "Anonymisez les données personnelles avant qu'elles n'atteignent le modèle",
     description:
-      "piighost est une bibliothèque Python pour les pipelines d'anonymisation de données personnelles. Elle remplace les informations sensibles par des jetons stables que le modèle peut utiliser, puis restitue les vraies valeurs à vos outils et à vos utilisateurs. Votre code d'agent ne change pas.",
+      "piighost est une bibliothèque Python pour créer des pipelines d'anonymisation de données personnelles. Elle remplace les informations sensibles par des jetons stables que le modèle peut utiliser, puis restitue les vraies valeurs à vos outils et à vos utilisateurs. Votre code d'agent ne change pas.",
     getStarted: "Démarrer",
     github: "GitHub",
   },
@@ -160,11 +161,11 @@ export const fr: Dictionary = {
     items: [
       {
         title: "Les clouds hébergés exposent les données brutes",
-        body: "OpenAI, Anthropic et Google proposent les meilleurs modèles du marché. Mais chaque octet de contexte que vous leur envoyez, y compris les données personnelles brutes, quitte votre juridiction dès que la requête part sur le réseau. Une seule invite devient une exportation de données, et 'on caviardera plus tard' ne tient pas face à un vrai audit.",
+        body: "OpenAI, Anthropic et Google proposent les meilleurs modèles du marché. Mais chaque octet de contexte que vous leur envoyez, y compris les données personnelles brutes, quitte votre juridiction dès que la requête part sur le réseau. Une seule invite devient une exportation de données.",
       },
       {
         title: "Les modèles locaux sacrifient la qualité",
-        body: "L'auto-hébergement garde les données dans votre réseau, mais vous renoncez à une partie de l'état de l'art et vous prenez en charge la facture GPU, les mises à jour et le pipeline d'évaluation. Le gain en confidentialité s'accompagne d'un coût opérationnel permanent, et le modèle que vous pouvez faire tourner est rarement celui que vous voudriez utiliser.",
+        body: "L'auto-hébergement garde les données dans votre réseau, mais vous renoncez à une partie de l'état de l'art et vous prenez en charge la facture GPU et les mises à jour. Le gain en confidentialité s'accompagne d'un coût opérationnel permanent, et le modèle que vous pouvez faire tourner est rarement celui que vous voudriez utiliser.",
       },
       {
         title: "La conformité n'attend pas",
@@ -186,7 +187,7 @@ export const fr: Dictionary = {
       deanonymize: "Désanonymiser",
     },
     detectCaption:
-      "piighost exécute vos détecteurs sur le message et signale chaque donnée personnelle trouvée : noms, e-mails, identifiants, tout ce que le modèle n'a pas besoin de voir. Les détections qui se chevauchent entre plusieurs détecteurs sont arbitrées par niveau de confiance avant tout remplacement.",
+      "piighost exécute vos détecteurs sur le message et indique chaque donnée personnelle trouvée : noms, e-mails, identifiants, tout ce que le modèle n'a pas besoin de voir. Les détections qui se chevauchent entre plusieurs détecteurs sont arbitrées par niveau de confiance avant tout remplacement.",
     anonymizeCaption:
       "Chaque donnée personnelle reçoit un compteur stable, propre à son type. Les trois personnes de ce message deviennent <<PERSON:1>>, <<PERSON:2>> et <<PERSON:3>> ; les deux adresses e-mail distinctes deviennent <<EMAIL:1>> et <<EMAIL:2>>. La même valeur garde le même identifiant dans chaque message suivant, chaque appel d'outil et chaque réessai.",
     toolsCaption:

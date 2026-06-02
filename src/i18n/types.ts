@@ -47,6 +47,7 @@ export type Dictionary = {
     repository: string;
     docs: string;
     pypi: string;
+    app: string;
   };
   projects: {
     piighost: ProjectPageDict;
