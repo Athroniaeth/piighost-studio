@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { toToml, toPython, requiredExtras } from "./pipeline-export";
 import type { ConfigPipeline } from "./detector-config";
+import { defaultPipeline } from "./detector-config";
 
 const pipeline: ConfigPipeline = {
   name: "demo",
@@ -101,5 +102,33 @@ describe("toPython", () => {
     expect(py).toContain('# Pipeline "demo"');
     expect(py).toContain("gliner2");
     expect(py).not.toContain("X");
+  });
+});
+
+describe("toToml detector labels (mapping)", () => {
+  const withGliner = (labels: string[] | Record<string, string>) => ({
+    ...defaultPipeline(),
+    name: "p",
+    detectors: [
+      {
+        name: "g",
+        enabled: true,
+        config: {
+          type: "gliner2" as const,
+          model: "onnx-community/gliner_small-v2.1" as const,
+          labels,
+          threshold: 0.5,
+          flatNer: true,
+        },
+      },
+    ],
+  });
+
+  it("emits a plain list for list labels", () => {
+    expect(toToml(withGliner(["person", "org"]))).toContain('labels = ["person", "org"]');
+  });
+
+  it("emits an inline table for a mapping", () => {
+    expect(toToml(withGliner({ PERSONNE: "person" }))).toContain('labels = { PERSONNE = "person" }');
   });
 });

@@ -1,5 +1,5 @@
 import type { ConfigPipeline, DetectorConfig, Placeholder } from "./detector-config";
-import { internalLabels } from "./labels";
+import type { LabelSpec } from "./labels";
 
 function tomlString(value: string): string {
   if (!value.includes("'")) return `'${value}'`;
@@ -15,6 +15,12 @@ function patternsInline(patterns: Record<string, string>): string {
   return `{ ${entries.join(", ")} }`;
 }
 
+function labelsToml(labels: LabelSpec): string {
+  if (Array.isArray(labels)) return `[${labels.map(basicString).join(", ")}]`;
+  const entries = Object.entries(labels).map(([emitted, model]) => `${emitted} = ${basicString(model)}`);
+  return `{ ${entries.join(", ")} }`;
+}
+
 function detectorToml(d: DetectorConfig, name?: string): string {
   const lines = ["[[detectors]]", `type = "${d.type}"`];
   const label = name ?? d.name;
@@ -25,11 +31,12 @@ function detectorToml(d: DetectorConfig, name?: string): string {
       break;
     case "transformers":
       lines.push(`model = ${basicString(d.model)}`, `threshold = ${d.threshold}`);
+      if (d.labels) lines.push(`labels = ${labelsToml(d.labels)}`);
       break;
     case "gliner2":
       lines.push(
         `model = ${basicString(d.model)}`,
-        `labels = [${internalLabels(d.labels).map(basicString).join(", ")}]`,
+        `labels = ${labelsToml(d.labels)}`,
         `threshold = ${d.threshold}`,
         `flat_ner = ${d.flatNer}`,
       );
@@ -38,7 +45,7 @@ function detectorToml(d: DetectorConfig, name?: string): string {
       lines.push(
         `provider = ${basicString(d.provider)}`,
         `model = ${basicString(d.model)}`,
-        `labels = [${internalLabels(d.labels).map(basicString).join(", ")}]`,
+        `labels = ${labelsToml(d.labels)}`,
       );
       break;
   }
