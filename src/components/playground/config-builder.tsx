@@ -24,6 +24,8 @@ import { savePipeline } from "@/lib/saved-pipelines";
 import { useT } from "@/i18n/use-t";
 import { EntityHighlight } from "@/components/playground/entity-highlight";
 import { PlaygroundTabs } from "@/components/playground/playground-tabs";
+import { PresetList } from "@/components/playground/preset-list";
+import { PRESET_PIPELINES } from "@/lib/presets";
 import { assignLabelColors, labelStyle } from "@/lib/labels";
 import { runPipeline } from "@/lib/run-pipeline";
 import { loadPiighostRuntime, type RuntimeStage } from "@/lib/piighost-runtime";
@@ -237,6 +239,16 @@ export function ConfigBuilder() {
           <h2 className="shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             {pg.configTitle}
           </h2>
+
+          <PresetList
+            title={pg.examplesTitle}
+            items={PRESET_PIPELINES}
+            loadLabel={pg.loadLabel}
+            onLoad={(p) => {
+              setPipeline(p.pipeline);
+              setSaveName(p.pipeline.name);
+            }}
+          />
 
           {/* Détecteurs */}
           <div className="space-y-2">

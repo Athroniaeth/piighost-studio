@@ -1,7 +1,7 @@
-import type { Entity, ModelId } from "./ner";
-import { runNer } from "./ner";
+import type { Entity, ModelId, ProgressEvent } from "./ner";
+import { runNer, loadNer } from "./ner";
 import type { GlinerModelId } from "./gliner";
-import { runGliner } from "./gliner";
+import { runGliner, loadGliner } from "./gliner";
 import { runRegex } from "./regex-detect";
 import { internalLabels, remapLabel, type LabelSpec } from "./labels";
 
@@ -125,12 +125,27 @@ export function defaultConfig(type: DetectorType): DetectorConfig {
       return {
         type: "gliner2",
         model: "onnx-community/gliner_small-v2.1",
-        labels: ["person", "organization", "location", "date"],
+        labels: { PERSON: "person", ORGANIZATION: "organization", LOCATION: "location", DATE: "date" },
         threshold: 0.5,
         flatNer: true,
       };
     case "llm":
       return { type: "llm", provider: "mistral", model: "mistral-small", labels: ["PER", "LOC"] };
+  }
+}
+
+/** Download (and warm up) a detector's model before running it, reporting
+ *  progress where the backend exposes it. transformers.js reports per-file
+ *  byte progress; GLiNER fetches its ONNX binary without a progress hook, so it
+ *  stays indeterminate. regex/llm have nothing to download. Safe to call before
+ *  every run — the model instances are cached, so only the first call downloads. */
+export async function loadDetector(
+  config: DetectorConfig,
+  onProgress?: (e: ProgressEvent) => void,
+): Promise<void> {
+  if (config.type === "transformers") return loadNer(config.model, onProgress);
+  if (config.type === "gliner2") {
+    await loadGliner(config.model);
   }
 }
 

@@ -87,45 +87,43 @@ export function labelStyle(label: string): string {
 /** A labels spec: a plain list (identity) or an {emitted: model} mapping. */
 export type LabelSpec = string[] | Record<string, string>;
 
-/** Parse the "Types to detect" textarea: one entry per line. "EMITTED: model"
- *  maps; a bare "label" is identity. Returns a plain list when every entry is
- *  identity, otherwise an {emitted: model} dict (identity entries become
- *  {label: label}). Trims, skips blanks, dedupes by emitted (case-insensitive). */
-export function parseLabelSpec(input: string): LabelSpec {
+/** One editable row of the label editor: the model-facing label, and the
+ *  emitted label (blank means "same as the model label"). */
+export type LabelRow = { model: string; emitted: string };
+
+/** Build a LabelSpec from editor rows. Trims both fields, drops rows whose
+ *  model side is blank, dedupes by model (case-insensitive, first wins). The
+ *  effective emitted label is `emitted || model`; if no row's emitted differs
+ *  from its model, returns a plain identity list, otherwise an
+ *  {emitted: model} dict. */
+export function rowsToLabelSpec(rows: LabelRow[]): LabelSpec {
   const list: string[] = [];
   const map: Record<string, string> = {};
   const seen = new Set<string>();
   let hasMapping = false;
-  for (const line of input.split("\n")) {
-    const raw = line.trim();
-    if (!raw) continue;
-    const i = raw.indexOf(":");
-    let emitted: string;
-    let model: string;
-    if (i === -1) {
-      emitted = raw;
-      model = raw;
-    } else {
-      emitted = raw.slice(0, i).trim();
-      model = raw.slice(i + 1).trim();
-      if (!emitted || !model) continue;
-      if (emitted !== model) hasMapping = true;
-    }
-    const key = emitted.toLowerCase();
+  for (const row of rows) {
+    const model = row.model.trim();
+    if (!model) continue;
+    const key = model.toLowerCase();
     if (seen.has(key)) continue;
     seen.add(key);
-    list.push(emitted);
+    const emitted = row.emitted.trim() || model;
+    if (emitted !== model) hasMapping = true;
+    list.push(model);
     map[emitted] = model;
   }
   return hasMapping ? map : list;
 }
 
-/** Render a LabelSpec back to the textarea text (one entry per line). */
-export function labelSpecToText(spec: LabelSpec): string {
-  if (Array.isArray(spec)) return spec.join("\n");
-  return Object.entries(spec)
-    .map(([emitted, model]) => (emitted === model ? emitted : `${emitted}: ${model}`))
-    .join("\n");
+/** Expand a LabelSpec into editor rows. A list yields rows with a blank emitted
+ *  field; a dict yields {model, emitted} rows, collapsing identity entries
+ *  (emitted === model) to a blank emitted field so they read cleanly. */
+export function labelSpecToRows(spec: LabelSpec): LabelRow[] {
+  if (Array.isArray(spec)) return spec.map((model) => ({ model, emitted: "" }));
+  return Object.entries(spec).map(([emitted, model]) => ({
+    model,
+    emitted: emitted === model ? "" : emitted,
+  }));
 }
 
 /** Labels passed to the model (the dict values, or the list itself). */

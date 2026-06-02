@@ -126,10 +126,10 @@ export type Dictionary = {
     };
     modelGroups: { classic: string; gliner: string };
     glinerLabelsLabel: string;
-    glinerLabelsPlaceholder: string;
-    glinerLabelsHint: string;
-    labelsHint: string;
-    labelsLabel: string;
+    labelSearchedPlaceholder: string;
+    labelEmittedPlaceholder: string;
+    labelAdd: string;
+    labelEmittedHint: string;
     thresholdLabel: string;
     inputLabel: string;
     example: string;
@@ -169,6 +169,7 @@ export type Dictionary = {
     saveDetector: string;
     detectorName: string;
     savedDetectors: string;
+    examplesTitle: string;
     noSaved: string;
     loadLabel: string;
     deleteLabel: string;

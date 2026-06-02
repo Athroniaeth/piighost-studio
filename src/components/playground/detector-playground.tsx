@@ -1,15 +1,19 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EntityHighlight } from "@/components/playground/entity-highlight";
 import { PlaygroundTabs } from "@/components/playground/playground-tabs";
 import { type Entity, type ModelId, sortEntities, type EntitySort } from "@/lib/ner";
 import { type GlinerModelId } from "@/lib/gliner";
-import { assignLabelColors, labelStyle, parseLabelSpec, labelSpecToText } from "@/lib/labels";
+import { assignLabelColors, labelStyle } from "@/lib/labels";
+import { LabelMappingEditor } from "@/components/playground/label-mapping-editor";
+import { PresetList } from "@/components/playground/preset-list";
+import { PRESET_DETECTORS } from "@/lib/presets";
 import {
   runDetector,
+  loadDetector,
   RUNNABLE,
   defaultConfig,
   type DetectorConfig,
@@ -79,7 +83,6 @@ export function DetectorPlayground() {
   const [threshold, setThreshold] = useState(0.5);
   const [durationMs, setDurationMs] = useState<number | null>(null);
   const [sort, setSort] = useState<EntitySort>("appearance");
-  const [labelsText, setLabelsText] = useState("");
 
   useEffect(() => {
     const list = loadSaved();
@@ -93,13 +96,6 @@ export function DetectorPlayground() {
     }
   }, []);
 
-  useEffect(() => {
-    if (config.type === "gliner2" || config.type === "transformers") {
-      setLabelsText(labelSpecToText(config.labels ?? []));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.type, "model" in config ? config.model : config.type, name]);
-
   const entities = useMemo(
     () => allEntities.filter((e) => e.score >= threshold),
     [allEntities, threshold],
@@ -110,25 +106,33 @@ export function DetectorPlayground() {
   const runnable = RUNNABLE[config.type];
   const busy = status === "running";
 
-  // Fold any uncommitted label edits into the config: clicking Test or Save
-  // without blurring the labels textarea must still use the freshly typed
-  // labels (commitLabels only runs on blur, and setConfig is async so the
-  // current render's `config` is stale).
-  function configWithLabels(): DetectorConfig {
-    if (config.type === "gliner2" || config.type === "transformers") {
-      return { ...config, labels: parseLabelSpec(labelsText) };
-    }
-    return config;
-  }
+  // Download progress (0-100) while the model is fetched; null = indeterminate
+  // (GLiNER, or the brief inference phase after the download completes).
+  const [progress, setProgress] = useState<number | null>(null);
+  // Per-file byte tallies, aggregated into one percentage across all files.
+  const downloadSizes = useRef(new Map<string, { loaded: number; total: number }>());
 
   async function test() {
-    const cfg = configWithLabels();
-    if (cfg !== config) setConfig(cfg);
     try {
+      downloadSizes.current.clear();
+      setProgress(null);
       setStatus("running");
       setDurationMs(null);
+      await loadDetector(config, (e) => {
+        if (e.status === "progress" && e.file && e.total) {
+          downloadSizes.current.set(e.file, { loaded: e.loaded ?? 0, total: e.total });
+          let loaded = 0;
+          let total = 0;
+          for (const v of downloadSizes.current.values()) {
+            loaded += v.loaded;
+            total += v.total;
+          }
+          // Cap at 99% so the bar never reads "done" before inference runs.
+          setProgress(total > 0 ? Math.min(99, Math.round((loaded / total) * 100)) : null);
+        }
+      });
       const started = performance.now();
-      const result = await runDetector(cfg, text);
+      const result = await runDetector(config, text);
       setDurationMs(performance.now() - started);
       setAllEntities(result);
       setAnalyzed(text);
@@ -142,15 +146,7 @@ export function DetectorPlayground() {
   function save() {
     const trimmed = name.trim();
     if (!trimmed) return;
-    const cfg = configWithLabels();
-    if (cfg !== config) setConfig(cfg);
-    setSaved(saveDetector(trimmed, cfg));
-  }
-
-  function commitLabels() {
-    if (config.type === "gliner2" || config.type === "transformers") {
-      setConfig({ ...config, labels: parseLabelSpec(labelsText) });
-    }
+    setSaved(saveDetector(trimmed, config));
   }
 
   return (
@@ -161,6 +157,15 @@ export function DetectorPlayground() {
             the playground itself: it is browser-stored persistence, not the test
             surface. Holds the save form and the saved list. */}
         <aside className="flex min-h-0 flex-col gap-4 overflow-auto rounded-xl border border-dashed bg-muted/30 p-4">
+          <PresetList
+            title={pg.examplesTitle}
+            items={PRESET_DETECTORS}
+            loadLabel={pg.loadLabel}
+            onLoad={(p) => {
+              setConfig(p.config);
+              setName(p.name);
+            }}
+          />
           <div className="space-y-2">
             <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {pg.savedDetectors}
@@ -263,15 +268,12 @@ export function DetectorPlayground() {
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium">{pg.glinerLabelsLabel}</label>
-                  <textarea
-                    className="min-h-20 w-full resize-none rounded-md border bg-background px-2.5 py-1.5 font-mono text-xs"
-                    value={labelsText}
-                    placeholder={pg.glinerLabelsPlaceholder}
+                  <LabelMappingEditor
+                    key={`transformers-${config.model}-${name}`}
+                    value={config.labels ?? []}
                     disabled={busy}
-                    onChange={(e) => setLabelsText(e.target.value)}
-                    onBlur={commitLabels}
+                    onChange={(labels) => setConfig({ ...config, labels })}
                   />
-                  <p className="text-xs text-muted-foreground">{pg.labelsHint}</p>
                 </div>
               </>
             )}
@@ -293,15 +295,12 @@ export function DetectorPlayground() {
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium">{pg.glinerLabelsLabel}</label>
-                  <textarea
-                    className="min-h-20 w-full resize-none rounded-md border bg-background px-2.5 py-1.5 font-mono text-xs"
-                    value={labelsText}
-                    placeholder={pg.glinerLabelsPlaceholder}
+                  <LabelMappingEditor
+                    key={`gliner2-${config.model}-${name}`}
+                    value={config.labels}
                     disabled={busy}
-                    onChange={(e) => setLabelsText(e.target.value)}
-                    onBlur={commitLabels}
+                    onChange={(labels) => setConfig({ ...config, labels })}
                   />
-                  <p className="text-xs text-muted-foreground">{pg.labelsHint}</p>
                 </div>
               </>
             )}
@@ -348,6 +347,25 @@ export function DetectorPlayground() {
               <Button variant="outline" size="sm" onClick={test}>
                 {pg.retry}
               </Button>
+            </div>
+          ) : status === "running" ? (
+            <div className="flex min-h-48 flex-1 flex-col items-center justify-center gap-4 rounded-lg border border-dashed bg-background p-6 text-center">
+              <Loader2 className="size-8 animate-spin text-muted-foreground" />
+              <p className="text-sm font-medium">{pg.loadingModel}</p>
+              <div className="h-2 w-64 max-w-full overflow-hidden rounded-full bg-muted">
+                {progress === null ? (
+                  <div className="h-full w-full animate-pulse rounded-full bg-primary/60" />
+                ) : (
+                  <div
+                    className="h-full rounded-full bg-primary transition-[width] duration-200"
+                    style={{ width: `${progress}%` }}
+                  />
+                )}
+              </div>
+              {progress !== null && (
+                <p className="text-xs tabular-nums text-muted-foreground">{progress}%</p>
+              )}
+              <p className="max-w-xs text-xs text-muted-foreground">{pg.firstLoadNote}</p>
             </div>
           ) : status === "done" ? (
             <div className="flex min-h-0 flex-1 flex-col">
