@@ -10,6 +10,7 @@ import { type GlinerModelId } from "@/lib/gliner";
 import { assignLabelColors, labelStyle } from "@/lib/labels";
 import { LabelMappingEditor } from "@/components/playground/label-mapping-editor";
 import { PresetList } from "@/components/playground/preset-list";
+import { SampleTextPicker } from "@/components/playground/sample-text-picker";
 import { PRESET_DETECTORS } from "@/lib/presets";
 import {
   runDetector,
@@ -58,12 +59,23 @@ function textToPatterns(text: string): Record<string, string> {
   return out;
 }
 
-function Region({ title, children }: { title: string; children: ReactNode }) {
+function Region({
+  title,
+  action,
+  children,
+}: {
+  title: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
   return (
     <section className="flex min-h-0 flex-col overflow-auto p-4">
-      <h2 className="mb-3 shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        {title}
-      </h2>
+      <div className="mb-3 flex shrink-0 items-center justify-between gap-2">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {title}
+        </h2>
+        {action}
+      </div>
       <div className="flex min-h-0 flex-1 flex-col">{children}</div>
     </section>
   );
@@ -150,7 +162,7 @@ export function DetectorPlayground() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[79rem] flex-col p-4 pb-8 lg:h-[calc(100dvh-4rem)]">
+    <div className="mx-auto flex w-full max-w-[88rem] flex-col p-4 pb-8 lg:h-[calc(100dvh-4rem)]">
       <PlaygroundTabs />
       <div className="grid flex-1 gap-4 overflow-hidden lg:min-h-0 lg:grid-cols-[minmax(0,0.6fr)_minmax(0,3.6fr)]">
         {/* Saved-detectors library — deliberately set apart (dashed, muted) from
@@ -161,6 +173,7 @@ export function DetectorPlayground() {
             title={pg.examplesTitle}
             items={PRESET_DETECTORS}
             loadLabel={pg.loadLabel}
+            defaultOpen
             onLoad={(p) => {
               setConfig(p.config);
               setName(p.name);
@@ -342,7 +355,19 @@ export function DetectorPlayground() {
         </Region>
 
         {/* 4. Text */}
-        <Region title={pg.inputLabel}>
+        <Region
+          title={pg.inputLabel}
+          action={
+            <SampleTextPicker
+              label={pg.loadSampleText}
+              disabled={busy}
+              onPick={(t) => {
+                setText(t);
+                setStatus("idle");
+              }}
+            />
+          }
+        >
           {status === "error" ? (
             <div className="space-y-3">
               <p className="text-sm text-destructive">{pg.errorTitle}</p>
