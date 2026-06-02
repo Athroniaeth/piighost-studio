@@ -130,6 +130,8 @@ export type ProgressEvent = {
   status: string;
   file?: string;
   progress?: number;
+  loaded?: number;
+  total?: number;
 };
 
 // One cached pipeline per model id.

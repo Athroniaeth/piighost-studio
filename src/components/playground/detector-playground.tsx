@@ -1,16 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EntityHighlight } from "@/components/playground/entity-highlight";
 import { PlaygroundTabs } from "@/components/playground/playground-tabs";
-import { type Entity, type ModelId, sortEntities, type EntitySort } from "@/lib/ner";
+import { type Entity, type ModelId, type ProgressEvent, sortEntities, type EntitySort } from "@/lib/ner";
 import { type GlinerModelId } from "@/lib/gliner";
 import { assignLabelColors, labelStyle } from "@/lib/labels";
 import { LabelMappingEditor } from "@/components/playground/label-mapping-editor";
 import {
   runDetector,
+  loadDetector,
   RUNNABLE,
   defaultConfig,
   type DetectorConfig,
@@ -103,10 +104,31 @@ export function DetectorPlayground() {
   const runnable = RUNNABLE[config.type];
   const busy = status === "running";
 
+  // Download progress (0-100) while the model is fetched; null = indeterminate
+  // (GLiNER, or the brief inference phase after the download completes).
+  const [progress, setProgress] = useState<number | null>(null);
+  // Per-file byte tallies, aggregated into one percentage across all files.
+  const downloadSizes = useRef(new Map<string, { loaded: number; total: number }>());
+
   async function test() {
     try {
+      downloadSizes.current.clear();
+      setProgress(null);
       setStatus("running");
       setDurationMs(null);
+      await loadDetector(config, (e) => {
+        if (e.status === "progress" && e.file && e.total) {
+          downloadSizes.current.set(e.file, { loaded: e.loaded ?? 0, total: e.total });
+          let loaded = 0;
+          let total = 0;
+          for (const v of downloadSizes.current.values()) {
+            loaded += v.loaded;
+            total += v.total;
+          }
+          // Cap at 99% so the bar never reads "done" before inference runs.
+          setProgress(total > 0 ? Math.min(99, Math.round((loaded / total) * 100)) : null);
+        }
+      });
       const started = performance.now();
       const result = await runDetector(config, text);
       setDurationMs(performance.now() - started);
@@ -314,6 +336,25 @@ export function DetectorPlayground() {
               <Button variant="outline" size="sm" onClick={test}>
                 {pg.retry}
               </Button>
+            </div>
+          ) : status === "running" ? (
+            <div className="flex min-h-48 flex-1 flex-col items-center justify-center gap-4 rounded-lg border border-dashed bg-background p-6 text-center">
+              <Loader2 className="size-8 animate-spin text-muted-foreground" />
+              <p className="text-sm font-medium">{pg.loadingModel}</p>
+              <div className="h-2 w-64 max-w-full overflow-hidden rounded-full bg-muted">
+                {progress === null ? (
+                  <div className="h-full w-full animate-pulse rounded-full bg-primary/60" />
+                ) : (
+                  <div
+                    className="h-full rounded-full bg-primary transition-[width] duration-200"
+                    style={{ width: `${progress}%` }}
+                  />
+                )}
+              </div>
+              {progress !== null && (
+                <p className="text-xs tabular-nums text-muted-foreground">{progress}%</p>
+              )}
+              <p className="max-w-xs text-xs text-muted-foreground">{pg.firstLoadNote}</p>
             </div>
           ) : status === "done" ? (
             <div className="flex min-h-0 flex-1 flex-col">
