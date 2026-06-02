@@ -126,10 +126,10 @@ export type Dictionary = {
     };
     modelGroups: { classic: string; gliner: string };
     glinerLabelsLabel: string;
-    glinerLabelsPlaceholder: string;
-    glinerLabelsHint: string;
-    labelsHint: string;
-    labelsLabel: string;
+    labelSearchedPlaceholder: string;
+    labelEmittedPlaceholder: string;
+    labelAdd: string;
+    labelEmittedHint: string;
     thresholdLabel: string;
     inputLabel: string;
     example: string;
