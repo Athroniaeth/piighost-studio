@@ -25,6 +25,7 @@ import { useT } from "@/i18n/use-t";
 import { EntityHighlight } from "@/components/playground/entity-highlight";
 import { PlaygroundTabs } from "@/components/playground/playground-tabs";
 import { PresetList } from "@/components/playground/preset-list";
+import { SampleTextPicker } from "@/components/playground/sample-text-picker";
 import { PRESET_PIPELINES } from "@/lib/presets";
 import { assignLabelColors, labelStyle } from "@/lib/labels";
 import { runPipeline } from "@/lib/run-pipeline";
@@ -230,20 +231,16 @@ export function ConfigBuilder() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[79rem] flex-col p-4 lg:h-[calc(100dvh-4rem)]">
+    <div className="mx-auto flex w-full max-w-[88rem] flex-col p-4 lg:h-[calc(100dvh-4rem)]">
       <PlaygroundTabs />
-      {/* Unified panel — like the detector view: Configuration | Texte | Anonymisé | Entités. */}
-      <div className="grid min-h-0 flex-1 divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:grid-cols-[minmax(0,0.95fr)_minmax(0,2.4fr)_minmax(0,0.7fr)] lg:divide-x lg:divide-y-0">
-        {/* Configuration — scrollable so future parameters can stack below. */}
-        <section className="flex min-h-0 flex-col gap-4 overflow-auto p-4">
-          <h2 className="shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {pg.configTitle}
-          </h2>
-
+      <div className="grid flex-1 gap-4 overflow-hidden lg:min-h-0 lg:grid-cols-[minmax(0,0.6fr)_minmax(0,3.4fr)]">
+        {/* Examples — dedicated left column. */}
+        <aside className="flex min-h-0 flex-col gap-4 overflow-auto rounded-xl border border-dashed bg-muted/30 p-4">
           <PresetList
             title={pg.examplesTitle}
             items={PRESET_PIPELINES}
             loadLabel={pg.loadLabel}
+            defaultOpen
             onLoad={(p) => {
               setPipeline(p.pipeline);
               setSaveName(p.pipeline.name);
@@ -251,6 +248,14 @@ export function ConfigBuilder() {
               setTestStatus("idle");
             }}
           />
+        </aside>
+        {/* Unified panel — like the detector view: Configuration | Texte | Anonymisé | Entités. */}
+        <div className="grid min-h-0 flex-1 divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:grid-cols-[minmax(0,0.95fr)_minmax(0,2.4fr)_minmax(0,0.7fr)] lg:divide-x lg:divide-y-0">
+        {/* Configuration — scrollable so future parameters can stack below. */}
+        <section className="flex min-h-0 flex-col gap-4 overflow-auto p-4">
+          <h2 className="shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {pg.configTitle}
+          </h2>
 
           {/* Détecteurs */}
           <div className="space-y-2">
@@ -473,6 +478,15 @@ export function ConfigBuilder() {
                 </button>
               ))}
             </div>
+            <SampleTextPicker
+              label={pg.loadSampleText}
+              disabled={testStatus === "running" || testStatus === "loading"}
+              onPick={(t) => {
+                setTestText(t);
+                setTestStatus("idle");
+                setResultView("input");
+              }}
+            />
           </div>
 
           {resultView === "input" ? (
@@ -556,6 +570,7 @@ export function ConfigBuilder() {
             </ul>
           )}
         </section>
+        </div>
       </div>
 
       {/* Actions */}
