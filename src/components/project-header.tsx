@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, Package } from "lucide-react";
+import { BookOpen, ExternalLink, Package } from "lucide-react";
 import { GithubIcon } from "@/components/github-icon";
 import { Button } from "@/components/ui/button";
 import type { Project } from "@/lib/site";
@@ -25,6 +25,14 @@ export function ProjectHeader({ project }: { project: Project }) {
           >
             <GithubIcon className="mr-1 size-4" /> {t.projectHeader.repository}
           </Button>
+          {project.app && (
+            <Button
+              size="sm"
+              render={<a href={project.app} target="_blank" rel="noreferrer" />}
+            >
+              <ExternalLink className="mr-1 size-4" /> {t.projectHeader.app}
+            </Button>
+          )}
           {project.docs && (
             <Button
               variant="outline"

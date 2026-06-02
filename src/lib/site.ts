@@ -7,6 +7,7 @@ export type Project = {
   repo: string;
   pypi?: string;
   docs?: string;
+  app?: string;
 };
 
 export const projects: Project[] = [
@@ -31,12 +32,14 @@ export const projects: Project[] = [
     name: "piighost-chat",
     tagline: "A demo chatbot that anonymizes messages before the LLM sees them.",
     repo: `${GITHUB_ORG}/piighost-chat`,
+    app: "https://piighost-chat.athroniaeth.cloud/",
   },
   {
     slug: "proofreader",
     name: "piighost-proofreader",
     tagline: "An LLM CV proofreader that anonymizes documents before any LLM call.",
     repo: `${GITHUB_ORG}/piighost-proofreader`,
+    app: "https://piighost-proofreader.athroniaeth.cloud/",
   },
 ];
 
