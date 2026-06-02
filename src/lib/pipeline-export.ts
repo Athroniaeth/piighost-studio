@@ -1,4 +1,5 @@
 import type { ConfigPipeline, DetectorConfig, Placeholder } from "./detector-config";
+import { internalLabels } from "./labels";
 
 function tomlString(value: string): string {
   if (!value.includes("'")) return `'${value}'`;
@@ -28,7 +29,7 @@ function detectorToml(d: DetectorConfig, name?: string): string {
     case "gliner2":
       lines.push(
         `model = ${basicString(d.model)}`,
-        `labels = [${d.labels.map(basicString).join(", ")}]`,
+        `labels = [${internalLabels(d.labels).map(basicString).join(", ")}]`,
         `threshold = ${d.threshold}`,
         `flat_ner = ${d.flatNer}`,
       );
@@ -37,7 +38,7 @@ function detectorToml(d: DetectorConfig, name?: string): string {
       lines.push(
         `provider = ${basicString(d.provider)}`,
         `model = ${basicString(d.model)}`,
-        `labels = [${d.labels.map(basicString).join(", ")}]`,
+        `labels = [${internalLabels(d.labels).map(basicString).join(", ")}]`,
       );
       break;
   }

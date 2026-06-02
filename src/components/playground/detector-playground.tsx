@@ -7,7 +7,7 @@ import { EntityHighlight } from "@/components/playground/entity-highlight";
 import { PlaygroundTabs } from "@/components/playground/playground-tabs";
 import { type Entity, type ModelId, sortEntities, type EntitySort } from "@/lib/ner";
 import { type GlinerModelId } from "@/lib/gliner";
-import { assignLabelColors, labelStyle, parseLabels } from "@/lib/labels";
+import { assignLabelColors, internalLabels, labelStyle, parseLabels } from "@/lib/labels";
 import {
   runDetector,
   RUNNABLE,
@@ -252,7 +252,7 @@ export function DetectorPlayground() {
                   <label className="text-sm font-medium">{pg.glinerLabelsLabel}</label>
                   <textarea
                     className="min-h-20 w-full resize-none rounded-md border bg-background px-2.5 py-1.5 font-mono text-xs"
-                    value={config.labels.join(", ")}
+                    value={internalLabels(config.labels).join(", ")}
                     placeholder={pg.glinerLabelsPlaceholder}
                     disabled={busy}
                     onChange={(e) => setConfig({ ...config, labels: parseLabels(e.target.value) })}

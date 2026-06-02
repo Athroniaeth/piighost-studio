@@ -3,6 +3,7 @@ import { runNer } from "./ner";
 import type { GlinerModelId } from "./gliner";
 import { runGliner } from "./gliner";
 import { runRegex } from "./regex-detect";
+import { internalLabels, remapLabel, type LabelSpec } from "./labels";
 
 export type RegexDetectorConfig = {
   type: "regex";
@@ -14,12 +15,13 @@ export type TransformersDetectorConfig = {
   name?: string;
   model: ModelId;
   threshold: number;
+  labels?: LabelSpec;
 };
 export type Gliner2DetectorConfig = {
   type: "gliner2";
   name?: string;
   model: GlinerModelId;
-  labels: string[];
+  labels: LabelSpec;
   threshold: number;
   flatNer: boolean;
 };
@@ -28,7 +30,7 @@ export type LlmDetectorConfig = {
   name?: string;
   provider: string;
   model: string;
-  labels: string[];
+  labels: LabelSpec;
 };
 export type DetectorConfig =
   | RegexDetectorConfig
@@ -137,10 +139,18 @@ export async function runDetector(config: DetectorConfig, text: string): Promise
   switch (config.type) {
     case "regex":
       return runRegex(config.patterns, text);
-    case "transformers":
-      return runNer(config.model, text);
-    case "gliner2":
-      return runGliner(config.model, config.labels, text);
+    case "transformers": {
+      const ents = await runNer(config.model, text);
+      const map = config.labels;
+      return map ? ents.map((e) => ({ ...e, label: remapLabel(e.label, map) })) : ents;
+    }
+    case "gliner2": {
+      const spec = config.labels;
+      return (await runGliner(config.model, internalLabels(spec), text)).map((e) => ({
+        ...e,
+        label: remapLabel(e.label, spec),
+      }));
+    }
     case "llm":
       throw new Error("The LLM detector runs at deployment, not in the browser.");
   }
