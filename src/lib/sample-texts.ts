@@ -5,7 +5,7 @@ export type SampleText = { name: string; text: string };
 export const SAMPLE_TEXTS: SampleText[] = [
   {
     name: "Email thread",
-    text: "From: sarah.connor@cyberdyne.com\nTo: j.reese@initech.io\nHi James, can you call me at +1 415 555 0132 before the Los Angeles meeting on March 3, 2024? Heads up: our key AKIA1234567890ABCDEF leaked in the last push. — Sarah",
+    text: "From: sarah.connor@cyberdyne.com\nTo: j.reese@initech.io\nHi James, can you call me at +1 415 555 0132 before the Los Angeles meeting on March 3, 2024? Heads up: our key AKIA1234567890ABCDEF leaked in the last push. Thanks, Sarah.",
   },
   {
     name: "Medical note",
@@ -25,6 +25,6 @@ export const SAMPLE_TEXTS: SampleText[] = [
   },
   {
     name: "Resume",
-    text: "David Lee — Seattle, WA. david.lee@gmail.com, (206) 555-0190. Experience: Software Engineer at Microsoft (2019-2023), Intern at Acme Corp in 2018. Education: University of Washington, graduated June 2019.",
+    text: "David Lee, Seattle, WA. david.lee@gmail.com, (206) 555-0190. Experience: Software Engineer at Microsoft (2019-2023), Intern at Acme Corp in 2018. Education: University of Washington, graduated June 2019.",
   },
 ];
