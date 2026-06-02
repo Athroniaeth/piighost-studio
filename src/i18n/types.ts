@@ -170,6 +170,7 @@ export type Dictionary = {
     detectorName: string;
     savedDetectors: string;
     examplesTitle: string;
+    loadSampleText: string;
     noSaved: string;
     loadLabel: string;
     deleteLabel: string;
