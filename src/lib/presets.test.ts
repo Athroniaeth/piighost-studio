@@ -19,8 +19,11 @@ describe("PRESET_DETECTORS", () => {
     expect(new Set(names).size).toBe(names.length);
   });
 
-  it("gives every preset a non-empty description", () => {
-    for (const d of PRESET_DETECTORS) expect(d.description.length).toBeGreaterThan(0);
+  it("gives every preset a non-empty description and sample text", () => {
+    for (const d of PRESET_DETECTORS) {
+      expect(d.description.length).toBeGreaterThan(0);
+      expect(d.sampleText.length).toBeGreaterThan(0);
+    }
   });
 
   it("only every regex pattern compiles", () => {
@@ -57,6 +60,10 @@ describe("PRESET_PIPELINES", () => {
       expect(new Set(dn).size).toBe(dn.length);
       for (const d of pipeline.detectors) expect(d.enabled).toBe(true);
     }
+  });
+
+  it("gives every pipeline a non-empty sample text", () => {
+    for (const p of PRESET_PIPELINES) expect(p.sampleText.length).toBeGreaterThan(0);
   });
 
   it("every regex pattern inside a pipeline compiles", () => {

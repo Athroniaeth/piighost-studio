@@ -1,7 +1,7 @@
 import type { ConfigPipeline, DetectorConfig, PipelineDetector } from "./detector-config";
 
-export type PresetDetector = { name: string; description: string; config: DetectorConfig };
-export type PresetPipeline = { name: string; description: string; pipeline: ConfigPipeline };
+export type PresetDetector = { name: string; description: string; config: DetectorConfig; sampleText: string };
+export type PresetPipeline = { name: string; description: string; pipeline: ConfigPipeline; sampleText: string };
 
 // --- Regex pattern atoms (JS-string source; backslashes doubled). Ported from
 // piighost's pattern packs (generic/us/eu) and examples/detectors/common.py. ---
@@ -50,12 +50,48 @@ const MEDICAL_CONDITION: DetectorConfig = {
 };
 
 export const PRESET_DETECTORS: PresetDetector[] = [
-  { name: "Contact & web", description: "Emails, URLs, IPs, phone numbers, credit cards.", config: CONTACT_WEB },
-  { name: "Financial identifiers", description: "IBAN, credit cards, US SSN, bank routing numbers.", config: FINANCIAL },
-  { name: "API keys & secrets", description: "OpenAI, AWS, GitHub, and Stripe keys.", config: SECRETS },
-  { name: "Dates", description: "ISO, slashed, and “Month D, YYYY” dates.", config: DATES },
-  { name: "People, orgs & places", description: "Names, organizations, and locations via classic NER.", config: NER_PEOPLE },
-  { name: "Medical condition", description: "Free-form diagnoses via GLiNER (optional, lower confidence).", config: MEDICAL_CONDITION },
+  {
+    name: "Contact & web",
+    description: "Emails, URLs, IPs, phone numbers, credit cards.",
+    config: CONTACT_WEB,
+    sampleText:
+      "Reach me at jane.doe@example.com or +1 415 555 0132. The dashboard at https://app.example.com logged a hit from 192.168.1.42; card on file 4111 1111 1111 1111.",
+  },
+  {
+    name: "Financial identifiers",
+    description: "IBAN, credit cards, US SSN, bank routing numbers.",
+    config: FINANCIAL,
+    sampleText:
+      "Wire the deposit to IBAN GB29 NWBK 6016 1331 9268 19 using card 4111 1111 1111 1111. SSN 078-05-1120, routing number 021000021.",
+  },
+  {
+    name: "API keys & secrets",
+    description: "OpenAI, AWS, GitHub, and Stripe keys.",
+    config: SECRETS,
+    sampleText:
+      "Leaked from the .env file: sk-proj-abc123XYZ456789ABCDEFGH, AKIA1234567890ABCDEF, ghp_aBcD1234567890aBcD1234567890aBcD1234, and sk_live_aBcD1234567890aBcD12345678.",
+  },
+  {
+    name: "Dates",
+    description: "ISO, slashed, and “Month D, YYYY” dates.",
+    config: DATES,
+    sampleText:
+      "The contract was signed on 2023-11-08, became effective 01/15/2024, and is up for review on March 3, 2024.",
+  },
+  {
+    name: "People, orgs & places",
+    description: "Names, organizations, and locations via classic NER.",
+    config: NER_PEOPLE,
+    sampleText:
+      "Sarah Connor, an engineer at Cyberdyne Systems, met James Reese in Los Angeles before flying to the London office of Initech.",
+  },
+  {
+    name: "Medical condition",
+    description: "Free-form diagnoses via GLiNER (optional, lower confidence).",
+    config: MEDICAL_CONDITION,
+    sampleText:
+      "The patient was diagnosed with type 2 diabetes and chronic hypertension, and is being screened for asthma.",
+  },
 ];
 
 // --- Pipeline composition helpers ---
@@ -78,6 +114,8 @@ export const PRESET_PIPELINES: PresetPipeline[] = [
       det("People, orgs & places", NER_PEOPLE),
       det("Contact & web", CONTACT_WEB),
     ]),
+    sampleText:
+      "Sarah Connor, an American engineer, joined Cyberdyne Systems in Los Angeles. Reach her at sarah.connor@example.com or +1 415 555 0132, or visit https://cyberdyne.example.com.",
   },
   {
     name: "Healthcare (HIPAA)",
@@ -87,6 +125,8 @@ export const PRESET_PIPELINES: PresetPipeline[] = [
       det("Contact & IDs", regex({ EMAIL, US_PHONE, US_SSN, DATE })),
       det("Medical condition", MEDICAL_CONDITION),
     ]),
+    sampleText:
+      "Patient Maria Gomez, date of birth 04/12/1979, was admitted to St. Mary's Hospital in Boston on 2023-11-08 and diagnosed with type 2 diabetes. Contact maria.gomez@mail.com or (617) 555-0148, SSN 123-45-6789.",
   },
   {
     name: "Banking & finance",
@@ -95,6 +135,8 @@ export const PRESET_PIPELINES: PresetPipeline[] = [
       det("Financial identifiers", FINANCIAL),
       det("People, orgs & places", NER_PEOPLE),
     ]),
+    sampleText:
+      "John Miller transferred funds from IBAN DE89 3704 0044 0532 0130 00 to his account at Barclays. Card 4111 1111 1111 1111, SSN 078-05-1120, routing number 021000021.",
   },
   {
     name: "HR & recruiting",
@@ -103,6 +145,8 @@ export const PRESET_PIPELINES: PresetPipeline[] = [
       det("People, orgs & places", NER_PEOPLE),
       det("Contact & dates", regex({ EMAIL, US_PHONE, DATE })),
     ]),
+    sampleText:
+      "Candidate David Lee, based in Seattle, applied to Acme Corp on 01/15/2024. Email david.lee@gmail.com, phone (206) 555-0190. Previously worked at Microsoft.",
   },
   {
     name: "Customer support / CRM",
@@ -111,6 +155,8 @@ export const PRESET_PIPELINES: PresetPipeline[] = [
       det("Contact & cards", regex({ EMAIL, US_PHONE, CREDIT_CARD })),
       det("People, orgs & places", NER_PEOPLE),
     ]),
+    sampleText:
+      "Ticket from emma.stone@mail.com, phone (212) 555-0177: the customer at Globex reports that card 4111 1111 1111 1111 was charged twice.",
   },
   {
     name: "Legal & contracts",
@@ -119,5 +165,7 @@ export const PRESET_PIPELINES: PresetPipeline[] = [
       det("People, orgs & places", NER_PEOPLE),
       det("Contact & dates", regex({ EMAIL, US_PHONE, DATE })),
     ]),
+    sampleText:
+      "This agreement between Acme Corp and Globex Inc, signed in New York on March 3, 2024, is countersigned by counsel at jane.roe@lawfirm.com, (212) 555-0143.",
   },
 ];

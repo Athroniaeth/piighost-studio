@@ -164,6 +164,8 @@ export function DetectorPlayground() {
             onLoad={(p) => {
               setConfig(p.config);
               setName(p.name);
+              setText(p.sampleText);
+              setStatus("idle");
             }}
           />
           <div className="space-y-2">
