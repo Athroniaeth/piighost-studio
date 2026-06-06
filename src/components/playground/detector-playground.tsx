@@ -168,7 +168,7 @@ export function DetectorPlayground() {
               {pg.savedDetectors}
             </h2>
             <input
-              className="w-full rounded-md border bg-background px-2.5 py-1.5 text-sm"
+              className="w-full rounded-md border bg-background px-2.5 py-1.5 text-xs"
               placeholder={pg.detectorName}
               aria-label={pg.detectorName}
               value={name}
@@ -218,7 +218,7 @@ export function DetectorPlayground() {
         </aside>
 
         {/* The playground itself: one unified panel, Config | Text | Detections. */}
-        <div className="grid divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:min-h-0 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.9fr)_minmax(0,1.05fr)] lg:divide-x lg:divide-y-0">
+        <div className="grid min-h-0 flex-1 divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.9fr)_minmax(0,1.05fr)] lg:divide-x lg:divide-y-0">
         {/* 3. Configuration */}
         <Region step={1} title={pg.configTitle}>
           <div className="space-y-4">
