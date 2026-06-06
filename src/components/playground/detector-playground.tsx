@@ -1,16 +1,21 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EntityHighlight } from "@/components/playground/entity-highlight";
 import { PlaygroundTabs } from "@/components/playground/playground-tabs";
 import { type Entity, type ModelId, sortEntities, type EntitySort } from "@/lib/ner";
 import { type GlinerModelId } from "@/lib/gliner";
-import { assignLabelColors, labelStyle } from "@/lib/labels";
+import { assignLabelColors } from "@/lib/labels";
 import { LabelMappingEditor } from "@/components/playground/label-mapping-editor";
 import { PresetList } from "@/components/playground/preset-list";
 import { SampleTextPicker } from "@/components/playground/sample-text-picker";
+import { Region } from "@/components/playground/region";
+import { RunStatus } from "@/components/playground/run-status";
+import { LoadingPane } from "@/components/playground/loading-pane";
+import { EntityRow } from "@/components/playground/entity-row";
+import { FieldLabel } from "@/components/playground/field-label";
 import { PRESET_DETECTORS } from "@/lib/presets";
 import {
   runDetector,
@@ -57,28 +62,6 @@ function textToPatterns(text: string): Record<string, string> {
     if (label && pat) out[label] = pat;
   }
   return out;
-}
-
-function Region({
-  title,
-  action,
-  children,
-}: {
-  title: string;
-  action?: ReactNode;
-  children: ReactNode;
-}) {
-  return (
-    <section className="flex min-h-0 flex-col overflow-auto p-4">
-      <div className="mb-3 flex shrink-0 items-center justify-between gap-2">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          {title}
-        </h2>
-        {action}
-      </div>
-      <div className="flex min-h-0 flex-1 flex-col">{children}</div>
-    </section>
-  );
 }
 
 export function DetectorPlayground() {
@@ -164,7 +147,7 @@ export function DetectorPlayground() {
   return (
     <div className="mx-auto flex w-full max-w-[88rem] flex-col p-4 pb-8 lg:h-[calc(100dvh-4rem)]">
       <PlaygroundTabs />
-      <div className="grid flex-1 gap-4 overflow-hidden lg:min-h-0 lg:grid-cols-[minmax(0,0.6fr)_minmax(0,3.6fr)]">
+      <div className="grid flex-1 gap-4 overflow-hidden lg:min-h-0 lg:grid-cols-[minmax(0,0.6fr)_minmax(0,3.4fr)]">
         {/* Saved-detectors library — deliberately set apart (dashed, muted) from
             the playground itself: it is browser-stored persistence, not the test
             surface. Holds the save form and the saved list. */}
@@ -235,12 +218,12 @@ export function DetectorPlayground() {
         </aside>
 
         {/* The playground itself: one unified panel, Config | Text | Detections. */}
-        <div className="grid divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:min-h-0 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.85fr)_minmax(0,1.05fr)] lg:divide-x lg:divide-y-0">
+        <div className="grid divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:min-h-0 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.9fr)_minmax(0,1.05fr)] lg:divide-x lg:divide-y-0">
         {/* 3. Configuration */}
-        <Region title={pg.configTitle}>
+        <Region step={1} title={pg.configTitle}>
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">{pg.detectorType}</label>
+              <FieldLabel label={pg.detectorType} />
               <select
                 className="w-full rounded-md border bg-background px-2.5 py-1.5 text-xs"
                 value={config.type}
@@ -257,7 +240,7 @@ export function DetectorPlayground() {
 
             {config.type === "regex" && (
               <div className="space-y-1.5">
-                <label className="text-sm font-medium">{pg.patternsLabel}</label>
+                <FieldLabel label={pg.patternsLabel} />
                 <textarea
                   className="min-h-28 w-full resize-none rounded-md border bg-background px-2.5 py-1.5 font-mono text-xs"
                   value={patternsToText(config.patterns)}
@@ -271,7 +254,7 @@ export function DetectorPlayground() {
             {config.type === "transformers" && (
               <>
                 <div className="space-y-1.5">
-                  <label className="text-sm font-medium">{pg.modelLabel}</label>
+                  <FieldLabel label={pg.modelLabel} />
                   <select
                     className="w-full rounded-md border bg-background px-2.5 py-1.5 font-mono text-xs"
                     value={config.model}
@@ -284,7 +267,7 @@ export function DetectorPlayground() {
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-sm font-medium">{pg.glinerLabelsLabel}</label>
+                  <FieldLabel label={pg.glinerLabelsLabel} />
                   <LabelMappingEditor
                     key={`transformers-${config.model}-${name}`}
                     value={config.labels ?? []}
@@ -298,7 +281,7 @@ export function DetectorPlayground() {
             {config.type === "gliner2" && (
               <>
                 <div className="space-y-1.5">
-                  <label className="text-sm font-medium">{pg.modelLabel}</label>
+                  <FieldLabel label={pg.modelLabel} />
                   <select
                     className="w-full rounded-md border bg-background px-2.5 py-1.5 font-mono text-xs"
                     value={config.model}
@@ -311,7 +294,7 @@ export function DetectorPlayground() {
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-sm font-medium">{pg.glinerLabelsLabel}</label>
+                  <FieldLabel label={pg.glinerLabelsLabel} />
                   <LabelMappingEditor
                     key={`gliner2-${config.model}-${name}`}
                     value={config.labels}
@@ -345,19 +328,28 @@ export function DetectorPlayground() {
               />
             </div>
 
-            <Button
-              className="w-full"
-              onClick={test}
-              disabled={busy || !runnable || text.trim().length === 0}
-            >
-              {busy && <Loader2 className="mr-2 size-4 animate-spin" />}
-              {pg.test}
-            </Button>
+            <div className="space-y-2">
+              <Button
+                className="w-full"
+                onClick={test}
+                disabled={busy || !runnable || text.trim().length === 0}
+              >
+                {busy && <Loader2 className="mr-2 size-4 animate-spin" />}
+                {pg.test}
+              </Button>
+              <RunStatus
+                pg={pg}
+                durationMs={status === "done" ? durationMs : null}
+                error={status === "error"}
+              />
+            </div>
           </div>
         </Region>
 
         {/* 4. Text */}
         <Region
+          step={2}
+          stepDone={status === "done"}
           title={pg.inputLabel}
           action={
             <SampleTextPicker
@@ -378,24 +370,7 @@ export function DetectorPlayground() {
               </Button>
             </div>
           ) : status === "running" ? (
-            <div className="flex min-h-48 flex-1 flex-col items-center justify-center gap-4 rounded-lg border border-dashed bg-background p-6 text-center">
-              <Loader2 className="size-8 animate-spin text-muted-foreground" />
-              <p className="text-sm font-medium">{pg.loadingModel}</p>
-              <div className="h-2 w-64 max-w-full overflow-hidden rounded-full bg-muted">
-                {progress === null ? (
-                  <div className="h-full w-full animate-pulse rounded-full bg-primary/60" />
-                ) : (
-                  <div
-                    className="h-full rounded-full bg-primary transition-[width] duration-200"
-                    style={{ width: `${progress}%` }}
-                  />
-                )}
-              </div>
-              {progress !== null && (
-                <p className="text-xs tabular-nums text-muted-foreground">{progress}%</p>
-              )}
-              <p className="max-w-xs text-xs text-muted-foreground">{pg.firstLoadNote}</p>
-            </div>
+            <LoadingPane progress={progress} message={pg.loadingModel} note={pg.firstLoadNote} />
           ) : status === "done" ? (
             <div className="flex min-h-0 flex-1 flex-col">
               <div
@@ -430,13 +405,7 @@ export function DetectorPlayground() {
         </Region>
 
         {/* 5. Detections */}
-        <Region title={pg.resultsTitle}>
-          {status === "done" && durationMs !== null && (
-            <p className="mb-3 shrink-0 text-xs text-muted-foreground">
-              {pg.inferenceTime}: {Math.round(durationMs)} ms · ~
-              {(1000 / durationMs).toFixed(1)} {pg.reqPerSecond}
-            </p>
-          )}
+        <Region step={3} stepDone={status === "done" && entities.length > 0} title={pg.resultsTitle}>
           {status !== "done" ? (
             <p className="text-sm text-muted-foreground">{pg.emptyHint}</p>
           ) : entities.length === 0 ? (
@@ -460,22 +429,13 @@ export function DetectorPlayground() {
               </div>
               <ul className="space-y-2 overflow-x-auto">
                 {sortedEntities.map((e, i) => (
-                  <li
+                  <EntityRow
                     key={`${e.start}-${i}`}
-                    className="flex items-center justify-between gap-2 rounded-md bg-muted/40 p-2"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`rounded px-1.5 py-0.5 text-xs font-medium ${colors.get(e.label) ?? labelStyle(e.label)}`}
-                      >
-                        {e.label}
-                      </span>
-                      <span className="whitespace-nowrap font-mono text-sm">{e.text}</span>
-                    </div>
-                    <span className="shrink-0 text-xs text-muted-foreground">
-                      {(e.score * 100).toFixed(0)}%
-                    </span>
-                  </li>
+                    label={e.label}
+                    text={e.text}
+                    score={e.score}
+                    colors={colors}
+                  />
                 ))}
               </ul>
             </>
