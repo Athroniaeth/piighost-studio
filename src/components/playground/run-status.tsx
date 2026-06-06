@@ -1,8 +1,9 @@
 // src/components/playground/run-status.tsx
 import { Loader2 } from "lucide-react";
 import type { Dictionary } from "@/i18n/types";
+import type { RuntimeStage as RuntimeStageBase } from "@/lib/piighost-runtime";
 
-type RuntimeStage = "downloading" | "installing" | "ready" | null;
+type RuntimeStage = RuntimeStageBase | null;
 
 /**
  * The single canonical status line both pages render at the end of their

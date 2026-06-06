@@ -35,6 +35,11 @@ describe("RunStatus", () => {
     expect(screen.queryByText("Downloading runtime")).not.toBeInTheDocument();
   });
 
+  it("shows the runtime-ready line when the runtime is ready and idle", () => {
+    render(<RunStatus pg={pg} runtimeStage="ready" />);
+    expect(screen.getByText("Runtime ready")).toBeInTheDocument();
+  });
+
   it("shows the error, stale, no-detectors and approximation notes when flagged", () => {
     render(
       <RunStatus
