@@ -423,7 +423,6 @@ export function ConfigBuilder() {
               error={testStatus === "error"}
               noEnabledDetectors={!hasEnabledDetector}
               llm={hasEnabledLlm}
-              stale={testStale}
               approximation
             />
           </div>
