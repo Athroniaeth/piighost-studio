@@ -26,6 +26,11 @@ import { EntityHighlight } from "@/components/playground/entity-highlight";
 import { PlaygroundTabs } from "@/components/playground/playground-tabs";
 import { PresetList } from "@/components/playground/preset-list";
 import { SampleTextPicker } from "@/components/playground/sample-text-picker";
+import { Region } from "@/components/playground/region";
+import { RunStatus } from "@/components/playground/run-status";
+import { LoadingPane } from "@/components/playground/loading-pane";
+import { EntityRow } from "@/components/playground/entity-row";
+import { FieldLabel, STAGE_SELECT } from "@/components/playground/field-label";
 import { PRESET_PIPELINES } from "@/lib/presets";
 import { assignLabelColors, labelStyle } from "@/lib/labels";
 import { runPipeline } from "@/lib/run-pipeline";
@@ -53,23 +58,6 @@ function tokenExample(ph: Placeholder): string {
       return "<<REDACT>>";
   }
 }
-
-/** A config-column field label with a "?" help tooltip. */
-function FieldLabel({ label, help }: { label: string; help: string }) {
-  return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-sm font-medium">{label}</span>
-      <span
-        title={help}
-        className="inline-flex size-4 shrink-0 cursor-help items-center justify-center rounded-full border text-[10px] text-muted-foreground"
-      >
-        ?
-      </span>
-    </div>
-  );
-}
-
-const STAGE_SELECT = "w-full rounded-md border bg-background px-2.5 py-1.5 font-mono text-xs";
 
 /** Centered modal dialog. */
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
@@ -250,13 +238,9 @@ export function ConfigBuilder() {
           />
         </aside>
         {/* Unified panel — like the detector view: Configuration | Texte | Anonymisé | Entités. */}
-        <div className="grid min-h-0 flex-1 divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:grid-cols-[minmax(0,0.95fr)_minmax(0,2.2fr)_minmax(0,0.95fr)] lg:divide-x lg:divide-y-0">
+        <div className="grid min-h-0 flex-1 divide-y divide-border overflow-hidden rounded-xl border bg-card shadow-sm lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.9fr)_minmax(0,1.05fr)] lg:divide-x lg:divide-y-0">
         {/* Configuration — scrollable so future parameters can stack below. */}
-        <section className="flex min-h-0 flex-col gap-4 overflow-auto p-4">
-          <h2 className="shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {pg.configTitle}
-          </h2>
-
+        <Region step={1} title={pg.configTitle} bodyClassName="gap-4">
           {/* Détecteurs */}
           <div className="space-y-2">
             <FieldLabel label={pg.detectorsTitle} help={pg.detectorsHelp} />
@@ -382,7 +366,7 @@ export function ConfigBuilder() {
             </select>
             <p className="text-xs text-muted-foreground">
               {pg.tokenExample} :{" "}
-              <code className="rounded bg-muted px-1 py-0.5 font-mono">{tokenExample(ph)}</code>
+              <code className="rounded bg-primary/10 px-1 py-0.5 font-mono text-primary">{tokenExample(ph)}</code>
             </p>
             {(ph.type === "label_hash" || ph.type === "redact_hash") && (
               <label className="flex items-center justify-between gap-2 text-sm">
@@ -431,79 +415,78 @@ export function ConfigBuilder() {
               )}
               {pg.test}
             </Button>
-            <div className="flex flex-col gap-1 text-xs text-muted-foreground">
-              {testStatus === "loading" && <span>{pg.loadingRuntime}</span>}
-              {(runtimeStage === "downloading" || runtimeStage === "installing") && testStatus !== "loading" && (
-                <span className="flex items-center gap-1.5">
-                  <Loader2 className="size-3 animate-spin" />
-                  {runtimeStage === "downloading" ? pg.runtimeDownloading : pg.runtimeInstalling}
-                </span>
-              )}
-              {runtimeStage === "ready" && testStatus !== "done" && testStatus !== "loading" && (
-                <span>{pg.runtimeReady}</span>
-              )}
-              {testStatus === "done" && testDurationMs !== null && (
-                <span>
-                  {pg.inferenceTime}: {Math.round(testDurationMs)} ms · ~
-                  {(1000 / testDurationMs).toFixed(1)} {pg.reqPerSecond}
-                </span>
-              )}
-              {testStatus === "error" && <span className="text-destructive">{pg.errorTitle}</span>}
-              {!hasEnabledDetector && <span>{pg.noEnabledDetectors}</span>}
-              {hasEnabledLlm && <span>{pg.llmDeploymentNote}</span>}
-              {testStale && <span className="text-amber-600">{pg.staleNote}</span>}
-              <span>{pg.approximationNote}</span>
-            </div>
+            <RunStatus
+              pg={pg}
+              durationMs={testStatus === "done" ? testDurationMs : null}
+              loadingRuntime={testStatus === "loading"}
+              runtimeStage={runtimeStage === "cold" ? null : runtimeStage}
+              error={testStatus === "error"}
+              noEnabledDetectors={!hasEnabledDetector}
+              llm={hasEnabledLlm}
+              stale={testStale}
+              approximation
+            />
           </div>
-        </section>
+        </Region>
 
         {/* Shared box: Saisie (input) ⇄ Anonymisé (result), toggled by a control.
             A run auto-switches to Anonymisé; switching back to Saisie shows the
             colored highlight (click it, or Edit, to return to editing). */}
-        <section className="flex min-h-0 flex-col p-4">
-          <div className="mb-2 flex shrink-0 items-center justify-between gap-2">
-            <div className="flex gap-1">
-              {(
-                [
-                  ["input", pg.inputLabel],
-                  ["anonymized", pg.anonymizedLabel],
-                ] as const
-              ).map(([v, label]) => (
-                <button
-                  key={v}
-                  type="button"
-                  onClick={() => setResultView(v)}
-                  className={`rounded-md px-3 py-1 text-xs font-medium ${
-                    resultView === v ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
+        <Region
+          step={2}
+          stepDone={testStatus === "done"}
+          title={pg.inputLabel}
+          action={
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1 rounded-lg bg-muted/40 p-1">
+                {(
+                  [
+                    ["input", pg.inputLabel],
+                    ["anonymized", pg.anonymizedLabel],
+                  ] as const
+                ).map(([v, label]) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => setResultView(v)}
+                    className={`rounded-md px-3 py-1 text-xs font-medium ${
+                      resultView === v
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <SampleTextPicker
+                label={pg.loadSampleText}
+                disabled={testStatus === "running" || testStatus === "loading"}
+                onPick={(t) => {
+                  setTestText(t);
+                  setTestStatus("idle");
+                  setResultView("input");
+                }}
+              />
             </div>
-            <SampleTextPicker
-              label={pg.loadSampleText}
-              disabled={testStatus === "running" || testStatus === "loading"}
-              onPick={(t) => {
-                setTestText(t);
-                setTestStatus("idle");
-                setResultView("input");
-              }}
-            />
-          </div>
+          }
+        >
+          {testStale && (
+            <p className="mb-2 shrink-0 text-xs text-amber-600">{pg.staleNote}</p>
+          )}
 
           {testStatus === "loading" || testStatus === "running" ? (
-            <div className="flex min-h-32 flex-1 flex-col items-center justify-center gap-4 rounded-lg border border-dashed bg-background p-6 text-center">
-              <Loader2 className="size-8 animate-spin text-muted-foreground" />
-              <p className="text-sm font-medium">
-                {testStatus === "loading" ||
+            <LoadingPane
+              progress={null}
+              message={
+                testStatus === "loading" ||
                 runtimeStage === "downloading" ||
                 runtimeStage === "installing"
                   ? pg.loadingRuntime
-                  : pg.loadingModel}
-              </p>
-              <p className="max-w-xs text-xs text-muted-foreground">{pg.firstLoadNote}</p>
-            </div>
+                  : pg.loadingModel
+              }
+              note={pg.firstLoadNote}
+            />
           ) : resultView === "input" ? (
             testStatus === "done" ? (
               <div
@@ -550,13 +533,10 @@ export function ConfigBuilder() {
               )}
             </p>
           )}
-        </section>
+        </Region>
 
         {/* Entités — narrow column. */}
-        <section className="flex min-h-0 flex-col overflow-auto p-4">
-          <h2 className="mb-2 shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {pg.resultsTitle}
-          </h2>
+        <Region step={3} stepDone={testStatus === "done" && testRows.length > 0} title={pg.resultsTitle}>
           {testStatus !== "done" ? (
             <p className="text-sm text-muted-foreground">{pg.emptyHint}</p>
           ) : testRows.length === 0 ? (
@@ -564,26 +544,17 @@ export function ConfigBuilder() {
           ) : (
             <ul className="space-y-2 overflow-x-auto">
               {testRows.map((e, i) => (
-                <li
+                <EntityRow
                   key={`${e.token}-${i}`}
-                  className="flex items-center justify-between gap-2 rounded-md bg-muted/40 p-2"
-                >
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`rounded px-1.5 py-0.5 text-xs font-medium ${testColors.get(e.label) ?? labelStyle(e.label)}`}
-                    >
-                      {e.label}
-                    </span>
-                    <span className="whitespace-nowrap font-mono text-sm">{e.text}</span>
-                  </div>
-                  <span className="shrink-0 text-xs text-muted-foreground">
-                    {(e.score * 100).toFixed(0)}%
-                  </span>
-                </li>
+                  label={e.label}
+                  text={e.text}
+                  score={e.score}
+                  colors={testColors}
+                />
               ))}
             </ul>
           )}
-        </section>
+        </Region>
         </div>
       </div>
 
