@@ -12,7 +12,8 @@ export function Analytics() {
   const clientId = process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID;
   if (!clientId) return null;
 
-  const apiUrl = process.env.NEXT_PUBLIC_OPENPANEL_API_URL ?? DEFAULT_API_URL;
+  // Slash final retiré : un `.../` produirait un `//op1.js` cassé.
+  const apiUrl = (process.env.NEXT_PUBLIC_OPENPANEL_API_URL ?? DEFAULT_API_URL).replace(/\/$/, "");
 
   return (
     <OpenPanelComponent
