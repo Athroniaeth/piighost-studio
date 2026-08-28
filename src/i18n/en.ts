@@ -15,6 +15,7 @@ export const en: Dictionary = {
     toggleTheme: "Toggle theme",
     toggleLanguage: "Switch to French",
     backToTop: "Scroll to top",
+    mainNavigation: "Main navigation",
   },
   projectHeader: {
     repository: "Repository",
@@ -284,6 +285,9 @@ export const en: Dictionary = {
   playground: {
     tabDetector: "Detector",
     tabPipeline: "Pipeline",
+    tabsLabel: "Playground views",
+    pipelineHeading: "Pipeline builder",
+    detectorHeading: "Detector bench",
     configTitle: "Configuration",
     modelLabel: "Model",
     models: {

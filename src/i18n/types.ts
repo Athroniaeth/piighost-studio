@@ -43,6 +43,7 @@ export type Dictionary = {
     toggleTheme: string;
     toggleLanguage: string;
     backToTop: string;
+    mainNavigation: string;
   };
   projectHeader: {
     repository: string;
@@ -118,6 +119,9 @@ export type Dictionary = {
   playground: {
     tabDetector: string;
     tabPipeline: string;
+    tabsLabel: string;
+    pipelineHeading: string;
+    detectorHeading: string;
     configTitle: string;
     modelLabel: string;
     models: {

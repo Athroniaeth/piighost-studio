@@ -33,7 +33,7 @@ export function SiteNavbar() {
         <Link href={localePath(locale, "/")} className="font-mono text-lg font-bold tracking-tight">
           piighost
         </Link>
-        <div className="hidden items-center gap-1 md:flex">
+        <nav aria-label={t.nav.mainNavigation} className="hidden items-center gap-1 md:flex">
           <NavLink href="/" label={t.nav.home} />
           <Button
             variant="ghost"
@@ -74,7 +74,7 @@ export function SiteNavbar() {
           </NavigationMenu>
           <NavLink href="/playground" label={t.nav.playground} matchSubpaths />
           <NavLink href="/philosophy" label={t.nav.philosophy} />
-        </div>
+        </nav>
         <div className="flex items-center gap-1">
           <Button
             variant="ghost"

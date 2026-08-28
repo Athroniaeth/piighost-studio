@@ -19,7 +19,10 @@ export function PlaygroundTabs() {
   ];
 
   return (
-    <nav className="mb-3 flex shrink-0 gap-1 self-start rounded-lg border bg-muted/40 p-1 text-sm">
+    <nav
+      aria-label={t.playground.tabsLabel}
+      className="mb-3 flex shrink-0 gap-1 self-start rounded-lg border bg-muted/40 p-1 text-sm"
+    >
       {tabs.map((tab) => (
         <Link
           key={tab.href}

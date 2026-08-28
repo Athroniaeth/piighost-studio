@@ -222,6 +222,7 @@ export function ConfigBuilder() {
 
   return (
     <div className="mx-auto flex w-full max-w-[88rem] flex-col p-4 lg:h-[calc(100dvh-4rem)]">
+      <h1 className="sr-only">{pg.pipelineHeading}</h1>
       <PlaygroundTabs />
       <div className="grid flex-1 gap-4 overflow-hidden lg:min-h-0 lg:grid-cols-[minmax(0,0.6fr)_minmax(0,3.4fr)]">
         {/* Examples — dedicated left column. */}
