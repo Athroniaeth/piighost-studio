@@ -31,6 +31,7 @@ import {
   deleteSaved,
   type SavedDetector,
 } from "@/lib/saved-detectors";
+import { useTrack } from "@/lib/analytics";
 import { useT } from "@/i18n/use-t";
 
 type Status = "idle" | "running" | "done" | "error";
@@ -66,6 +67,7 @@ function textToPatterns(text: string): Record<string, string> {
 
 export function DetectorPlayground() {
   const { t } = useT();
+  const track = useTrack();
   const pg = t.playground;
   const [config, setConfig] = useState<DetectorConfig>(defaultConfig("gliner2"));
   const [name, setName] = useState("");
@@ -132,6 +134,15 @@ export function DetectorPlayground() {
       setAllEntities(result);
       setAnalyzed(text);
       setStatus("done");
+      track({
+        name: "detector_run",
+        props: {
+          detectorType: config.type,
+          entityCount: result.length,
+          durationMs: Math.round(performance.now() - started),
+          modelId: "model" in config ? config.model : undefined,
+        },
+      });
     } catch (err) {
       console.error("detector test failed", err);
       setStatus("error");
@@ -142,6 +153,7 @@ export function DetectorPlayground() {
     const trimmed = name.trim();
     if (!trimmed) return;
     setSaved(saveDetector(trimmed, config));
+    track({ name: "detector_saved", props: { detectorType: config.type } });
   }
 
   return (
