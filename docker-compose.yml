@@ -9,6 +9,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # Variables OpenPanel inlinées au build. Définis-les dans les variables
+      # d'environnement Coolify ; elles sont interpolées ici puis passées en
+      # build-args au Dockerfile. Pour le first-party (contourne les adblockers) :
+      #   NEXT_PUBLIC_OPENPANEL_SCRIPT_URL=https://piighost.athroniaeth.cloud/op1.js
+      #   NEXT_PUBLIC_OPENPANEL_API_URL=https://piighost.athroniaeth.cloud/api/op
+      args:
+        NEXT_PUBLIC_OPENPANEL_CLIENT_ID: ${NEXT_PUBLIC_OPENPANEL_CLIENT_ID:-}
+        NEXT_PUBLIC_OPENPANEL_SCRIPT_URL: ${NEXT_PUBLIC_OPENPANEL_SCRIPT_URL:-}
+        NEXT_PUBLIC_OPENPANEL_API_URL: ${NEXT_PUBLIC_OPENPANEL_API_URL:-}
     restart: unless-stopped
     expose:
       - "80"
