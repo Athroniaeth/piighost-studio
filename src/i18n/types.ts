@@ -115,6 +115,10 @@ export type Dictionary = {
     readTheDocs: string;
     starOnGitHub: string;
   };
+  faq: {
+    heading: string;
+    items: { question: string; answer: string }[];
+  };
   philosophy: PhilosophyDict;
   playground: {
     tabDetector: string;

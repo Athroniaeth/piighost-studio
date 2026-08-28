@@ -283,6 +283,36 @@ export const fr: Dictionary = {
     readTheDocs: "Lire la documentation",
     starOnGitHub: "Étoiler sur GitHub",
   },
+  faq: {
+    heading: "Questions fréquentes",
+    items: [
+      {
+        question: "Comment anonymiser les données personnelles avant d'envoyer un prompt à un modèle en Python ?",
+        answer:
+          "Installez piighost, construisez un pipeline autour d'un détecteur et faites passer votre texte avant que le modèle ne le voie. Le pipeline repère les données personnelles et les remplace par des jetons comme <<PERSON:1>>, puis restaure les vraies valeurs dans la réponse. Vous choisissez le détecteur : regex, NER classique, GLiNER ou un modèle.",
+      },
+      {
+        question: "Quelle est la différence entre la détection par regex, NER et LLM ?",
+        answer:
+          "Ce sont des détecteurs équivalents entre lesquels vous choisissez. La regex repère des motifs fixes comme les e-mails ou les numéros de carte, de façon rapide et exacte. Le NER (modèles classiques ou GLiNER) reconnaît les noms, lieux et organisations selon le contexte. Un détecteur par modèle gère les cas plus subtils. piighost reste agnostique, donc vous pouvez les combiner.",
+      },
+      {
+        question: "Comment utiliser piighost avec LangChain, Pydantic AI ou LlamaIndex ?",
+        answer:
+          "piighost fournit des intégrations pour LangChain, Pydantic AI et LlamaIndex. Vous enveloppez votre pipeline dans l'assistant proposé (middleware, hooks ou anonymiseur de nœuds) afin que les données personnelles soient remplacées avant l'appel au modèle et restaurées ensuite. Le modèle ne raisonne que sur des jetons comme <<PERSON:1>>, jamais sur les vraies valeurs.",
+      },
+      {
+        question: "piighost est-il conforme au RGPD, et comment fonctionnent les jetons stables ?",
+        answer:
+          "piighost réalise une pseudonymisation réversible au sens du RGPD, ce qui facilite la conformité mais ne remplace pas votre propre analyse juridique. Des jetons stables signifient qu'une même entité correspond toujours au même jeton (Patrick devient <<PERSON:1>> partout), donc le modèle garde le contexte pendant que la vraie valeur reste hors de sa portée.",
+      },
+      {
+        question: "Mes données restent-elles locales ? Qu'est-ce qui est réellement envoyé au modèle ?",
+        answer:
+          "Seul le texte anonymisé est envoyé au modèle, chaque valeur détectée étant remplacée par un jeton comme <<PERSON:1>>. La correspondance entre les jetons et les vraies valeurs reste de votre côté et n'est jamais envoyée. Après la réponse du modèle, piighost restaure localement les valeurs d'origine pour que vos utilisateurs voient les vraies données.",
+      },
+    ],
+  },
   playground: {
     tabDetector: "Détecteur",
     tabPipeline: "Pipeline",

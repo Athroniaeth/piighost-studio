@@ -282,6 +282,36 @@ export const en: Dictionary = {
     readTheDocs: "Read the docs",
     starOnGitHub: "Star on GitHub",
   },
+  faq: {
+    heading: "Frequently asked questions",
+    items: [
+      {
+        question: "How do I anonymize PII before sending a prompt to a model in Python?",
+        answer:
+          "Install piighost, build a pipeline around a detector, and pass your text through it before the model sees it. The pipeline finds personal data and swaps it for placeholders like <<PERSON:1>>, then restores the real values in the reply. You choose the detector: regex, classic NER, GLiNER, or an LLM.",
+      },
+      {
+        question: "What is the difference between regex, NER and LLM detection?",
+        answer:
+          "They are peer detectors you pick between. Regex matches fixed patterns such as emails or card numbers and is fast and exact. NER (classic models or GLiNER) recognizes names, places and organizations from context. An LLM detector reads intent for tricky cases. piighost is detector-agnostic, so you can combine them.",
+      },
+      {
+        question: "How do I use piighost with LangChain, Pydantic AI or LlamaIndex?",
+        answer:
+          "piighost ships integrations for LangChain, Pydantic AI and LlamaIndex. You wrap your pipeline in the provided helper (middleware, hooks or a node anonymizer) so PII is replaced before the model runs and restored afterward. The model only ever reasons over placeholders like <<PERSON:1>>, never the real values.",
+      },
+      {
+        question: "Is piighost GDPR compliant, and how do stable placeholders work?",
+        answer:
+          "piighost performs reversible pseudonymization in the GDPR sense, which supports compliance but does not replace your own legal review. Stable placeholders mean the same entity always maps to the same token (Patrick becomes <<PERSON:1>> everywhere), so the model keeps context while the real value stays out of its reach.",
+      },
+      {
+        question: "Does my data stay local? What is actually sent to the model?",
+        answer:
+          "Only the anonymized text is sent to the model, with every detected value replaced by a placeholder such as <<PERSON:1>>. The mapping from tokens back to real values stays on your side and is never sent. After the model responds, piighost restores the original values locally so your users see the real data.",
+      },
+    ],
+  },
   playground: {
     tabDetector: "Detector",
     tabPipeline: "Pipeline",
