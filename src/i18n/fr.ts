@@ -29,8 +29,42 @@ export const fr: Dictionary = {
         {
           heading: "Ce qu'elle fait",
           paragraphs: [
-            "piighost est la bibliothèque centrale. Elle se place entre votre agent et le modèle. Elle détecte les données personnelles, les remplace par des jetons stables que le modèle peut manipuler, et restitue les vraies valeurs à vos outils et à vos utilisateurs finaux. Une même valeur conserve le même jeton sur toute une conversation, y compris à travers plusieurs messages et appels d'outils.",
-            "Elle est agnostique au détecteur : vous branchez des expressions régulières, un modèle NER, un LLM, ou plusieurs à la fois. piighost gère l'arbitrage des détections, un lieur tolérant aux fautes de frappe et aux variantes de casse, et des garde-fous en sortie pour les cas où le modèle génère de nouvelles données personnelles dans sa réponse.",
+            "piighost est une bibliothèque Python qui empêche les données personnelles (PII) d'atteindre un modèle de langage, sans gêner ce que votre application a besoin de faire.",
+            "Elle repère les données personnelles avec des détecteurs (expressions régulières, NER, ou un autre modèle) et remplace chaque valeur par un jeton stable, si bien que john.doe@example.com devient <<EMAIL:1>> et que le modèle ne travaille jamais que sur du texte dé-identifié. Quand le modèle répond avec ces jetons, piighost remet les vraies valeurs, si bien que l'utilisateur final lit john.doe@example.com sans rien remarquer. Un outil qui a réellement besoin de la vraie adresse la reçoit en clair, tandis que le modèle qui a décidé de l'appeler ne voit toujours que <<EMAIL:1>>.",
+            "La correspondance entre une valeur et son jeton perdure sur toute la conversation. Si john.doe@example.com réapparaît trois messages plus tard, il reste <<EMAIL:1>>, si bien que le modèle peut toujours suivre le fil.",
+          ],
+        },
+        {
+          heading: "Réversible par conception",
+          paragraphs: [
+            "piighost effectue une dé-identification réversible. Comme la correspondance entre une valeur et son jeton est conservée pour pouvoir restituer les données, il s'agit de pseudonymisation au sens du RGPD, et non d'une anonymisation définitive. Les vraies valeurs restent stockées pendant toute la durée de la conversation et doivent être protégées en conséquence.",
+          ],
+        },
+        {
+          heading: "Pourquoi piighost",
+          paragraphs: [
+            "La plupart des outils de PII s'arrêtent à la détection. Presidio, GLiNER, spaCy et les catalogues d'expressions régulières trouvent tous les entités dans un texte, et ils le font bien. Le plus difficile pour un agent, c'est tout ce qui vient après la détection : remplacer les valeurs sans casser le raisonnement du modèle, garder une valeur associée à un même jeton sur toute une conversation, donner aux outils la vraie valeur pendant que le modèle ne voit que le jeton, et remettre les valeurs d'origine dans la réponse. C'est cette orchestration qu'est piighost.",
+          ],
+        },
+        {
+          heading: "Ce qu'elle apporte en plus",
+          list: [
+            "Détecteurs enfichables : catalogues d'expressions régulières (générique, US, UE, FR), NER (GLiNER2, spaCy, Transformers), un détecteur LLM, plus des détecteurs par correspondance exacte, composites et par découpage, et vous gardez celui en qui vous avez confiance (Presidio se branche via un extra).",
+            "Jetons réversibles et transparents : chaque valeur devient un identifiant stable comme <<PERSON:1>> et est remise automatiquement, si bien que l'utilisateur final ne voit jamais de jeton ; des fabriques par étiquette seule, masquées et à hachage à clé sont aussi disponibles.",
+            "Cohérence sur toute la conversation : une même valeur conserve le même jeton sur tout le fil, appuyée sur une mémoire en processus, Redis ou SQLAlchemy (Redis et SQL peuvent chiffrer les valeurs au repos et hacher les clés).",
+            "Intégrations d'agents avec frontière d'outils : middleware LangChain, hooks Pydantic AI et LlamaIndex ; l'outil reçoit la vraie valeur pendant que le modèle ne voit que le jeton, avec une restitution en flux jeton par jeton.",
+            "Un pipeline par étapes personnalisable : détecter, lier, résoudre les chevauchements, étendre, anonymiser, et un garde-fou optionnel qui refuse une réponse contenant des PII résiduelles ; remplacez par de la correspondance floue pour tolérer les fautes de frappe ou ajoutez votre propre étape.",
+            "Piloté par configuration et auto-hébergeable : construisez un pipeline entier depuis un fichier TOML ou JSON, avec une CLI pour le valider, exécutez-le dans votre processus, ou en tant que service via le compagnon piighost-api.",
+            "Typé et observable : livre py.typed et un cœur minimal avec tout le lourd derrière des extras, plus des spans OpenTelemetry par étape avec expurgation optionnelle des charges utiles.",
+          ],
+        },
+        {
+          heading: "Limites et compromis",
+          list: [
+            "Le jeton n'embarque pas la valeur chiffrée, à dessein. Contrairement à un jeton de chiffrement préservant le format, piighost utilise un identifiant (<<PERSON:1>>) appuyé sur un cache, si bien qu'un jeton capturé ne révèle rien en lui-même. En contrepartie, il vous faut un cache pour conserver la correspondance jeton-valeur.",
+            "Le cache stocke les vraies valeurs, donc la réversibilité est de la pseudonymisation, pas de l'anonymisation. piighost vous donne le chiffrement AES-GCM des valeurs et le hachage Argon2id des clés, mais la base de données elle-même doit être sécurisée en production.",
+            "Pas d'anonymisation de jeux de données. Pas de k-anonymat, de l-diversité, de confidentialité différentielle ni de données tabulaires. piighost protège du texte et des conversations en direct, pas un jeu de données entier.",
+            "Pas de validation par somme de contrôle (Luhn, IBAN, NIR), par choix. Le détecteur d'expressions régulières s'appuie sur la seule forme, si bien qu'il ne laisse jamais fuir une vraie valeur abîmée par l'OCR, au prix de signaler parfois une chaîne qui ressemble seulement à une PII.",
           ],
         },
         {
