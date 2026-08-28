@@ -89,13 +89,15 @@ import { OpenPanelComponent } from "@openpanel/nextjs";
 export function Analytics() {
   const clientId = process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID;
   if (!clientId) return null;
-  const apiUrl =
-    process.env.NEXT_PUBLIC_OPENPANEL_API_URL ??
-    "https://opapi.athroniaeth.cloud";
+  const apiUrl = (
+    process.env.NEXT_PUBLIC_OPENPANEL_API_URL ?? "https://opapi.athroniaeth.cloud"
+  ).replace(/\/$/, "");
+  const scriptUrl =
+    process.env.NEXT_PUBLIC_OPENPANEL_SCRIPT_URL ?? "https://openpanel.dev/op1.js";
   return (
     <OpenPanelComponent
       apiUrl={apiUrl}
-      scriptUrl={`${apiUrl}/op1.js`}
+      scriptUrl={scriptUrl}
       clientId={clientId}
       trackScreenViews
       trackOutgoingLinks
