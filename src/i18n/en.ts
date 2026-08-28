@@ -272,8 +272,8 @@ export const en: Dictionary = {
   },
   quickStart: {
     eyebrow: "Quick start",
-    title: "Drop it into a LangChain agent",
-    description: "Add the middleware and your agent code stays the same.",
+    title: "Drop it into your agent framework",
+    description: "Add piighost to the framework you already use. Your agent code stays the same.",
   },
   cta: {
     title: "Ship AI features without shipping user data",
