@@ -5,6 +5,22 @@ import { useT } from "@/i18n/use-t";
 
 type ProjectSlug = "piighost" | "api" | "chat" | "proofreader";
 
+// Render `backtick`-delimited spans as inline code, everything else as plain text.
+function renderInline(text: string): ReactNode {
+  return text.split(/(`[^`]+`)/g).map((part, i) =>
+    part.startsWith("`") && part.endsWith("`") && part.length > 2 ? (
+      <code
+        key={i}
+        className="rounded bg-muted px-1.5 py-0.5 font-mono text-[0.85em] text-foreground"
+      >
+        {part.slice(1, -1)}
+      </code>
+    ) : (
+      part
+    ),
+  );
+}
+
 export function ProjectArticle({
   slug,
   codeBlocks,
@@ -26,7 +42,7 @@ export function ProjectArticle({
               key={j}
               className="mt-4 leading-7 text-justify hyphens-auto text-muted-foreground"
             >
-              {p}
+              {renderInline(p)}
             </p>
           ))}
 
@@ -34,13 +50,13 @@ export function ProjectArticle({
             (section.ordered ? (
               <ol className="mt-4 list-decimal space-y-2 pl-6 leading-7 text-muted-foreground">
                 {section.list.map((item, j) => (
-                  <li key={j}>{item}</li>
+                  <li key={j}>{renderInline(item)}</li>
                 ))}
               </ol>
             ) : (
               <ul className="mt-4 list-disc space-y-2 pl-6 leading-7 text-muted-foreground">
                 {section.list.map((item, j) => (
-                  <li key={j}>{item}</li>
+                  <li key={j}>{renderInline(item)}</li>
                 ))}
               </ul>
             ))}
@@ -51,7 +67,7 @@ export function ProjectArticle({
 
           {section.afterCode && (
             <p className="mt-4 leading-7 text-justify hyphens-auto text-muted-foreground">
-              {section.afterCode}
+              {renderInline(section.afterCode)}
             </p>
           )}
         </section>

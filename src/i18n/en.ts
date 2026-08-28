@@ -30,8 +30,8 @@ export const en: Dictionary = {
           heading: "What it does",
           paragraphs: [
             "piighost is a Python library that keeps PII (personally identifiable information) from ever reaching a language model, without getting in the way of what your app needs to do.",
-            "It spots PII with detectors (regex, NER, or another model) and swaps each value for a stable placeholder, so john.doe@example.com becomes <<EMAIL:1>> and the model only ever works on de-identified text. When the model answers with those placeholders, piighost puts the real values back, so the end user reads john.doe@example.com and never notices a thing. A tool that genuinely needs the real address receives it in clear, while the model that decided to call it still sees only <<EMAIL:1>>.",
-            "The mapping between a value and its placeholder sticks around for the whole conversation. If john.doe@example.com comes up again three messages later, it stays <<EMAIL:1>>, so the model can still follow the thread.",
+            "It spots PII with detectors (regex, NER, or another model) and swaps each value for a stable placeholder, so `john.doe@example.com` becomes `<<EMAIL:1>>` and the model only ever works on de-identified text. When the model answers with those placeholders, piighost puts the real values back, so the end user reads `john.doe@example.com` and never notices a thing. A tool that genuinely needs the real address receives it in clear, while the model that decided to call it still sees only `<<EMAIL:1>>`.",
+            "The mapping between a value and its placeholder sticks around for the whole conversation. If `john.doe@example.com` comes up again three messages later, it stays `<<EMAIL:1>>`, so the model can still follow the thread.",
           ],
         },
         {
@@ -50,18 +50,18 @@ export const en: Dictionary = {
           heading: "What it adds on top",
           list: [
             "Pluggable detectors: regex catalogs (generic, US, EU, FR), NER (GLiNER2, spaCy, Transformers), an LLM detector, plus exact-match, composite, and chunked detectors, and you keep the one you trust (Presidio plugs in through an extra).",
-            "Reversible, transparent tokens: each value becomes a stable id like <<PERSON:1>> and is put back automatically, so the end user never sees a token; label-only, masked, and keyed-hash factories are available too.",
+            "Reversible, transparent tokens: each value becomes a stable id like `<<PERSON:1>>` and is put back automatically, so the end user never sees a token; label-only, masked, and keyed-hash factories are available too.",
             "Consistent across a conversation: the same value keeps the same token for the whole thread, backed by in-process, Redis, or SQLAlchemy memory (Redis and SQL can encrypt values at rest and hash keys).",
             "Agent integrations with a tool boundary: LangChain middleware, Pydantic AI hooks, and LlamaIndex; the tool receives the real value while the model sees only the token, with token-by-token streaming restoration.",
             "A customizable staged pipeline: detect, link, resolve overlaps, expand, anonymize, and an optional guard rail that refuses a reply with residual PII; swap in fuzzy matching to tolerate typos or add your own stage.",
             "Config-driven and self-hostable: build a whole pipeline from a TOML or JSON file with a CLI to validate it, run it in your process, or as a service through the companion piighost-api.",
-            "Typed and observable: ships py.typed and a minimal core with everything heavy behind extras, plus OpenTelemetry per-stage spans with optional payload redaction.",
+            "Typed and observable: ships `py.typed` and a minimal core with everything heavy behind extras, plus OpenTelemetry per-stage spans with optional payload redaction.",
           ],
         },
         {
           heading: "Limitations and trade-offs",
           list: [
-            "The token does not embed the encrypted value, on purpose. Unlike a format-preserving encryption token, piighost uses an id (<<PERSON:1>>) backed by a cache, so a captured token reveals nothing on its own. In return, you need a cache to hold the token-to-value mapping.",
+            "The token does not embed the encrypted value, on purpose. Unlike a format-preserving encryption token, piighost uses an id (`<<PERSON:1>>`) backed by a cache, so a captured token reveals nothing on its own. In return, you need a cache to hold the token-to-value mapping.",
             "The cache stores the real values, so reversibility is pseudonymisation, not anonymisation. piighost gives you AES-GCM encryption of the values and Argon2id hashing of the keys, but the database itself must be secured in production.",
             "No dataset anonymization. No k-anonymity, l-diversity, differential privacy, or tabular data. piighost protects live text and conversations, not a whole dataset.",
             "No checksum validation (Luhn, IBAN, NIR), by choice. The regex detector matches on shape alone so it never lets a real value mangled by OCR leak, at the cost of occasionally flagging a string that only looks like PII.",
