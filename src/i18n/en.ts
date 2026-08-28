@@ -10,6 +10,7 @@ export const en: Dictionary = {
     philosophy: "Philosophy",
     home: "Home",
     playground: "Playground",
+    docs: "Documentation",
     github: "GitHub",
     toggleTheme: "Toggle theme",
     toggleLanguage: "Switch to French",
