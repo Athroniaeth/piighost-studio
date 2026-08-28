@@ -16,6 +16,5 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: "*", allow: "/" },
     ],
     sitemap: "https://piighost.dev/sitemap.xml",
-    host: "https://piighost.dev",
   };
 }

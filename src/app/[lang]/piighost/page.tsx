@@ -13,7 +13,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const { lang: raw } = await params;
   const lang = toLocale(raw);
   const t = dictionaries[lang];
-  return pageMetadata({ lang, path: "/piighost", title: "piighost", description: t.seo.pages.piighost });
+  const meta = pageMetadata({ lang, path: "/piighost", title: "piighost", description: t.seo.pages.piighost });
+  return { ...meta, title: { absolute: "piighost - PII anonymization for Python" } };
 }
 
 const USAGE = `from langchain.agents import create_agent

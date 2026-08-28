@@ -657,7 +657,7 @@ export const fr: Dictionary = {
     ],
   },
   seo: {
-    defaultTitle: "piighost - anonymiser les PII avant qu'elles n'atteignent le LLM",
+    defaultTitle: "piighost - anonymiser les PII avant qu'elles n'atteignent le modèle",
     defaultDescription:
       "piighost est une librairie Python pour anonymiser les informations personnelles avant qu'elles n'atteignent un grand modèle de langage. Détectez les PII par regex, NER ou LLM, remplacez-les par des placeholders stables, puis restaurez les vraies valeurs pour vos outils.",
     philosophyDescription:
