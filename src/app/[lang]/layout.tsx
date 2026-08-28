@@ -7,6 +7,7 @@ import { SiteNavbar } from "@/components/site-navbar";
 import { SiteFooter } from "@/components/site-footer";
 import { SmoothSnap } from "@/components/smooth-snap";
 import { BackToTop } from "@/components/back-to-top";
+import { Analytics } from "@/components/analytics/openpanel";
 import { dictionaries } from "@/i18n";
 import { toLocale } from "@/i18n/locale-path";
 import { JsonLd } from "@/components/json-ld";
@@ -66,6 +67,7 @@ export default async function LangLayout({
   return (
     <html lang={lang} suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <Analytics />
         <JsonLd data={organizationLd()} />
         <JsonLd data={websiteLd()} />
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>

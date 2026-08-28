@@ -35,6 +35,7 @@ import { FieldLabel, STAGE_SELECT } from "@/components/playground/field-label";
 import { PRESET_PIPELINES } from "@/lib/presets";
 import { assignLabelColors, labelStyle } from "@/lib/labels";
 import { runPipeline } from "@/lib/run-pipeline";
+import { useTrack } from "@/lib/analytics";
 import { loadPiighostRuntime, type RuntimeStage } from "@/lib/piighost-runtime";
 import type { AnonSegment, AssembleResult } from "@/lib/piighost-bridge";
 import { Loader2 } from "lucide-react";
@@ -83,10 +84,10 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
   );
 }
 
-function ExportBox({ code }: { code: string }) {
+function ExportBox({ code, onCopy }: { code: string; onCopy?: () => void }) {
   return (
     <div className="group relative overflow-hidden rounded-lg border bg-muted/30">
-      <CopyButton value={code} />
+      <CopyButton value={code} onCopy={onCopy} />
       <pre className="overflow-x-auto p-4 font-mono text-xs">{code}</pre>
     </div>
   );
@@ -95,6 +96,7 @@ function ExportBox({ code }: { code: string }) {
 export function ConfigBuilder() {
   const { t, locale } = useT();
   const pg = t.playground;
+  const track = useTrack();
   const [pipeline, setPipeline] = useState<ConfigPipeline>(defaultPipeline());
   const [saved, setSaved] = useState<SavedDetector[]>([]);
   const [showExport, setShowExport] = useState(false);
@@ -173,6 +175,10 @@ export function ConfigBuilder() {
     a.download = `${pipeline.name.trim() || "pipeline"}.toml`;
     a.click();
     URL.revokeObjectURL(url);
+    track({
+      name: "pipeline_exported",
+      props: { format: "toml", detectorCount: pipeline.detectors.length },
+    });
   }
 
   async function runTest() {
@@ -198,6 +204,10 @@ export function ConfigBuilder() {
       setTestSnapshot(JSON.stringify({ pipeline, text: testText }));
       setResultView("anonymized");
       setTestStatus("done");
+      track({
+        name: "pipeline_run",
+        props: { detectorCount: pipeline.detectors.length, entityCount: result.entities.length },
+      });
     } catch (err) {
       console.error("pipeline test failed", err);
       setTestHighlights([]);
@@ -615,7 +625,15 @@ export function ConfigBuilder() {
                 {pg.downloadToml}
               </Button>
             </div>
-            <ExportBox code={exportTab === "toml" ? toToml(pipeline) : toPython(pipeline)} />
+            <ExportBox
+              code={exportTab === "toml" ? toToml(pipeline) : toPython(pipeline)}
+              onCopy={() =>
+                track({
+                  name: "pipeline_exported",
+                  props: { format: exportTab, detectorCount: pipeline.detectors.length },
+                })
+              }
+            />
           </div>
         </Modal>
       )}

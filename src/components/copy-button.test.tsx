@@ -13,4 +13,12 @@ describe("CopyButton", () => {
     await userEvent.click(screen.getByRole("button", { name: /copy/i }));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith("pip install piighost");
   });
+
+  it("appelle onCopy après une copie réussie", async () => {
+    const onCopy = vi.fn();
+    const user = userEvent.setup();
+    render(<CopyButton value="hello" onCopy={onCopy} />);
+    await user.click(screen.getByRole("button", { name: /copy/i }));
+    expect(onCopy).toHaveBeenCalledTimes(1);
+  });
 });
