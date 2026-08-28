@@ -35,4 +35,11 @@ describe("useTrack", () => {
       result.current({ name: "detector_saved", props: { detectorType: "gliner2" } }),
     ).not.toThrow();
   });
+
+  it("rejette au compile-time une prop non prévue (garde-fou vie privée)", () => {
+    const { result } = renderHook(() => useTrack());
+    // @ts-expect-error - une clé libre (ex: texte utilisateur) ne doit pas compiler
+    result.current({ name: "detector_run", props: { detectorType: "regex", entityCount: 0, durationMs: 0, userText: "jean@example.com" } });
+    expect(true).toBe(true);
+  });
 });
