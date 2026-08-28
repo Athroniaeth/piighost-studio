@@ -34,8 +34,14 @@ l'API auto-hébergée :
 > (`https://openpanel.dev/op1.js`, 200) tandis que les événements partent bien
 > vers l'instance auto-hébergée. C'est le schéma documenté du self-hosting.
 
-Conséquence assumée : pas de proxy anti-bloqueur de pub (impossible sans
-serveur). Acceptable pour ce projet.
+Conséquence assumée : par défaut, pas de proxy anti-bloqueur de pub côté
+application (export statique). **Constaté en prod :** Brave/uBlock bloquent le
+script `openpanel.dev` → aucun suivi pour ces visiteurs. Comme le site est servi
+par **nginx**, on peut rendre l'analytics **first-party** (servir `op1.js` et
+relayer l'ingestion sous le domaine du site) sans changement de code, via les
+variables `NEXT_PUBLIC_OPENPANEL_SCRIPT_URL` / `_API_URL` et la config
+`docs/openpanel-nginx.conf`. Choix de fond (contourner les bloqueurs vs respecter
+le refus de suivi) laissé à l'exploitant.
 
 Package : `@openpanel/nextjs` (`OpenPanelComponent` + hook `useOpenPanel`),
 compatible App Router + export statique (100 % client).
