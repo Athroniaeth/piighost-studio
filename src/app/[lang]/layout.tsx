@@ -9,6 +9,8 @@ import { SmoothSnap } from "@/components/smooth-snap";
 import { BackToTop } from "@/components/back-to-top";
 import { dictionaries } from "@/i18n";
 import { toLocale } from "@/i18n/locale-path";
+import { JsonLd } from "@/components/json-ld";
+import { organizationLd, websiteLd } from "@/lib/jsonld";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -58,6 +60,8 @@ export default async function LangLayout({
   return (
     <html lang={lang} suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <JsonLd data={organizationLd()} />
+        <JsonLd data={websiteLd()} />
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <LanguageProvider locale={lang}>
             <SmoothSnap />

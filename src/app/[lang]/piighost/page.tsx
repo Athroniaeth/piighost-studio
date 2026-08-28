@@ -5,6 +5,8 @@ import { CodeBlock } from "@/components/code-block";
 import { getProject } from "@/lib/site";
 import { dictionaries } from "@/i18n";
 import { toLocale } from "@/i18n/locale-path";
+import { JsonLd } from "@/components/json-ld";
+import { softwareApplicationLd, softwareSourceCodeLd, breadcrumbLd } from "@/lib/jsonld";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang: raw } = await params;
@@ -46,6 +48,14 @@ export default function PiighostPage() {
 
   return (
     <>
+      <JsonLd data={softwareApplicationLd()} />
+      <JsonLd data={softwareSourceCodeLd()} />
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Home", item: "https://piighost.dev/en/" },
+          { name: "piighost", item: "https://piighost.dev/en/piighost/" },
+        ])}
+      />
       <ProjectHeader project={getProject("piighost")} />
       <ProjectArticle slug="piighost" codeBlocks={codeBlocks} />
     </>
