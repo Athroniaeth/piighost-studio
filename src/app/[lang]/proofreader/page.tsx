@@ -5,20 +5,13 @@ import { CodeBlock } from "@/components/code-block";
 import { getProject } from "@/lib/site";
 import { dictionaries } from "@/i18n";
 import { toLocale } from "@/i18n/locale-path";
+import { pageMetadata } from "@/lib/page-metadata";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang: raw } = await params;
   const lang = toLocale(raw);
   const t = dictionaries[lang];
-  return {
-    title: "piighost-proofreader",
-    description: t.seo.pages.proofreader,
-    alternates: {
-      canonical: `/${lang}/proofreader`,
-      languages: { en: "/en/proofreader", fr: "/fr/proofreader", "x-default": "/en/proofreader" },
-    },
-    openGraph: { title: "piighost-proofreader", url: `/${lang}/proofreader` },
-  };
+  return pageMetadata({ lang, path: "/proofreader", title: "piighost-proofreader", description: t.seo.pages.proofreader });
 }
 
 export default function ProofreaderPage() {

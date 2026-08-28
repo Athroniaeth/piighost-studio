@@ -5,20 +5,13 @@ import { CodeBlock } from "@/components/code-block";
 import { getProject } from "@/lib/site";
 import { dictionaries } from "@/i18n";
 import { toLocale } from "@/i18n/locale-path";
+import { pageMetadata } from "@/lib/page-metadata";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang: raw } = await params;
   const lang = toLocale(raw);
   const t = dictionaries[lang];
-  return {
-    title: "piighost-api",
-    description: t.seo.pages.api,
-    alternates: {
-      canonical: `/${lang}/api`,
-      languages: { en: "/en/api", fr: "/fr/api", "x-default": "/en/api" },
-    },
-    openGraph: { title: "piighost-api", url: `/${lang}/api` },
-  };
+  return pageMetadata({ lang, path: "/api", title: "piighost-api", description: t.seo.pages.api });
 }
 
 const REQUEST = `POST /v1/anonymize

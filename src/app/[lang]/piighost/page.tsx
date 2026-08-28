@@ -5,6 +5,7 @@ import { CodeBlock } from "@/components/code-block";
 import { getProject } from "@/lib/site";
 import { dictionaries } from "@/i18n";
 import { toLocale } from "@/i18n/locale-path";
+import { pageMetadata } from "@/lib/page-metadata";
 import { JsonLd } from "@/components/json-ld";
 import { softwareApplicationLd, softwareSourceCodeLd, breadcrumbLd } from "@/lib/jsonld";
 
@@ -12,15 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const { lang: raw } = await params;
   const lang = toLocale(raw);
   const t = dictionaries[lang];
-  return {
-    title: "piighost",
-    description: t.seo.pages.piighost,
-    alternates: {
-      canonical: `/${lang}/piighost`,
-      languages: { en: "/en/piighost", fr: "/fr/piighost", "x-default": "/en/piighost" },
-    },
-    openGraph: { title: "piighost", url: `/${lang}/piighost` },
-  };
+  return pageMetadata({ lang, path: "/piighost", title: "piighost", description: t.seo.pages.piighost });
 }
 
 const USAGE = `from langchain.agents import create_agent

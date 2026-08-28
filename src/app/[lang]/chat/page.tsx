@@ -5,20 +5,13 @@ import { CodeBlock } from "@/components/code-block";
 import { getProject } from "@/lib/site";
 import { dictionaries } from "@/i18n";
 import { toLocale } from "@/i18n/locale-path";
+import { pageMetadata } from "@/lib/page-metadata";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang: raw } = await params;
   const lang = toLocale(raw);
   const t = dictionaries[lang];
-  return {
-    title: "piighost-chat",
-    description: t.seo.pages.chat,
-    alternates: {
-      canonical: `/${lang}/chat`,
-      languages: { en: "/en/chat", fr: "/fr/chat", "x-default": "/en/chat" },
-    },
-    openGraph: { title: "piighost-chat", url: `/${lang}/chat` },
-  };
+  return pageMetadata({ lang, path: "/chat", title: "piighost-chat", description: t.seo.pages.chat });
 }
 
 export default function ChatPage() {
