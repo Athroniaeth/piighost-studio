@@ -1,11 +1,11 @@
 "use client";
 
-import { MessageSquare, FileText, Table, Terminal } from "lucide-react";
+import { Layers, RefreshCw, MessagesSquare, Server } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Section } from "@/components/section";
 import { useT } from "@/i18n/use-t";
 
-const icons = [MessageSquare, FileText, Table, Terminal];
+const icons = [Layers, RefreshCw, MessagesSquare, Server];
 
 export function Detector() {
   const { t } = useT();

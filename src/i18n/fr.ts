@@ -240,26 +240,26 @@ export const fr: Dictionary = {
     },
   },
   detector: {
-    eyebrow: "Orienté cas d'usage",
-    title: "Chaque cas d'usage appelle son propre pipeline",
+    eyebrow: "Pourquoi piighost",
+    title: "Plus qu'un détecteur de PII",
     description:
-      "Il n'existe pas de détecteur universel pour les données personnelles. piighost vous fournit des briques composables (détection, liaison, garde-fous de sortie) pour construire un pipeline adapté à vos données, votre budget de latence et vos règles de conformité.",
+      "Repérer les données sensibles, c'est le plus facile. piighost fournit tout le reste : des détecteurs que vous composez, des jetons que vous pouvez annuler, la cohérence sur toute une conversation, et un pipeline que vous exécutez à vos conditions.",
     items: [
       {
-        title: "Conversationnel",
-        body: "Support client, chat intégré, transcriptions vocales. Reconnaissance d'entités nommées rapide pour les noms et lieux, expressions régulières pour les e-mails et numéros de téléphone, mémoire par fil de discussion pour que la même personne garde le même jeton tout au long de la conversation.",
+        title: "Détecteurs composables",
+        body: "Combinez des détecteurs regex, NER et LLM dans un même pipeline et gardez ceux en qui vous avez confiance. Un découpage intégré fractionne les longs documents, si bien que même les gros fichiers sont entièrement couverts.",
       },
       {
-        title: "Traitement de documents",
-        body: "PDF longs, contrats, tickets de support. Le budget de latence est plus large, la précision prime. Un LLM en détecteur sur les passages difficiles, des expressions régulières sur les champs structurés, et un ré-ancrage pour que les résultats se calent sur le document source.",
+        title: "Jetons réversibles et transparents",
+        body: "Chaque valeur devient un jeton stable, restitué automatiquement. Vos utilisateurs et vos outils voient toujours les vraies données, tandis que le modèle ne voit jamais que le jeton.",
       },
       {
-        title: "Formulaires structurés",
-        body: "Charges utiles d'API, CSV, exports. Sous la milliseconde, déterministe, auditable. Un pipeline regex pur avec un jeu de règles exhaustif, aucun modèle dans la boucle, et un format de jeton que vos systèmes aval peuvent analyser.",
+        title: "Cohérent sur toute une conversation",
+        body: "Une même valeur conserve le même jeton sur toute une conversation, à travers chaque message, appel d'outil et agent. Rien ne dérive, si bien que le modèle ne perd jamais le fil de qui est qui.",
       },
       {
-        title: "Code et journaux",
-        body: "Assistants de débogage, tri des journaux, bots d'incident. Les traces d'exécution et les lignes de journaux contiennent des secrets, des jetons, des noms d'hôtes internes et des enregistrements utilisateur. Un pipeline d'abord à base d'expressions régulières retire les identifiants et les secrets, avec des détecteurs sur mesure pour vos propres formats d'identifiants, avant que quoi que ce soit n'atteigne le modèle.",
+        title: "Piloté par config, auto-hébergé",
+        body: "Décrivez un pipeline entier dans un seul fichier de configuration et exécutez-le entièrement sur votre propre infrastructure. Rien ne sort de chez vous, et aucun service tiers à qui faire confiance.",
       },
     ],
   },
