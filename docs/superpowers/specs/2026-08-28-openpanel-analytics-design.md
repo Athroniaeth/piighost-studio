@@ -25,8 +25,14 @@ Comme le site est un export statique, il n'y a **pas** de route `/api/op`
 possible (cela exigerait un serveur Next.js). Le SDK tape donc **directement**
 l'API auto-hébergée :
 
-- `apiUrl = https://opapi.athroniaeth.cloud`
-- `scriptUrl = https://opapi.athroniaeth.cloud/op1.js`
+- `apiUrl = https://opapi.athroniaeth.cloud` (destination des événements)
+- `scriptUrl = https://openpanel.dev/op1.js` (loader générique servi par le CDN)
+
+> **Découvert au test live :** l'API auto-hébergée ne sert **pas** `op1.js`
+> (`opapi.athroniaeth.cloud/op1.js` → 404). `op1.js` est un loader générique qui
+> lit `apiUrl` à l'exécution ; on le charge donc depuis le CDN OpenPanel
+> (`https://openpanel.dev/op1.js`, 200) tandis que les événements partent bien
+> vers l'instance auto-hébergée. C'est le schéma documenté du self-hosting.
 
 Conséquence assumée : pas de proxy anti-bloqueur de pub (impossible sans
 serveur). Acceptable pour ce projet.
@@ -43,6 +49,7 @@ expose aussi via variables d'env optionnelles pour rester flexible :
 
 - `NEXT_PUBLIC_OPENPANEL_CLIENT_ID` (requis pour activer le suivi)
 - `NEXT_PUBLIC_OPENPANEL_API_URL` (défaut : `https://opapi.athroniaeth.cloud`)
+- `NEXT_PUBLIC_OPENPANEL_SCRIPT_URL` (défaut : `https://openpanel.dev/op1.js`)
 
 Si `NEXT_PUBLIC_OPENPANEL_CLIENT_ID` est **absent**, le composant n'est pas
 monté → **aucun suivi** (utile en dev/local ; pas de crash, pas d'events
@@ -133,8 +140,9 @@ minimale et ne touche pas la logique métier (appels `track(...)` en marge).
 ## Flux de données
 
 1. Chargement de page → `Analytics` monte `OpenPanelComponent` → le script
-   `op1.js` est chargé depuis l'API auto-hébergée → `init` avec le `clientId`.
-2. Navigation → screen view automatique envoyée à `opapi.athroniaeth.cloud`.
+   `op1.js` est chargé depuis le **CDN** `openpanel.dev` → `init` avec le
+   `clientId` et l'`apiUrl` auto-hébergée.
+2. Navigation → screen view automatique envoyée à `opapi.athroniaeth.cloud/track`.
 3. Action outil (run/save/export) → `track(event)` → event métadonnées envoyé.
 
 Aucune donnée ne transite par un serveur du site (il n'y en a pas) ; tout part
@@ -160,16 +168,19 @@ du navigateur vers l'API OpenPanel.
    playground, exécuter un détecteur, vérifier dans le dashboard OpenPanel que
    la page vue et l'event `detector_run` arrivent.
 
-## À faire côté OpenPanel (résumé — instructions détaillées à la livraison)
+## À faire côté OpenPanel (validé au test live)
 
 1. Le projet/client est créé. `clientId` :
    `66c9779d-9dfb-433c-acda-13ec88907038` (temporaire, fourni par l'utilisateur).
-2. Autoriser l'**origine CORS** du site dans la config du client (domaine de
-   production du site + `http://localhost:3000` pour les tests locaux).
+2. **Action critique — autoriser l'origine (CORS) du site dans le client.**
+   Sans cela, l'API répond `401 « Invalid cors or secret »` sur `/track` (vérifié
+   au test). Dans le dashboard → le client → « Cross-origin (CORS) » / domaines
+   autorisés, ajouter le domaine de production du site **et**
+   `http://localhost:3000` + `http://localhost:3001` pour les tests locaux.
 3. Renseigner `NEXT_PUBLIC_OPENPANEL_CLIENT_ID` dans l'environnement de build
    (Coolify / `.env` local).
-4. Vérifier que `https://opapi.athroniaeth.cloud/op1.js` est accessible
-   publiquement (script du SDK servi par l'API).
+4. Ne PAS attendre que l'API serve `op1.js` : elle renvoie 404. Le loader est
+   chargé depuis le CDN `openpanel.dev` (défaut du composant).
 
 ## Hors périmètre (YAGNI)
 
