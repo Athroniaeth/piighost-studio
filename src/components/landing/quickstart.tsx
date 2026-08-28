@@ -8,10 +8,8 @@ import { useT } from "@/i18n/use-t";
 type UsageExample = { id: string; label: string; block: ReactNode };
 
 export function QuickStart({
-  installBlock,
   usageExamples,
 }: {
-  installBlock: ReactNode;
   usageExamples: UsageExample[];
 }) {
   const { t } = useT();
@@ -23,7 +21,6 @@ export function QuickStart({
       centerDescription
     >
       <div className="mx-auto grid max-w-3xl gap-4">
-        {installBlock}
         <Tabs defaultValue={usageExamples[0]?.id} className="gap-3">
           <TabsList className="grid w-full grid-cols-3">
             {usageExamples.map((ex) => (
