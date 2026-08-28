@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { ConfigBuilder } from "@/components/playground/config-builder";
 import { dictionaries } from "@/i18n";
-import type { Locale } from "@/i18n/types";
+import { toLocale } from "@/i18n/locale-path";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang: raw } = await params;
-  const lang: Locale = raw === "fr" ? "fr" : "en";
+  const lang = toLocale(raw);
   const t = dictionaries[lang];
   return {
     title: "Pipeline",

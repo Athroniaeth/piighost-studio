@@ -8,14 +8,10 @@ import { SiteFooter } from "@/components/site-footer";
 import { SmoothSnap } from "@/components/smooth-snap";
 import { BackToTop } from "@/components/back-to-top";
 import { dictionaries } from "@/i18n";
-import type { Locale } from "@/i18n/types";
+import { toLocale } from "@/i18n/locale-path";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
-
-function toLocale(raw: string): Locale {
-  return raw === "fr" ? "fr" : "en";
-}
 
 export function generateStaticParams() {
   return [{ lang: "en" }, { lang: "fr" }];

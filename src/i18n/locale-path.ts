@@ -1,4 +1,5 @@
 import type { Locale } from "./types";
+import { defaultLocale } from "./index";
 
 const LOCALES = ["en", "fr"] as const;
 
@@ -22,4 +23,9 @@ export function stripLocale(pathname: string): string {
 /** Replace the leading locale segment with `target`, preserving the path. */
 export function swapLocale(pathname: string, target: Locale): string {
   return localePath(target, stripLocale(pathname));
+}
+
+/** Narrow a string to a Locale, defaulting to the app's default locale if unrecognized. */
+export function toLocale(raw: string): Locale {
+  return (LOCALES as readonly string[]).includes(raw) ? (raw as Locale) : defaultLocale;
 }
