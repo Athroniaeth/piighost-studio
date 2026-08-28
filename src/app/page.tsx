@@ -13,21 +13,17 @@ const LANGCHAIN = `from langchain.agents import create_agent
 
 from piighost.components.detector.ner import Gliner2Detector
 from piighost.pipeline import ThreadAnonymizationPipeline
-from piighost.integrations.langchain import (
-    PIIAnonymizationMiddleware,
-    ToolCallStrategy,
-)
+from piighost.integrations.langchain import PIIAnonymizationMiddleware
 
 # Any detector works: regex, NER, or an LLM. Here a GLiNER2 NER model.
 detector = Gliner2Detector("fastino/gliner2-multi-v1", labels=["PERSON", "LOCATION"])
 pipeline = ThreadAnonymizationPipeline(detector)
+middleware = PIIAnonymizationMiddleware(pipeline=pipeline)
 
 agent = create_agent(
     model="openai:gpt-5.6-terra",
     tools=[lookup_city],
-    middleware=[
-        PIIAnonymizationMiddleware(pipeline=pipeline, tool_strategy=ToolCallStrategy.FULL)
-    ],
+    middleware=[middleware],
 )
 
 # The model only sees "<<PERSON:1>>"; lookup_city still receives "Patrick".`;
