@@ -130,7 +130,8 @@ export function DetectorPlayground() {
       });
       const started = performance.now();
       const result = await runDetector(config, text);
-      setDurationMs(performance.now() - started);
+      const elapsed = performance.now() - started;
+      setDurationMs(elapsed);
       setAllEntities(result);
       setAnalyzed(text);
       setStatus("done");
@@ -139,7 +140,7 @@ export function DetectorPlayground() {
         props: {
           detectorType: config.type,
           entityCount: result.length,
-          durationMs: Math.round(performance.now() - started),
+          durationMs: Math.round(elapsed),
           modelId: "model" in config ? config.model : undefined,
         },
       });
