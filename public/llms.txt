@@ -1,0 +1,28 @@
+# piighost
+
+> piighost is an open-source Python library that anonymizes personally
+> identifiable information before it reaches a large language model, using
+> composable regex, NER and LLM detection pipelines with stable, reversible
+> placeholders.
+
+Key facts:
+- Language: Python
+- Detectors: regex, classic NER, GLiNER, LLM (composable pipeline, detector-agnostic)
+- Pipeline stages: detect, span resolve, entity link, entity resolve, anonymize
+- Placeholders: stable and reversible; the token-to-value mapping stays local
+- Use case: anonymize PII before sending prompts to a model, then restore values
+- Integrations: LangChain, Pydantic AI, LlamaIndex
+
+## Documentation
+
+- [piighost site](https://piighost.dev/en/): overview and interactive tools
+- [Core library](https://piighost.dev/en/piighost/): build anonymization pipelines
+- [piighost-api](https://piighost.dev/en/api/): host a pipeline behind HTTP
+- [Package (PyPI)](https://pypi.org/project/piighost/): install with pip or uv
+- [Source (GitHub)](https://github.com/Athroniaeth/piighost): repository and docs
+- [API reference](https://athroniaeth.github.io/piighost/): full documentation
+
+## Tools
+
+- [Playground](https://piighost.dev/en/playground/): compose a pipeline in the browser
+- [Detector bench](https://piighost.dev/en/playground/detector/): test a single detector
