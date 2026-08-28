@@ -9,37 +9,89 @@ import { CodeBlock } from "@/components/code-block";
 
 const INSTALL = `uv add 'piighost[cache]'`;
 
-const USAGE = `from langchain.agents import create_agent
+const LANGCHAIN = `from langchain.agents import create_agent
 
-from piighost import Anonymizer, ExactMatchDetector
+from piighost.components.detector.ner import Gliner2Detector
 from piighost.pipeline import ThreadAnonymizationPipeline
-from piighost.middleware import PIIAnonymizationMiddleware
-
-# Wire any detector you like: regex, a NER model, or an LLM.
-detector = ExactMatchDetector([("Patrick", "PERSON")])
-pipeline = ThreadAnonymizationPipeline(detector=detector, anonymizer=Anonymizer())
-middleware = PIIAnonymizationMiddleware(pipeline=pipeline)
-
-agent = create_agent(
-    model="openai:gpt-5.5",
-    tools=[send_email],
-    middleware=[middleware],
+from piighost.integrations.langchain import (
+    PIIAnonymizationMiddleware,
+    ToolCallStrategy,
 )
 
-# The LLM only sees "<<PERSON:1>>".
-# Your send_email tool still receives the real value.`;
+# Any detector works: regex, NER, or an LLM. Here a GLiNER2 NER model.
+detector = Gliner2Detector("fastino/gliner2-multi-v1", labels=["PERSON", "LOCATION"])
+pipeline = ThreadAnonymizationPipeline(detector)
+
+agent = create_agent(
+    model="openai:gpt-5.6-terra",
+    tools=[lookup_city],
+    middleware=[
+        PIIAnonymizationMiddleware(pipeline=pipeline, tool_strategy=ToolCallStrategy.FULL)
+    ],
+)
+
+# The model only sees "<<PERSON:1>>"; lookup_city still receives "Patrick".`;
+
+const PYDANTIC = `from pydantic_ai import Agent
+
+from piighost.components.detector.ner import Gliner2Detector
+from piighost.pipeline import ThreadAnonymizationPipeline
+from piighost.integrations.pydantic_ai import pii_hooks
+
+detector = Gliner2Detector("fastino/gliner2-multi-v1", labels=["PERSON", "LOCATION"])
+pipeline = ThreadAnonymizationPipeline(detector)
+
+# pii_hooks scopes every token to the thread id.
+hooks = pii_hooks(pipeline, "thread-42")
+agent = Agent("openai:gpt-5.6-terra", capabilities=[hooks])
+
+# The model reasons over "<<PERSON:1>>"; you read "Patrick" in the reply.
+result = await agent.run("Where does Patrick live?")`;
+
+const LLAMAINDEX = `from llama_index.core import Document, VectorStoreIndex
+from llama_index.core.node_parser import SentenceSplitter
+
+from piighost.components.detector.ner import Gliner2Detector
+from piighost.pipeline import ThreadAnonymizationPipeline
+from piighost.integrations.llama_index import PIINodeAnonymizer, PIIQueryEngine
+
+detector = Gliner2Detector("fastino/gliner2-multi-v1", labels=["PERSON", "LOCATION"])
+pipeline = ThreadAnonymizationPipeline(detector)
+
+# Anonymize each node before it is embedded, so the index is built on tokens.
+index = VectorStoreIndex.from_documents(
+    [Document(text="Patrick lives in Paris.")],
+    transformations=[
+        SentenceSplitter(),
+        PIINodeAnonymizer(pipeline=pipeline, thread_id="docs"),
+    ],
+)
+
+# The query engine anonymizes the question and restores the answer.
+engine = PIIQueryEngine(inner=index.as_query_engine(), pipeline=pipeline, thread_id="docs")
+answer = engine.query("Where does Patrick live?")`;
+
+const USAGE_EXAMPLES = [
+  { id: "langchain", label: "LangChain", code: LANGCHAIN },
+  { id: "pydantic", label: "Pydantic AI", code: PYDANTIC },
+  { id: "llamaindex", label: "LlamaIndex", code: LLAMAINDEX },
+];
 
 export default function Home() {
   return (
     <>
       <Hero />
       <Problem />
-      <HowItWorks />
       <Detector />
+      <HowItWorks />
       <Ecosystem />
       <QuickStart
         installBlock={<CodeBlock code={INSTALL} lang="bash" />}
-        usageBlock={<CodeBlock code={USAGE} lang="python" />}
+        usageExamples={USAGE_EXAMPLES.map((ex) => ({
+          id: ex.id,
+          label: ex.label,
+          block: <CodeBlock code={ex.code} lang="python" />,
+        }))}
       />
       <Cta />
     </>

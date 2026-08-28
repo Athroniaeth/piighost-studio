@@ -240,26 +240,26 @@ export const en: Dictionary = {
     },
   },
   detector: {
-    eyebrow: "Use case driven",
-    title: "Each use case calls for its own pipeline",
+    eyebrow: "Why piighost",
+    title: "More than a PII detector",
     description:
-      "There is no universal detector for PII. piighost gives you composable building blocks (detection, linking, output guardrails) so you can build a pipeline tuned to your data, your latency budget, and your compliance rules.",
+      "Finding sensitive data is the easy part. piighost gives you everything around it: detectors you compose, placeholders you can undo, consistency across a whole conversation, and a pipeline you run on your own terms.",
     items: [
       {
-        title: "Conversational",
-        body: "Customer support, in-app chat, voice transcripts. Fast NER for names and locations, regex for emails and phone numbers, thread-scoped memory so the same person keeps the same placeholder across the whole conversation.",
+        title: "Composable detectors",
+        body: "Combine regex, NER, and LLM detectors in a single pipeline and keep the ones you trust. Built-in chunking splits long documents, so even large files are fully covered.",
       },
       {
-        title: "Document processing",
-        body: "Long PDFs, contracts, support tickets. Latency budget is wider, accuracy matters more. An LLM as a detector on the tricky paragraphs, regex on the structured fields, and re-anchoring so findings line up with the source document.",
+        title: "Reversible, transparent tokens",
+        body: "Every value becomes a stable placeholder and is restored automatically. Your users and your tools always see the real data, while the model only ever sees the placeholder.",
       },
       {
-        title: "Structured forms",
-        body: "API payloads, CSVs, exports. Sub-millisecond, deterministic, auditable. A pure regex pipeline with an exhaustive ruleset, no model in the loop, and a placeholder format your downstream systems can parse.",
+        title: "Consistent across a conversation",
+        body: "The same value keeps the same placeholder for a whole conversation, across every message, tool call, and agent. Nothing drifts, so the model never loses track of who is who.",
       },
       {
-        title: "Code and logs",
-        body: "Debugging assistants, log triage, incident bots. Stack traces and log lines carry secrets, tokens, internal hostnames, and user records. A regex-first pipeline strips credentials and identifiers, with custom detectors for your own ID formats, before anything reaches the model.",
+        title: "Config-driven and self-hosted",
+        body: "Describe a whole pipeline in one config file and run it entirely on your own infrastructure. Nothing leaves your walls, and there is no extra service to trust.",
       },
     ],
   },
@@ -272,8 +272,8 @@ export const en: Dictionary = {
   },
   quickStart: {
     eyebrow: "Quick start",
-    title: "Drop it into a LangChain agent",
-    description: "Add the middleware and your agent code stays the same.",
+    title: "Drop it into your agent framework",
+    description: "Add piighost to the framework you already use. Your agent code stays the same.",
   },
   cta: {
     title: "Ship AI features without shipping user data",
