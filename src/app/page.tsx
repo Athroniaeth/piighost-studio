@@ -7,27 +7,21 @@ import { QuickStart } from "@/components/landing/quickstart";
 import { Cta } from "@/components/landing/cta";
 import { CodeBlock } from "@/components/code-block";
 
-const INSTALL = `uv add 'piighost[cache]'`;
-
 const LANGCHAIN = `from langchain.agents import create_agent
 
 from piighost.components.detector.ner import Gliner2Detector
 from piighost.pipeline import ThreadAnonymizationPipeline
-from piighost.integrations.langchain import (
-    PIIAnonymizationMiddleware,
-    ToolCallStrategy,
-)
+from piighost.integrations.langchain import PIIAnonymizationMiddleware
 
 # Any detector works: regex, NER, or an LLM. Here a GLiNER2 NER model.
 detector = Gliner2Detector("fastino/gliner2-multi-v1", labels=["PERSON", "LOCATION"])
 pipeline = ThreadAnonymizationPipeline(detector)
+middleware = PIIAnonymizationMiddleware(pipeline=pipeline)
 
 agent = create_agent(
     model="openai:gpt-5.6-terra",
     tools=[lookup_city],
-    middleware=[
-        PIIAnonymizationMiddleware(pipeline=pipeline, tool_strategy=ToolCallStrategy.FULL)
-    ],
+    middleware=[middleware],
 )
 
 # The model only sees "<<PERSON:1>>"; lookup_city still receives "Patrick".`;
@@ -59,12 +53,10 @@ detector = Gliner2Detector("fastino/gliner2-multi-v1", labels=["PERSON", "LOCATI
 pipeline = ThreadAnonymizationPipeline(detector)
 
 # Anonymize each node before it is embedded, so the index is built on tokens.
+splitter = SentenceSplitter()
 index = VectorStoreIndex.from_documents(
     [Document(text="Patrick lives in Paris.")],
-    transformations=[
-        SentenceSplitter(),
-        PIINodeAnonymizer(pipeline=pipeline, thread_id="docs"),
-    ],
+    transformations=[splitter, PIINodeAnonymizer(pipeline=pipeline, thread_id="docs")],
 )
 
 # The query engine anonymizes the question and restores the answer.
@@ -72,9 +64,24 @@ engine = PIIQueryEngine(inner=index.as_query_engine(), pipeline=pipeline, thread
 answer = engine.query("Where does Patrick live?")`;
 
 const USAGE_EXAMPLES = [
-  { id: "langchain", label: "LangChain", code: LANGCHAIN },
-  { id: "pydantic", label: "Pydantic AI", code: PYDANTIC },
-  { id: "llamaindex", label: "LlamaIndex", code: LLAMAINDEX },
+  {
+    id: "langchain",
+    label: "LangChain",
+    install: `uv add 'piighost[langchain,gliner2]'`,
+    code: LANGCHAIN,
+  },
+  {
+    id: "pydantic",
+    label: "Pydantic AI",
+    install: `uv add 'piighost[pydantic-ai,gliner2]'`,
+    code: PYDANTIC,
+  },
+  {
+    id: "llamaindex",
+    label: "LlamaIndex",
+    install: `uv add 'piighost[llama-index,gliner2]'`,
+    code: LLAMAINDEX,
+  },
 ];
 
 export default function Home() {
@@ -86,11 +93,15 @@ export default function Home() {
       <HowItWorks />
       <Ecosystem />
       <QuickStart
-        installBlock={<CodeBlock code={INSTALL} lang="bash" />}
         usageExamples={USAGE_EXAMPLES.map((ex) => ({
           id: ex.id,
           label: ex.label,
-          block: <CodeBlock code={ex.code} lang="python" />,
+          block: (
+            <div className="grid gap-4">
+              <CodeBlock code={ex.install} lang="bash" />
+              <CodeBlock code={ex.code} lang="python" />
+            </div>
+          ),
         }))}
       />
       <Cta />
