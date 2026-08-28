@@ -15,7 +15,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageToggle } from "@/components/language-toggle";
 import { GithubIcon } from "@/components/github-icon";
 import { NavLink } from "@/components/nav-link";
-import { GITHUB_ORG, projects } from "@/lib/site";
+import { GITHUB_ORG, getProject, projects } from "@/lib/site";
 import { useT } from "@/i18n/use-t";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +34,15 @@ export function SiteNavbar() {
         </Link>
         <div className="hidden items-center gap-1 md:flex">
           <NavLink href="/" label={t.nav.home} />
+          <Button
+            variant="ghost"
+            size="lg"
+            render={
+              <a href={getProject("piighost").docs} target="_blank" rel="noreferrer" />
+            }
+          >
+            {t.nav.docs}
+          </Button>
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>

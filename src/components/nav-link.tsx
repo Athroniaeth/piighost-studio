@@ -22,7 +22,7 @@ export function NavLink({
   return (
     <Button
       variant="ghost"
-      size="sm"
+      size="lg"
       render={<Link href={href} className={cn(active && "text-primary")} />}
     >
       {label}

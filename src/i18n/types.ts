@@ -38,6 +38,7 @@ export type Dictionary = {
     philosophy: string;
     home: string;
     playground: string;
+    docs: string;
     github: string;
     toggleTheme: string;
     toggleLanguage: string;
