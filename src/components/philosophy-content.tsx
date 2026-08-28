@@ -35,7 +35,7 @@ function PhilosophyTable({ table }: { table: NonNullable<PhilosophyDict["section
   );
 }
 
-export default function PhilosophyPage() {
+export function PhilosophyContent() {
   const { t } = useT();
   const p = t.philosophy;
 

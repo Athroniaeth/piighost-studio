@@ -203,4 +203,17 @@ export type Dictionary = {
     phHashLength: string;
     phMaskChar: string;
   };
+  seo: {
+    defaultTitle: string;
+    defaultDescription: string;
+    philosophyDescription: string;
+    pages: {
+      piighost: string;
+      api: string;
+      chat: string;
+      proofreader: string;
+      playground: string;
+      detector: string;
+    };
+  };
 };

@@ -1,11 +1,16 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useT } from "@/i18n/use-t";
+import { localePath } from "@/i18n/locale-path";
 import type { Project } from "@/lib/site";
 
 export function ProjectCard({ project }: { project: Project }) {
+  const { locale } = useT();
   return (
-    <Link href={`/${project.slug}`} className="group">
+    <Link href={localePath(locale, `/${project.slug}`)} className="group">
       <Card className="h-full transition-colors hover:border-primary">
         <CardHeader>
           <CardTitle className="font-mono text-lg">{project.name}</CardTitle>

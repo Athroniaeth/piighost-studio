@@ -22,6 +22,7 @@ import { toToml, toPython } from "@/lib/pipeline-export";
 import { loadSaved, type SavedDetector } from "@/lib/saved-detectors";
 import { savePipeline } from "@/lib/saved-pipelines";
 import { useT } from "@/i18n/use-t";
+import { localePath } from "@/i18n/locale-path";
 import { EntityHighlight } from "@/components/playground/entity-highlight";
 import { PlaygroundTabs } from "@/components/playground/playground-tabs";
 import { PresetList } from "@/components/playground/preset-list";
@@ -92,7 +93,7 @@ function ExportBox({ code }: { code: string }) {
 }
 
 export function ConfigBuilder() {
-  const { t } = useT();
+  const { t, locale } = useT();
   const pg = t.playground;
   const [pipeline, setPipeline] = useState<ConfigPipeline>(defaultPipeline());
   const [saved, setSaved] = useState<SavedDetector[]>([]);
@@ -283,7 +284,7 @@ export function ConfigBuilder() {
                       </span>
                     </label>
                     <span className="flex shrink-0 gap-2 text-muted-foreground">
-                      <Link className="text-xs" href={`/playground/detector?edit=${encodeURIComponent(d.name)}`}>{pg.editInPlayground}</Link>
+                      <Link className="text-xs" href={localePath(locale, `/playground/detector?edit=${encodeURIComponent(d.name)}`)}>{pg.editInPlayground}</Link>
                       <button type="button" className="text-xs text-destructive" onClick={() => removeDetector(i)} title={pg.remove}>✕</button>
                     </span>
                   </li>

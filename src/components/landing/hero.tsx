@@ -7,9 +7,10 @@ import { GithubIcon } from "@/components/github-icon";
 import { AnonymizeFlow } from "@/components/anonymize-flow";
 import { GITHUB_ORG } from "@/lib/site";
 import { useT } from "@/i18n/use-t";
+import { localePath } from "@/i18n/locale-path";
 
 export function Hero() {
-  const { t } = useT();
+  const { t, locale } = useT();
   return (
     <section className="relative flex min-h-[calc(100dvh-4rem)] snap-start scroll-mt-16 items-center overflow-hidden border-b">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_0%,var(--primary)/12%,transparent)]" />
@@ -22,7 +23,7 @@ export function Hero() {
             {t.hero.description}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button size="xl" render={<Link href="/piighost" />}>
+            <Button size="xl" render={<Link href={localePath(locale, "/piighost")} />}>
               <Rocket className="mr-2 size-5" /> {t.hero.getStarted}
             </Button>
             <Button size="xl" variant="outline" render={<a href={`${GITHUB_ORG}/piighost`} target="_blank" rel="noreferrer" />}>

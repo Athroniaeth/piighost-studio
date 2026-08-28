@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useT } from "@/i18n/use-t";
+import { localePath, stripLocale } from "@/i18n/locale-path";
 import { cn } from "@/lib/utils";
 
 export function NavLink({
@@ -14,7 +16,8 @@ export function NavLink({
   label: string;
   matchSubpaths?: boolean;
 }) {
-  const pathname = usePathname();
+  const { locale } = useT();
+  const pathname = stripLocale(usePathname());
   const active =
     pathname === href ||
     pathname === `${href}/` ||
@@ -23,7 +26,7 @@ export function NavLink({
     <Button
       variant="ghost"
       size="lg"
-      render={<Link href={href} className={cn(active && "text-primary")} />}
+      render={<Link href={localePath(locale, href)} className={cn(active && "text-primary")} />}
     >
       {label}
     </Button>

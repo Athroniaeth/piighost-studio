@@ -17,11 +17,12 @@ import { GithubIcon } from "@/components/github-icon";
 import { NavLink } from "@/components/nav-link";
 import { GITHUB_ORG, getProject, projects } from "@/lib/site";
 import { useT } from "@/i18n/use-t";
+import { localePath, stripLocale } from "@/i18n/locale-path";
 import { cn } from "@/lib/utils";
 
 export function SiteNavbar() {
-  const { t } = useT();
-  const pathname = usePathname();
+  const { t, locale } = useT();
+  const pathname = stripLocale(usePathname());
   const projectsActive = projects.some(
     (p) => pathname === `/${p.slug}` || pathname === `/${p.slug}/`,
   );
@@ -29,7 +30,7 @@ export function SiteNavbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <Link href="/" className="font-mono text-lg font-bold tracking-tight">
+        <Link href={localePath(locale, "/")} className="font-mono text-lg font-bold tracking-tight">
           piighost
         </Link>
         <div className="hidden items-center gap-1 md:flex">
@@ -57,7 +58,7 @@ export function SiteNavbar() {
                         t.projects[p.slug as keyof typeof t.projects]?.tagline ?? p.tagline;
                       return (
                         <li key={p.slug}>
-                          <NavigationMenuLink render={<Link href={`/${p.slug}`} />}>
+                          <NavigationMenuLink render={<Link href={localePath(locale, `/${p.slug}`)} />}>
                             <div className="flex flex-col gap-0.5">
                               <span className="font-mono text-sm font-medium">{label}</span>
                               <span className="text-xs text-muted-foreground">{tagline}</span>

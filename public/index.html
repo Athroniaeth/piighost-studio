@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href="https://piighost.dev/en/" />
+    <meta http-equiv="refresh" content="0; url=/en/" />
+    <script>
+      try {
+        var l = localStorage.getItem("piighost.locale");
+        if (l === "fr" || (l !== "en" && (navigator.language || "").slice(0, 2) === "fr")) {
+          location.replace("/fr/");
+        } else {
+          location.replace("/en/");
+        }
+      } catch (e) { location.replace("/en/"); }
+    </script>
+    <title>piighost</title>
+  </head>
+  <body>Redirecting to <a href="/en/">/en/</a></body>
+</html>

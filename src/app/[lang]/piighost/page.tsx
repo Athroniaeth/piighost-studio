@@ -1,9 +1,25 @@
+import type { Metadata } from "next";
 import { ProjectHeader } from "@/components/project-header";
 import { ProjectArticle } from "@/components/project-article";
 import { CodeBlock } from "@/components/code-block";
 import { getProject } from "@/lib/site";
+import { dictionaries } from "@/i18n";
+import type { Locale } from "@/i18n/types";
 
-export const metadata = { title: "piighost" };
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang: raw } = await params;
+  const lang: Locale = raw === "fr" ? "fr" : "en";
+  const t = dictionaries[lang];
+  return {
+    title: "piighost",
+    description: t.seo.pages.piighost,
+    alternates: {
+      canonical: `/${lang}/piighost`,
+      languages: { en: "/en/piighost", fr: "/fr/piighost", "x-default": "/en/piighost" },
+    },
+    openGraph: { title: "piighost", url: `/${lang}/piighost` },
+  };
+}
 
 const USAGE = `from langchain.agents import create_agent
 

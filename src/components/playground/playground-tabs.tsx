@@ -3,14 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useT } from "@/i18n/use-t";
+import { localePath, stripLocale } from "@/i18n/locale-path";
 import { cn } from "@/lib/utils";
 
 /** Tab bar that switches between the two playground surfaces:
  *  Pipeline (/playground) and Detector (/playground/detector). Rendered at the top
  *  of both views so each can navigate to the other. */
 export function PlaygroundTabs() {
-  const { t } = useT();
-  const pathname = usePathname();
+  const { t, locale } = useT();
+  const pathname = stripLocale(usePathname());
   const onDetector = pathname.startsWith("/playground/detector");
   const tabs = [
     { href: "/playground", label: t.playground.tabPipeline, active: !onDetector },
@@ -22,7 +23,7 @@ export function PlaygroundTabs() {
       {tabs.map((tab) => (
         <Link
           key={tab.href}
-          href={tab.href}
+          href={localePath(locale, tab.href)}
           aria-current={tab.active ? "page" : undefined}
           className={cn(
             "rounded-md px-3 py-1.5 font-medium transition-colors",

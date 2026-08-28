@@ -622,4 +622,19 @@ export const fr: Dictionary = {
       },
     ],
   },
+  seo: {
+    defaultTitle: "piighost - anonymiser les PII avant qu'elles n'atteignent le LLM",
+    defaultDescription:
+      "piighost est une librairie Python pour anonymiser les informations personnelles avant qu'elles n'atteignent un grand modèle de langage. Détectez les PII par regex, NER ou LLM, remplacez-les par des placeholders stables, puis restaurez les vraies valeurs pour vos outils.",
+    philosophyDescription:
+      "Les principes de piighost : minimiser les données personnelles transmises au modèle, garder la correspondance en local, et rester réversible pour le RGPD.",
+    pages: {
+      piighost: "La librairie Python de référence pour construire des pipelines d'anonymisation de PII. Détectez par regex, NER ou LLM, remplacez les PII par des placeholders stables, et restaurez les vraies valeurs en sortie d'outil.",
+      api: "piighost-api héberge un pipeline d'anonymisation derrière un point d'accès HTTP, pour que n'importe quel service retire les PII avant qu'elles n'atteignent un modèle.",
+      chat: "piighost-chat est un chatbot de démonstration qui anonymise chaque message avant que le modèle ne le voie, puis restaure les vraies valeurs dans la réponse.",
+      proofreader: "piighost-proofreader est un relecteur de CV qui anonymise les documents avant tout appel à un modèle, pour que les données personnelles ne quittent jamais votre contrôle.",
+      playground: "Composez un pipeline complet d'anonymisation de PII dans le navigateur : détecter, résoudre, lier et anonymiser, puis exportez-le en configuration piighost.",
+      detector: "Testez un détecteur de PII dans votre navigateur : regex, NER classique ou GLiNER. Aucune donnée ne quitte la page.",
+    },
+  },
 };

@@ -621,4 +621,19 @@ export const en: Dictionary = {
       },
     ],
   },
+  seo: {
+    defaultTitle: "piighost - anonymize PII before it reaches the LLM",
+    defaultDescription:
+      "piighost is a Python library to anonymize personally identifiable information before it reaches a large language model. Detect PII with regex, NER or an LLM, swap it for stable placeholders, and restore real values for your tools.",
+    philosophyDescription:
+      "The principles behind piighost: minimize the personal data that reaches a model, keep the mapping local, and stay reversible for GDPR.",
+    pages: {
+      piighost: "The core Python library to build PII anonymization pipelines. Detect with regex, NER or an LLM, swap PII for stable placeholders, and restore real values on tool output.",
+      api: "piighost-api hosts one anonymization pipeline behind an HTTP endpoint, so any service can redact PII before it reaches a model.",
+      chat: "piighost-chat is a demo chatbot that anonymizes each message before the model sees it, then restores the real values in the reply.",
+      proofreader: "piighost-proofreader is a CV proofreader that anonymizes documents before any model call, so personal data never leaves your control.",
+      playground: "Compose a full PII anonymization pipeline in the browser: detect, resolve, link and anonymize, then export it as piighost config.",
+      detector: "Test a single PII detector in your browser: regex, classic NER or GLiNER. No data leaves the page.",
+    },
+  },
 };

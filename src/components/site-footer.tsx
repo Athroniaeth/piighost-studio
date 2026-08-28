@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { GITHUB_ORG, projects } from "@/lib/site";
 import { useT } from "@/i18n/use-t";
+import { localePath } from "@/i18n/locale-path";
 
 export function SiteFooter() {
-  const { t } = useT();
+  const { t, locale } = useT();
   return (
     <footer className="border-t">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-3">
@@ -20,7 +21,7 @@ export function SiteFooter() {
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             {projects.map((p) => (
               <li key={p.slug}>
-                <Link href={`/${p.slug}`} className="hover:text-foreground">
+                <Link href={localePath(locale, `/${p.slug}`)} className="hover:text-foreground">
                   {p.name}
                 </Link>
               </li>

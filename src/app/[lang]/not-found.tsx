@@ -7,7 +7,7 @@ export default function NotFound() {
       <p className="font-mono text-6xl font-bold text-primary">404</p>
       <h1 className="mt-4 text-2xl font-semibold">This page slipped past the placeholder</h1>
       <p className="mt-2 text-muted-foreground">The page you are looking for does not exist.</p>
-      <Button className="mt-8" render={<Link href="/" />}>
+      <Button className="mt-8" render={<Link href="/en/" />}>
         Back home
       </Button>
     </div>
