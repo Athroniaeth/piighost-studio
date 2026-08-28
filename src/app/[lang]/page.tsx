@@ -4,8 +4,13 @@ import { HowItWorks } from "@/components/landing/how-it-works";
 import { Detector } from "@/components/landing/detector";
 import { Ecosystem } from "@/components/landing/ecosystem";
 import { QuickStart } from "@/components/landing/quickstart";
+import { Faq } from "@/components/landing/faq";
 import { Cta } from "@/components/landing/cta";
 import { CodeBlock } from "@/components/code-block";
+import { JsonLd } from "@/components/json-ld";
+import { faqPageLd } from "@/lib/jsonld";
+import { dictionaries } from "@/i18n";
+import { toLocale } from "@/i18n/locale-path";
 
 const INSTALL = `uv add 'piighost[cache]'`;
 
@@ -77,7 +82,10 @@ const USAGE_EXAMPLES = [
   { id: "llamaindex", label: "LlamaIndex", code: LLAMAINDEX },
 ];
 
-export default function Home() {
+export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang: raw } = await params;
+  const lang = toLocale(raw);
+  const faq = dictionaries[lang].faq;
   return (
     <>
       <Hero />
@@ -93,6 +101,8 @@ export default function Home() {
           block: <CodeBlock code={ex.code} lang="python" />,
         }))}
       />
+      <Faq />
+      <JsonLd data={faqPageLd(faq.items)} />
       <Cta />
     </>
   );
