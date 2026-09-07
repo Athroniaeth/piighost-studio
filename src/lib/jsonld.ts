@@ -1,3 +1,5 @@
+import type { FaqSegment } from "@/i18n/types";
+
 const BASE = "https://piighost.dev";
 const REPO = "https://github.com/Athroniaeth/piighost";
 const PYPI = "https://pypi.org/project/piighost/";
@@ -66,14 +68,23 @@ export function breadcrumbLd(items: { name: string; item: string }[]) {
   } as const;
 }
 
-export function faqPageLd(qa: { question: string; answer: string }[]) {
+/** Collapse FAQ answer segments into the plain text FAQPage schema expects. */
+export function flattenFaqAnswer(answer: FaqSegment[]): string {
+  return answer
+    .map((seg) =>
+      typeof seg === "string" ? seg : "code" in seg ? seg.code : seg.link.text,
+    )
+    .join("");
+}
+
+export function faqPageLd(qa: { question: string; answer: FaqSegment[] }[]) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     mainEntity: qa.map((x) => ({
       "@type": "Question",
       name: x.question,
-      acceptedAnswer: { "@type": "Answer", text: x.answer },
+      acceptedAnswer: { "@type": "Answer", text: flattenFaqAnswer(x.answer) },
     })),
   } as const;
 }

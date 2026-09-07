@@ -28,6 +28,12 @@ export type PhilosophyDict = {
   }>;
 };
 
+/** A run of FAQ answer content: plain text, an inline code token, or a link. */
+export type FaqSegment =
+  | string
+  | { code: string }
+  | { link: { href: string; text: string } };
+
 export type Dictionary = {
   nav: {
     piighost: string;
@@ -117,7 +123,7 @@ export type Dictionary = {
   };
   faq: {
     heading: string;
-    items: { question: string; answer: string }[];
+    items: { question: string; answer: FaqSegment[] }[];
   };
   philosophy: PhilosophyDict;
   playground: {

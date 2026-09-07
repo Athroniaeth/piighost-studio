@@ -286,29 +286,68 @@ export const en: Dictionary = {
     heading: "Frequently asked questions",
     items: [
       {
-        question: "How do I anonymize PII before sending a prompt to a model in Python?",
-        answer:
-          "Install piighost, build a pipeline around a detector, and pass your text through it before the model sees it. The pipeline finds personal data and swaps it for placeholders like <<PERSON:1>>, then restores the real values in the reply. You choose the detector: regex, classic NER, GLiNER, or an LLM.",
+        question: "Why anonymize instead of self-hosting the model?",
+        answer: [
+          "Self-hosting is a valid choice and gives the strongest confidentiality: no third party can read the content, by construction. The cost is that everything moves onto you (the GPU bill, security, patching, logging) and the model you can run yourself is usually weaker than the best hosted ones. Anonymizing keeps that quality: only placeholders like ",
+          { code: "<<PERSON:1>>" },
+          " leave your infrastructure, so the leakage risk is neutralized whichever provider you use. It is one layer, not a silver bullet. ",
+          {
+            link: {
+              href: "/philosophy",
+              text: "The Philosophy page walks through the full tradeoff.",
+            },
+          },
+        ],
       },
       {
-        question: "What is the difference between regex, NER and LLM detection?",
-        answer:
-          "They are peer detectors you pick between. Regex matches fixed patterns such as emails or card numbers and is fast and exact. NER (classic models or GLiNER) recognizes names, places and organizations from context. An LLM detector reads intent for tricky cases. piighost is detector-agnostic, so you can combine them.",
+        question: "What do I need to run piighost in production?",
+        answer: [
+          "At minimum, the piighost library and a pipeline. Install it with the extras your detectors need: ",
+          { code: "pip install 'piighost[config]'" },
+          " is enough for a regex-only pipeline; add ",
+          { code: "transformers" },
+          ", ",
+          { code: "gliner2" },
+          " or ",
+          { code: "llm" },
+          " per detector, and ",
+          { code: "cache" },
+          " for a shared Redis mapping. Save your pipeline as a TOML file and load it with ",
+          { code: "load_pipeline" },
+          ". Classic NER and GLiNER download an ONNX model on first use and run on CPU; regex needs nothing more; the LLM detector needs a provider and an API key. When several processes need one shared endpoint, deploy piighost-api instead of embedding the library.",
+        ],
       },
       {
-        question: "How do I use piighost with LangChain, Pydantic AI or LlamaIndex?",
-        answer:
-          "piighost ships integrations for LangChain, Pydantic AI and LlamaIndex. You wrap your pipeline in the provided helper (middleware, hooks or a node anonymizer) so PII is replaced before the model runs and restored afterward. The model only ever reasons over placeholders like <<PERSON:1>>, never the real values.",
+        question: "Can I use piighost with Claude Code?",
+        answer: [
+          "piighost is model-agnostic, so it works with Anthropic's Claude the same way it works with any provider. It runs at the data layer: you anonymize text in your own code before the model sees it, so only placeholders like ",
+          { code: "<<PERSON:1>>" },
+          " ever reach Claude, and the real values are restored in the reply. Wrap any Claude call you make from Python, directly or through LangChain, Pydantic AI or LlamaIndex. There is no dedicated extension for the Claude Code CLI itself, since piighost protects the prompts and data you send, not the tool you send them with.",
+        ],
+      },
+      {
+        question: "Can I use piighost with LangChain, Pydantic AI or LlamaIndex?",
+        answer: [
+          "piighost ships integrations for LangChain, Pydantic AI and LlamaIndex. You wrap your pipeline in the provided helper (middleware, hooks or a node anonymizer) so PII is replaced before the model runs and restored afterward. The model only ever reasons over placeholders like ",
+          { code: "<<PERSON:1>>" },
+          ", never the real values.",
+        ],
       },
       {
         question: "Is piighost GDPR compliant, and how do stable placeholders work?",
-        answer:
-          "piighost performs reversible pseudonymization in the GDPR sense, which supports compliance but does not replace your own legal review. Stable placeholders mean the same entity always maps to the same token (Patrick becomes <<PERSON:1>> everywhere), so the model keeps context while the real value stays out of its reach.",
+        answer: [
+          "piighost performs reversible pseudonymization in the GDPR sense, which supports compliance but does not replace your own legal review. Stable placeholders mean the same entity always maps to the same token (Patrick becomes ",
+          { code: "<<PERSON:1>>" },
+          " everywhere), so the model keeps context while the real value stays out of its reach.",
+        ],
       },
       {
         question: "Does my data stay local? What is actually sent to the model?",
-        answer:
-          "Only the anonymized text is sent to the model, with every detected value replaced by a placeholder such as <<PERSON:1>>. The mapping from tokens back to real values stays on your side and is never sent. After the model responds, piighost restores the original values locally so your users see the real data.",
+        answer: [
+          "Only the anonymized text is sent to the model, with every detected value replaced by a placeholder such as ",
+          { code: "<<PERSON:1>>" },
+          ". The mapping from tokens back to real values stays on your side and is never sent. After the model responds, piighost restores the original values locally so your users see the real data.",
+        ],
       },
     ],
   },
