@@ -11,7 +11,7 @@ export const fr: Dictionary = {
     home: "Accueil",
     playground: "Playground",
     docs: "Documentation",
-    hub: "Hub de regex",
+    hub: "Hub",
     github: "GitHub",
     toggleTheme: "Changer le thème",
     toggleLanguage: "Passer en anglais",
