@@ -15,7 +15,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageToggle } from "@/components/language-toggle";
 import { GithubIcon } from "@/components/github-icon";
 import { NavLink } from "@/components/nav-link";
-import { GITHUB_ORG, getProject, projects } from "@/lib/site";
+import { GITHUB_ORG, HUB_URL, getProject, projects } from "@/lib/site";
 import { useT } from "@/i18n/use-t";
 import { localePath, stripLocale } from "@/i18n/locale-path";
 import { cn } from "@/lib/utils";
@@ -43,6 +43,13 @@ export function SiteNavbar() {
             }
           >
             {t.nav.docs}
+          </Button>
+          <Button
+            variant="ghost"
+            size="lg"
+            render={<a href={HUB_URL} target="_blank" rel="noreferrer" />}
+          >
+            {t.nav.hub}
           </Button>
           <NavigationMenu>
             <NavigationMenuList>

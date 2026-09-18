@@ -1,5 +1,8 @@
 export const GITHUB_ORG = "https://github.com/Athroniaeth";
 
+/** The regex registry. A site of its own, so it is a link and not a route. */
+export const HUB_URL = "https://hub.piighost.dev";
+
 export type Project = {
   slug: string;
   name: string;
@@ -32,14 +35,14 @@ export const projects: Project[] = [
     name: "piighost-chat",
     tagline: "A demo chatbot that anonymizes messages before the LLM sees them.",
     repo: `${GITHUB_ORG}/piighost-chat`,
-    app: "https://piighost-chat.athroniaeth.cloud/",
+    app: "https://chat.piighost.dev/",
   },
   {
     slug: "proofreader",
     name: "piighost-proofreader",
     tagline: "An LLM CV proofreader that anonymizes documents before any LLM call.",
     repo: `${GITHUB_ORG}/piighost-proofreader`,
-    app: "https://piighost-proofreader.athroniaeth.cloud/",
+    app: "https://proofreader.piighost.dev/",
   },
 ];
 

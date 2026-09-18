@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { GITHUB_ORG, projects } from "@/lib/site";
+import { GITHUB_ORG, HUB_URL, projects } from "@/lib/site";
 import { useT } from "@/i18n/use-t";
 import { localePath } from "@/i18n/locale-path";
 
@@ -34,6 +34,7 @@ export function SiteFooter() {
             <li><a className="hover:text-foreground" href={`${GITHUB_ORG}/piighost`} target="_blank" rel="noreferrer">GitHub</a></li>
             <li><a className="hover:text-foreground" href="https://pypi.org/project/piighost/" target="_blank" rel="noreferrer">PyPI</a></li>
             <li><a className="hover:text-foreground" href="https://athroniaeth.github.io/piighost/" target="_blank" rel="noreferrer">Documentation</a></li>
+            <li><a className="hover:text-foreground" href={HUB_URL} target="_blank" rel="noreferrer">{t.nav.hub}</a></li>
           </ul>
         </div>
       </div>

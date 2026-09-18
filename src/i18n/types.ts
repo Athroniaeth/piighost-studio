@@ -45,6 +45,7 @@ export type Dictionary = {
     home: string;
     playground: string;
     docs: string;
+    hub: string;
     github: string;
     toggleTheme: string;
     toggleLanguage: string;
